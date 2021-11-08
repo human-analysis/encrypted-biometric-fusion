@@ -19,10 +19,6 @@ class Linear_Feature_Fusion():
     def parameters(self):
         return [self.P]
     def distance(self,x1,x2):
-        #print("distance")
-        #print(self.P)
-        #print(x1.T)
-        #print(x2)
         x1_tilde = torch.matmul(self.P.T, x1.T)
         x2_tilde = torch.matmul(self.P.T, x2.T)
         return 1-torch.dot(x1_tilde, x2_tilde)/(torch.linalg.norm(x1_tilde)*torch.linalg.norm(x2_tilde))

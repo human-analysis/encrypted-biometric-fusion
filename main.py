@@ -10,69 +10,7 @@ import math
 import torch
 from torch.distributions.multivariate_normal import MultivariateNormal
 from model import Linear_Feature_Fusion
-
-def data_gen(num_samples):
-    alpha=3
-    beta=2
-    covar1 = torch.eye(alpha) / 6.0
-    covar2 = torch.eye(beta) / 6.0
-    #covar1 = np.identity(alpha) / 6.0
-    #covar2 = np.identity(beta) / 6.0
-    A = []
-    A_distr1 = MultivariateNormal(loc=torch.tensor([1.,2.,3.]), covariance_matrix=covar1)
-    A_distr2 = MultivariateNormal(loc=torch.tensor([-1.,-2.,-3.]), covariance_matrix=covar1)
-    A_distr3 = MultivariateNormal(loc=torch.tensor([0.,0.,3.]), covariance_matrix=covar1)
-    #print(A_distr1.rsample())
-    #Adistr4 = MultivariateNormal(loc=torch.tensor([0.,0.,3.]), covariance_matrix=covar1)
-    for i in range(num_samples):
-        A.append(A_distr1.rsample().unsqueeze(dim=0))
-        #A.append(np.random.multivariate_normal(np.array([1.,2.,3.]), covar1))
-    for i in range(num_samples):
-        #A.append(np.random.multivariate_normal(np.array([-1.,-2.,-3.]), covar1))
-        A.append(A_distr2.rsample().unsqueeze(dim=0))
-    for i in range(num_samples):
-        A.append(A_distr3.rsample().unsqueeze(dim=0))
-        #A.append(np.random.multivariate_normal(np.array([0.,0.,3.]), covar1))
-    for i in range(num_samples):
-        A.append(A_distr3.rsample().unsqueeze(dim=0))
-        #A.append(np.random.multivariate_normal(np.array([0.,0.,3.]), covar1))
-    
-    B = []
-    B_distr1 = MultivariateNormal(loc=torch.tensor([-4.,4.]), covariance_matrix=covar2)
-    B_distr2 = MultivariateNormal(loc=torch.tensor([3.,-3.]), covariance_matrix=covar2)
-    B_distr3 = MultivariateNormal(loc=torch.tensor([0.,3.]), covariance_matrix=covar2)
-    #Bdistr4 = 
-    for i in range(num_samples):
-        B.append(B_distr1.rsample().unsqueeze(dim=0))
-        #B.append(np.random.multivariate_normal(np.array([-4.,4.]), covar2))
-    for i in range(num_samples):
-        B.append(B_distr2.rsample().unsqueeze(dim=0))
-        #B.append(np.random.multivariate_normal(np.array([3.,-3.,]), covar2))
-    for i in range(num_samples):
-        B.append(B_distr3.rsample().unsqueeze(dim=0))
-        #B.append(np.random.multivariate_normal(np.array([0.,3.,]), covar2))
-    for i in range(num_samples):
-        B.append(B_distr2.rsample().unsqueeze(dim=0))
-        #B.append(np.random.multivariate_normal(np.array([3.,-3.,]), covar2))
-        
-    A_final = torch.Tensor(num_samples*4,alpha)
-    torch.cat(A, out=A_final,dim=0)
-    B_final = torch.Tensor(num_samples*4,beta)
-    torch.cat(B, out=B_final,dim=0)
-    
-    L = []
-    for i in range(num_samples):
-        L.append(0.)
-    for i in range(num_samples):
-        L.append(1.)
-    for i in range(num_samples):
-        L.append(2.)
-    for i in range(num_samples):
-        L.append(3.)
-    
-    L = torch.tensor(L).T
-    
-    return A_final,B_final,L
+from data_generation import data_gen
 
 def main():
     A,B,L = data_gen(10)
@@ -80,6 +18,25 @@ def main():
     beta = B.shape[1]
     gamma = 2
     #P = torch.rand(alpha+beta,gamma)
+    
+    outfile_a = open("A_values.txt",'w')
+    for i in range(A.shape[0]):
+        outfile_a.write(str(A[i].tolist()))
+        outfile_a.write("\n")
+    outfile_a.close()
+    
+    outfile_b = open("B_values.txt",'w')
+    for i in range(B.shape[0]):
+        outfile_b.write(str(B[i].tolist()))
+        outfile_b.write("\n")
+    outfile_b.close()
+    
+    outfile_l = open("L_values.txt",'w')
+    for i in range(L.shape[0]):
+        outfile_l.write(str(L[i].tolist()))
+        outfile_l.write("\n")
+    outfile_l.close()
+    
     
     lamb = 0.2
     margin = 1#math.cos(math.pi/6)
@@ -106,21 +63,23 @@ def main():
     print("Initial loss:",model.loss())
     P_history = []
     losses = []
-    optim = torch.optim.SGD(model.parameters(), lr=rate, momentum=0.9)
+    optim = torch.optim.SGD(model.parameters(), lr=rate)#, momentum=0.9)
     for i in range(iterations):
         loss = model.loss()
         losses.append(loss)
-        print(model.P)
+        #print(model.P)
         P_history.append(str(model.P.tolist()))
         loss.backward()
         optim.step()
+        if i%10 == 0:
+            print("Iteration",i)
     print("final loss:",model.loss())
     
-    outfile = open("P_values.txt",'w')
+    outfile_p = open("P_values.txt",'w')
     for P_value in P_history:
-        outfile.write(P_value)
-        outfile.write("\n")
-    outfile.close()
+        outfile_p.write(P_value)
+        outfile_p.write("\n")
+    outfile_p.close()
     
     outfile_loss = open("loss_values.txt",'w')
     for loss_value in losses:

@@ -18,20 +18,21 @@ def main():
     beta = B.shape[1]
     gamma = 2
     #P = torch.rand(alpha+beta,gamma)
-    
-    outfile_a = open("A_values.txt",'w')
+    if not os.path.exists("data"):
+        os.mkdir("data")
+    outfile_a = open("data/A_values.txt",'w')
     for i in range(A.shape[0]):
         outfile_a.write(str(A[i].tolist()))
         outfile_a.write("\n")
     outfile_a.close()
     
-    outfile_b = open("B_values.txt",'w')
+    outfile_b = open("data/B_values.txt",'w')
     for i in range(B.shape[0]):
         outfile_b.write(str(B[i].tolist()))
         outfile_b.write("\n")
     outfile_b.close()
     
-    outfile_l = open("L_values.txt",'w')
+    outfile_l = open("data/L_values.txt",'w')
     for i in range(L.shape[0]):
         outfile_l.write(str(L[i].tolist()))
         outfile_l.write("\n")
@@ -56,10 +57,7 @@ def main():
     iterations = 100
     break_point = 0.005
     rate = 10e-2
-    #for i in range(iterations):
-    #    index = random.randint(0,X3.shape[0]-1)
-    #    sample = X3[index]
-    #    label = L[index]
+
     print("Initial loss:",model.loss())
     P_history = []
     losses = []
@@ -67,7 +65,6 @@ def main():
     for i in range(iterations):
         loss = model.loss()
         losses.append(loss)
-        #print(model.P)
         P_history.append(str(model.P.tolist()))
         loss.backward()
         optim.step()
@@ -75,38 +72,17 @@ def main():
             print("Iteration",i)
     print("final loss:",model.loss())
     
-    outfile_p = open("P_values.txt",'w')
+    outfile_p = open("data/P_values.txt",'w')
     for P_value in P_history:
         outfile_p.write(P_value)
         outfile_p.write("\n")
     outfile_p.close()
     
-    outfile_loss = open("loss_values.txt",'w')
+    outfile_loss = open("data/loss_values.txt",'w')
     for loss_value in losses:
         outfile_loss.write(str(loss_value.tolist()))
         outfile_loss.write("\n")
     outfile_loss.close()
-    
-    """
-    loss_gradient_function = grad(Loss)
-    last_loss = Loss(P)
-    for i in range(iterations):
-        losses.append(last_loss)
-        if i%10 == 0:
-            print("Iteration:",i)
-        gradient = loss_gradient_function(P)
-        #if i%10 == 0:
-        #    print(np.linalg.norm(gradient))
-        if np.linalg.norm(gradient) < break_point:
-            print("Converged on iteration",i)
-            break
-        P -= gradient * rate
-        loss = Loss(P)
-        #if loss < last_loss:
-        #    alpha = 0.97 * alpha
-        last_loss = loss
-    print("Final loss:",Loss(P))
-    """
 
 if __name__ == "__main__":
     main()

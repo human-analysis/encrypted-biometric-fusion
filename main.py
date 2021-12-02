@@ -1,5 +1,6 @@
 #import numpy as np
 import random
+import os
 
 #import autograd.numpy as np  # Thinly-wrapped numpy
 #from autograd import grad
@@ -58,12 +59,17 @@ def main():
     break_point = 0.005
     rate = 10e-2
 
-    print("Initial loss:",model.loss())
+    best_loss = model.loss()
+    best_P = model.P
+    print("Initial loss:",best_loss)
     P_history = []
     losses = []
     optim = torch.optim.SGD(model.parameters(), lr=rate)#, momentum=0.9)
     for i in range(iterations):
         loss = model.loss()
+        if loss < best_loss:
+            best_loss = loss
+            best_P = model.P
         losses.append(loss)
         P_history.append(str(model.P.tolist()))
         loss.backward()
@@ -77,6 +83,12 @@ def main():
         outfile_p.write(P_value)
         outfile_p.write("\n")
     outfile_p.close()
+    
+    outfile_p_t = open("data/best_P_value_transpose.txt",'w')
+    P_final_t = best_P.T
+    P_final_t = str(P_final_t.tolist())
+    outfile_p_t.write(P_final_t)
+    outfile_p_t.close()
     
     outfile_loss = open("data/loss_values.txt",'w')
     for loss_value in losses:

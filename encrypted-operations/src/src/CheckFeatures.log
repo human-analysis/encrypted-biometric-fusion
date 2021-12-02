@@ -1,0 +1,60 @@
+*** CheckFeatures log ***
+g++ -I../include -I. -g -O2 -std=c++11 -pthread -march=native -o TestGetTime TestGetTime.cpp GetTime1.cpp -lm
+running
+g++ -I../include -I. -g -O2 -std=c++11 -pthread -march=native -o TestGetPID TestGetPID.cpp GetPID1.cpp -lm
+g++ -I../include -I. -g -O2 -std=c++11 -pthread -march=native CheckALIGNED_ARRAY.cpp -o CheckFeatures -lm
+g++ -I../include -I. -g -O2 -std=c++11 -pthread -march=native CheckBUILTIN_CLZL.cpp -o CheckFeatures -lm
+g++ -I../include -I. -g -O2 -std=c++11 -pthread -march=native CheckLL_TYPE.cpp -o CheckFeatures -lm
+g++ -I../include -I. -g -O2 -std=c++11 -pthread -march=native CheckSSSE3.cpp -o CheckFeatures -lm
+g++ -I../include -I. -g -O2 -std=c++11 -pthread -march=native CheckAVX.cpp -o CheckFeatures -lm
+g++ -I../include -I. -g -O2 -std=c++11 -pthread -march=native CheckPCLMUL.cpp -o CheckFeatures -lm
+g++ -I../include -I. -g -O2 -std=c++11 -pthread -march=native CheckAVX2.cpp -o CheckFeatures -lm
+g++ -I../include -I. -g -O2 -std=c++11 -pthread -march=native CheckFMA.cpp -o CheckFeatures -lm
+g++ -I../include -I. -g -O2 -std=c++11 -pthread -march=native CheckAVX512F.cpp -o CheckFeatures -lm
+CheckAVX512F.cpp:12:2: error: "AVX512F not supported"
+#error "AVX512F not supported"
+ ^
+CheckAVX512F.cpp:16:2: error: "AVX512F not supported"
+#error "AVX512F not supported"
+ ^
+2 errors generated.
+g++ -I../include -I. -g -O2 -std=c++11 -pthread -march=native CheckCOPY_TRAITS1.cpp -o CheckFeatures -lm
+g++ -I../include -I. -g -O2 -std=c++11 -pthread -march=native CheckCOPY_TRAITS2.cpp -o CheckFeatures -lm
+g++ -I../include -I. -g -O2 -std=c++11 -pthread -march=native CheckCHRONO_TIME.cpp -o CheckFeatures -lm
+g++ -I../include -I. -g -O2 -std=c++11 -pthread -march=native CheckMACOS_TIME.cpp -o CheckFeatures -lm
+g++ -I../include -I. -g -O2 -std=c++11 -pthread -march=native CheckPOSIX_TIME.cpp -o CheckFeatures -lm
+CheckPOSIX_TIME.cpp:36:15: error: use of undeclared identifier '_ntl_GetWallTime'
+   double t = _ntl_GetWallTime();
+              ^
+CheckPOSIX_TIME.cpp:37:11: error: use of undeclared identifier 'retval'
+   return retval;
+          ^
+2 errors generated.
+g++ -I../include -I. -g -O2 -std=c++11 -pthread -march=native CheckAES_NI.cpp -o CheckFeatures -lm
+CheckAES_NI.cpp:18:13: error: use of undeclared identifier '_mm_cvtsi64x_si128'; did you mean '_mm_cvtsi64_si128'?
+  __m128i a=_mm_cvtsi64x_si128(atol("17"));
+            ^~~~~~~~~~~~~~~~~~
+            _mm_cvtsi64_si128
+/Library/Developer/CommandLineTools/usr/lib/clang/12.0.5/include/emmintrin.h:3478:1: note: '_mm_cvtsi64_si128' declared here
+_mm_cvtsi64_si128(long long __a)
+^
+CheckAES_NI.cpp:19:15: error: use of undeclared identifier '_mm_cvtsi64x_si128'; did you mean '_mm_cvtsi64_si128'?
+  __m128i key=_mm_cvtsi64x_si128(atol("42"));
+              ^~~~~~~~~~~~~~~~~~
+              _mm_cvtsi64_si128
+/Library/Developer/CommandLineTools/usr/lib/clang/12.0.5/include/emmintrin.h:3478:1: note: '_mm_cvtsi64_si128' declared here
+_mm_cvtsi64_si128(long long __a)
+^
+CheckAES_NI.cpp:21:12: error: use of undeclared identifier '_mm_cvtsi128_si64x'; did you mean '_mm_cvtsi128_si64'?
+  long x = _mm_cvtsi128_si64x(a);
+           ^~~~~~~~~~~~~~~~~~
+           _mm_cvtsi128_si64
+/Library/Developer/CommandLineTools/usr/lib/clang/12.0.5/include/emmintrin.h:3515:1: note: '_mm_cvtsi128_si64' declared here
+_mm_cvtsi128_si64(__m128i __a)
+^
+3 errors generated.
+g++ -I../include -I. -g -O2 -std=c++11 -pthread -march=native CheckKMA.cpp -o CheckFeatures -lm
+CheckKMA.cpp:11:2: error: "KMA not supported"
+#error "KMA not supported"
+ ^
+1 error generated.

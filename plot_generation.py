@@ -159,5 +159,5 @@ def plot_p():
 
 if __name__ == "__main__":
     plot_dataset()
-    #plot_loss()
-    #plot_p()
+    plot_loss()
+    plot_p()

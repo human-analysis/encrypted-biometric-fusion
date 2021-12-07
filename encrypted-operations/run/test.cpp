@@ -11,7 +11,7 @@
   * This file is for test HEAAN library
   * You can find more in src/TestScheme.h
   * "./TestHEAAN Encrypt" will run Encrypt Test
-  * There are Encrypt, EncryptSingle, Add, Mult, iMult, RotateFast, Conjugate Tests
+  * There are Fusion, Encrypt, EncryptSingle, Add, Mult, iMult, RotateFast, Conjugate Tests
   */
 int main(int argc, char **argv) {
 

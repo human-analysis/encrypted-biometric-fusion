@@ -41,7 +41,7 @@ def plot_loss():
                       title="Train Loss")
         
         fig_file_name = "figures/loss/train_loss_lambda=" + str(lamb) + "_margin=" + str(margin) + ".png"
-        fig.write_image("figures/loss/train_loss.png")
+        fig.write_image(fig_file_name)
 
 
 def plot_dataset():

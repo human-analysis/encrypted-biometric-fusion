@@ -1,3 +1,4 @@
+<<<<<<< Updated upstream
 # -*- coding: utf-8 -*-
 """
 Created on Fri Dec  3 16:41:16 2021
@@ -77,3 +78,72 @@ def main():
                         
 if __name__ == "__main__":
     main()
+=======
+import torch
+import plotly.express as px
+import plotly.graph_objects as go
+import pandas
+import ast
+
+
+def Cosine_Distance(vec1, vec2):
+    #assumes vec1 and vec2 are unit vectors
+    return 1 - torch.dot(vec1, vec2)
+
+def ROC():
+    enc_results_file = open("results/toy_data_1_4.txt",'r')
+    enc_results = []
+    L = []
+    for line in enc_results_file:
+        result, l = line.strip().split(";")
+        result = torch.tensor(ast.literal_eval(result)).unsqueeze(dim=0)
+        l = int(l)
+        enc_results.append(result)
+        L.append(l)
+    enc_results_final = torch.Tensor(len(enc_results),enc_results[0].shape[0])
+    torch.cat(enc_results, out=enc_results_final,dim=0)
+    
+    thresholds = [0.05 * i for i in range(20)]
+    
+    num_class = len(set(L))
+    samples_per_class = L.count(L[0])
+    
+    count = num_class * samples_per_class
+    fps = []
+    tps = []
+    for threshold in thresholds:
+        fp = 0
+        tp = 0
+        for i in range(count):
+            for j in range(i,count):
+                guess = False
+                if Cosine_Distance(enc_results_final[i],enc_results_final[j]) < threshold:
+                    guess = True
+                if L[i]==L[j]:
+                    if guess:
+                        tp += 1
+                else:
+                    if guess:
+                        fp += 1
+        fps.append(fp)
+        tps.append(tp)
+    fig = go.Figure(layout = go.Layout(title = go.layout.Title(text="ROC")))
+    fig.add_trace(
+        go.Scatter(
+            mode='lines',
+            x=fps,
+            y=tps,
+            marker={'color':'black'},
+            showlegend=False
+        )   
+    )
+    fig_file_name = "figures/ROC.png"
+    fig.write_image(fig_file_name)
+    print(fps)
+    print(tps)
+    
+    
+
+if __name__ == "__main__":
+    ROC()
+>>>>>>> Stashed changes

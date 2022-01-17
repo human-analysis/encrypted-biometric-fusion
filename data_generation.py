@@ -8,6 +8,9 @@ import torch
 from torch.distributions.multivariate_normal import MultivariateNormal
 
 def data_gen(num_samples):
+    #set the seed
+    torch.manual_seed(0)
+    
     alpha=3
     beta=2
     covar1 = torch.eye(alpha) / 6.0

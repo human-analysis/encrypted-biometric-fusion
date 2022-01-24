@@ -6,7 +6,7 @@ import time
 from data_generation import data_gen
 import torch
 
-from encrypted_normalization import normalize
+from encrypted_normalization import normalize, efficient_normalize
 
 import os
 
@@ -20,23 +20,29 @@ def Inference_Time_Encrypted_Fusion():
     ##unencrypted test
     context = None
     vector = torch.tensor([-51.6411,  24.2202])
-    print("normalized:",normalize(vector, context, dimensionality=5))
+    print("normalized:",efficient_normalize(vector, context, dimensionality=5))
     #vector = torch.tensor([37.4037, -21.0916])
     s = torch.dot(vector,vector)
     #print("norm:",s**0.5)
     inverse_norm = 1/(s**0.5)
     print("true inverse norm:",inverse_norm)
     print("truth:",vector * inverse_norm)
-    0/0"""
-    
+    0/0
+    """
     
     if not os.path.exists("results"):
         os.mkdir("results")
     
     
-    m_poly_mod = 32768#//2
+    m_poly_mod = 32768
+    #m_coeff_mod = [60]
+    #m_poly_mod = 32768//2
     m_coeff_mod = [60]
-    for i in range(19-2):#-12):
+    #for i in range(19-2):#-12):
+    
+    #for i in range(15):
+    #for i in range(15):
+    for i in range(13):
         m_coeff_mod.append(40)
     m_coeff_mod.append(60)
     
@@ -49,7 +55,7 @@ def Inference_Time_Encrypted_Fusion():
                 coeff_mod_bit_sizes=m_coeff_mod,
               )
     context.generate_galois_keys()
-    context.global_scale = 2**40
+    context.global_scale = 2**80
     
     
     toc = time.perf_counter()
@@ -58,16 +64,18 @@ def Inference_Time_Encrypted_Fusion():
     print("time elapsed to create context:",toc - tic)
     
     
-    """
+    
     ##encrypted test
-    print("encrypted:",normalize(ts.ckks_vector(context,[37.4037, -21.0916]), context, dimensionality=5).decrypt())
-    vector = torch.tensor([37.4037, -21.0916])
+    #
+    #[37.4037, -21.0916]
+    print("encrypted:",efficient_normalize(ts.ckks_vector(context,[-51.6411,  24.2202]), context, dimensionality=5).decrypt())
+    vector = torch.tensor([-51.6411,  24.2202])
     s = torch.dot(vector,vector)
-    print("norm:",s**0.5)
+    print("true norm:",s**0.5)
     inverse_norm = 1/(s**0.5)
     print("truth:",vector * inverse_norm)
     0/0
-    """
+    
     
     
     
@@ -138,7 +146,7 @@ def Inference_Time_Encrypted_Fusion():
         total_error += abs(dec_results[i] - plain_results[i])
     avg_error = total_error/count
     
-    outfile_name = "results/toy_data_1_4.txt"
+    outfile_name = "results/toy_data_1_2.txt"
     outfile = open(outfile_name, 'w')
     for i  in range(count):
         result = dec_results[i]
@@ -148,7 +156,7 @@ def Inference_Time_Encrypted_Fusion():
         outfile.write("\n")
     outfile.close()
     
-    outfile_name_plain = "results/toy_data_1_4_plain.txt"
+    outfile_name_plain = "results/toy_data_1_2_plain.txt"
     outfile_plain = open(outfile_name_plain, 'w')
     for i  in range(count):
         result = plain_results[i]

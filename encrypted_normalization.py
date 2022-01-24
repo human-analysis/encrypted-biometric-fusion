@@ -96,6 +96,48 @@ def normalize(enc_vector, context, dimensionality):
     #initial_estimate = reencrypt(initial_estimate, context)
     
     
-    
-    inverse_norm = Goldschmidt(s, initial_estimate, context, iters=4)
+    #inverse_norm = initial_estimate
+    inverse_norm = Goldschmidt(s, initial_estimate, context, iters=2)
     return enc_vector * inverse_norm
+
+"""
+def efficient_normalize(enc_vector, context, dimensionality):
+    #0.8178302654835186
+    coeffs = [ 0.00000000e+00, -1.00922126e-01,  7.19802379e-03, -2.59873687e-04,
+      4.52208769e-06, -3.01334013e-08]
+    s = enc_vector.dot(enc_vector) #squared norm
+    inverse_norm = ts.ckks_vector(context,[0.0])
+    for i, coeff in enumerate(coeffs):
+        if abs(coeff) < 1e-8:
+            continue
+        poly = ts.ckks_vector(context,[coeff])
+        for j in range(i):
+            poly = poly * s
+        inverse_norm = inverse_norm + poly
+    return enc_vector * inverse_norm
+"""
+
+def efficient_normalize(enc_vector, context, dimensionality):
+    coeffs = [[-1.74906337e+06,  5.73576978e+04, -2.63561506e+01,  3.31516365e-03],
+      [2.14909489e-01, -2.42205486e-08,  9.67622195e-16, -1.23207013e-23]]
+    s = enc_vector.dot(enc_vector) #squared norm
+    print("squared norm", s.decrypt())
+    inverse_norm = ts.ckks_vector(context,[0.0])
+    x = s
+    for coeff_set in coeffs:
+        print("iter")
+        for i, coeff in enumerate(coeff_set):
+            #print("coeff:", coeff)
+            #if abs(coeff) < 1e-8:
+                #continue
+            poly = ts.ckks_vector(context, [coeff])
+            for j in range(i):
+                poly = poly * x
+            print("adding", poly.decrypt()[0])
+            inverse_norm = inverse_norm + poly
+        x = inverse_norm
+        inverse_norm = ts.ckks_vector(context,[0.0])
+    inverse_norm = x
+    print("inv norm",inverse_norm.decrypt())
+    return enc_vector * inverse_norm
+

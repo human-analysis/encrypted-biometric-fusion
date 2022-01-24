@@ -232,7 +232,7 @@ def plot_results():
     circle_y = circle_y_pos+circle_y_neg
 
 
-    enc_results_file = open("results/toy_data_1_4.txt",'r')
+    enc_results_file = open("results/toy_data_1_3.txt",'r')
     enc_results = []
     L = []
     for line in enc_results_file:
@@ -244,7 +244,7 @@ def plot_results():
     enc_results_final = torch.Tensor(len(enc_results),enc_results[0].shape[0])
     torch.cat(enc_results, out=enc_results_final,dim=0)
     
-    pln_results_file = open("results/toy_data_1_4_plain.txt",'r')
+    pln_results_file = open("results/toy_data_1_3_plain.txt",'r')
     pln_results = []
     L = []
     for line in pln_results_file:
@@ -278,7 +278,7 @@ def plot_results():
     fig.update_xaxes(range=[-1.1,1.1],constrain="domain")
     fig.update_yaxes(scaleanchor = "x",scaleratio = 1)    
     
-    fig_file_name = "figures/results/toy_data_1_4.png"
+    fig_file_name = "figures/results/toy_data_1_3.png"
     fig.write_image(fig_file_name)
     
     
@@ -302,9 +302,9 @@ def plot_results():
         fig.add_scatter(name=titles[i],x=pln_results_final[i*samples_per_class:i*samples_per_class+samples_per_class,0],y=pln_results_final[i*samples_per_class:i*samples_per_class+samples_per_class,1],mode="markers",marker={'size': 15,'color': colors[i]})#,legendgrouptitle={'text':titles[i]})
     fig.update_yaxes(scaleanchor="x",scaleratio=1)
     fig.update_xaxes(range=[-1.1,1.1],constrain="domain")
-    fig.update_yaxes(scaleanchor = "x",scaleratio = 1)    
+    #fig.update_xaxes(scaleanchor = "y",scaleratio = 1)    
     
-    fig_file_name = "figures/results/toy_data_1_4_plain.png"
+    fig_file_name = "figures/results/toy_data_1_3_plain.png"
     fig.write_image(fig_file_name)
 
 if __name__ == "__main__":

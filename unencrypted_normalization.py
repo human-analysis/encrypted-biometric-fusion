@@ -86,3 +86,32 @@ def normalize(vector, context, dimensionality):
     #print(torch.dot(vector * inverse_norm,vector * inverse_norm))
     #print(torch.linalg.norm(vector * inverse_norm))
     return vector * inverse_norm
+
+def efficient_normalize(vector, context, dimensionality):
+    #0.8178302654835186
+    #coeffs = [ 0.00000000e+00, -1.00922126e-01,  7.19802379e-03, -2.59873687e-04,
+      #4.52208769e-06, -3.01334013e-08]
+    #coeffs = [0.8178302654835186, -1.00922126e-01,  7.19802379e-03, -2.59873687e-04,
+      #4.52208769e-06, -3.01334013e-08]
+    coeffs = [[-1.74906337e+06,  5.73576978e+04, -2.63561506e+01,  3.31516365e-03],
+      [2.14909489e-01, -2.42205486e-08,  9.67622195e-16, -1.23207013e-23]]
+    s = torch.dot(vector,vector) #squared norm
+    print("squared norm",s)
+    inverse_norm = 0.0
+    x = s
+    for coeff_set in coeffs:
+        print("iter")
+        for i, coeff in enumerate(coeff_set):
+            #if abs(coeff) < 1e-8:
+                #continue
+            poly = coeff
+            for j in range(i):
+                poly = poly * x
+            poly = float(poly)
+            print("adding", poly)
+            inverse_norm = inverse_norm + poly
+        x = inverse_norm
+        inverse_norm = 0.0
+    inverse_norm = x
+    print("inv norm",inverse_norm)
+    return vector * inverse_norm

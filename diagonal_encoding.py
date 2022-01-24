@@ -36,10 +36,53 @@ def diagonal_encoding(lamb, margin):
         p_final.append(torch.tensor(temp))
     p_final = torch.stack(p_final)
         
+    
+    
+    #p_final = []
+    #new_max_dim = 3
+    #p_final.append(torch.tensor([1,2,3]))
+    #p_final.append(torch.tensor([4,5,6]))
+    #p_final.append(torch.tensor([7,8,9]))
+    #p_final = torch.stack(p_final)
+    
+    
     print(p_final)
-        
-        
-        
+    print()
+    
+    
+    p_diag = []
+    
+    i = 0
+    j = 0
+    for k in range(new_max_dim):
+        temp = []
+        for l in range(new_max_dim):
+            temp.append(float(p_final[j][i]))
+            i+=1
+            j+=1
+            if i >= new_max_dim:
+                i = 0
+            if j >= new_max_dim:
+                j = 0
+        p_diag.append(torch.tensor(temp))
+        i+=1
+    p_diag = torch.stack(p_diag)
+    print(p_diag)
+    
+    
+    p_output_file_name = "data/diagonal_P_value_lambda=" + str(lamb) + "_margin=" + str(margin) + ".txt"
+    outfile_p = open(p_output_file_name,'w')
+    for row in p_diag.tolist():
+        for item in row:
+            outfile_p.write(str(item))
+            outfile_p.write(" ")
+        outfile_p.write("\n")
+    #P_final = str(p_diag.tolist())
+    #outfile_p.write(P_final)
+    outfile_p.close()
+    
+    
+    
 if __name__ == "__main__":
     lamb = 0.5
     margin = 0.5

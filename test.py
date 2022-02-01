@@ -1,10 +1,57 @@
 #import tenseal as ts
 #import time
-import enchant
+#import enchant
 
-from nltk.corpus import words
+#from nltk.corpus import words
+
+import torch
+import ast
 
 
+lamb = 0.5
+margin = 0.5
+
+p_file_name = "data/best_P_value_transpose_lambda=" + str(lamb) + "_margin=" + str(margin) + ".txt"
+p_file = open(p_file_name,'r')
+p_values = []
+for line in p_file:
+    P = torch.tensor(ast.literal_eval(line.strip()))
+    p_values.append(P)
+    
+a_file = open("data/A_values.txt",'r')
+A = []
+for line in a_file:
+    a = torch.tensor(ast.literal_eval(line.strip())).unsqueeze(dim=0)
+    A.append(a)
+A_final = torch.Tensor(len(A),A[0].shape[0])
+torch.cat(A, out=A_final,dim=0)
+
+b_file = open("data/B_values.txt",'r')
+B = []
+for line in b_file:
+    b = torch.tensor(ast.literal_eval(line.strip())).unsqueeze(dim=0)
+    B.append(b)
+B_final = torch.Tensor(len(B),B[0].shape[0])
+torch.cat(B, out=B_final,dim=0)
+    
+l_file = open("data/L_values.txt",'r')
+L = []
+for line in l_file:
+    L.append(float(line.strip()))
+
+
+#Create feature fusion dataset
+X = torch.cat((A_final,B_final),dim=1)
+
+X_prime = torch.mm(X,torch.transpose(p_values[0],0,1))
+
+print(X_prime)
+
+for i in range(X_prime.shape[0]):
+    result = (X_prime[i][0]**2 + X_prime[i][1]**2)
+    print(result)
+
+"""
 results = []
 word = ["0"]*5
 word[1] = 'o'
@@ -88,3 +135,4 @@ result = enc_v1 * enc_v1
 toc = time.perf_counter()
 print(toc-tic)
 print(result.decrypt()) # ~ [10]
+"""

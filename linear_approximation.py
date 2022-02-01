@@ -17,18 +17,35 @@ def poly(x, a1, b1, c1, d1, a2, b2, c2, d2):
     x = a2 + b2 * x + c2 * x**2 + d2 * x**3# + e2 * x**4
     return x
 """
+"""
+def poly(x, a1, b1, c1, d1, a2, b2, c2):
+    x = a1 + b1 * x + c1 * x**2 + d1 * x**3
+    x = a2 + b2 * x + c2 * x**2
+    return x
+"""
+
+def poly(x, a1, b1, c1, d1, a2, b2):
+    #if abs(b2) < 1e-12:
+        #b2 = 0
+    x = a1 + b1 * x + c1 * x**2 + d1 * x**3
+    x = a2 + b2 * x
+    return x
+"""
 def poly(x, a1, b1, c1, a2, b2, c2):
     x = a1 + b1 * x + c1 * x**2
     x = a2 + b2 * x + c2 * x**2
     return x
+    """
 
 def linear_approximation():
-    x = [1 * i for i in range(100,5000)]
+    x = [1 * i for i in range(500,4000)]
+    #x = [1 * i for i in range(1000,5000)]
     y = [1/(i**0.5) for i in x]
     x = np.array(x)#.reshape(-1,1)
     y = np.array(y)
     
     popt, pcov = curve_fit(poly, x, y)
+    #popt, pcov = curve_fit(poly, x, y,bounds=((1e-30,1e-30,1e-30,1e-30,1e-30,1e-30), (np.inf,np.inf,np.inf,np.inf,np.inf,np.inf)))
     
     print(popt)
     

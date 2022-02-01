@@ -306,10 +306,67 @@ def plot_results():
     
     fig_file_name = "figures/results/toy_data_1_3_plain.png"
     fig.write_image(fig_file_name)
+    
+def plot_poly_results():
+    
+    if not os.path.exists("figures"):
+        os.mkdir("figures")
+    if not os.path.exists("figures/results"):
+        os.mkdir("figures/results")
+    
+    circle_x = [c*0.005 for c in range(-200,201)]
+    circle_y_pos = [(1-c**2)**0.5 for c in circle_x]
+    circle_y_neg = [-1*(1-c**2)**0.5 for c in circle_x]
+    
+    circle_x_final = circle_x+circle_x[::-1]
+    circle_y = circle_y_pos+circle_y_neg
+
+
+    enc_results_file = open("results/toy_data_polynomial.txt",'r')
+    enc_results = []
+    L = []
+    for line in enc_results_file:
+        result, l = line.strip().split(";")
+        result = [float(val) for val in result.split()]
+        print(result)
+        result = torch.tensor(result).unsqueeze(dim=0)
+        l = int(l)
+        enc_results.append(result)
+        L.append(l)
+    enc_results_final = torch.Tensor(len(enc_results),enc_results[0].shape[0])
+    torch.cat(enc_results, out=enc_results_final,dim=0)
+    
+    
+    #encrypted
+    fig = go.Figure(layout = go.Layout(title = go.layout.Title(text="Encrypted-space Toy Data (Polynomial)")))
+    fig.add_trace(
+        go.Scatter(
+            mode='lines',
+            x=circle_x_final,
+            y=circle_y,
+            marker={'color':'black'},
+            showlegend=False
+        )
+    )
+    num_class = len(set(L))
+    samples_per_class = L.count(L[0])
+    colors = list(set(L))
+    colors = [3*color for color in colors]
+    titles = ["class "+str(i) for i in range(num_class)]
+    for i in range(num_class):
+        fig.add_scatter(name=titles[i],x=enc_results_final[i*samples_per_class:i*samples_per_class+samples_per_class,0],y=enc_results_final[i*samples_per_class:i*samples_per_class+samples_per_class,1],mode="markers",marker={'size': 15,'color': colors[i]})#,legendgrouptitle={'text':titles[i]})
+    fig.update_yaxes(scaleanchor="x",scaleratio=1)
+    fig.update_xaxes(range=[-1.1,1.1],constrain="domain")
+    fig.update_yaxes(scaleanchor = "x",scaleratio = 1)
+    
+    fig_file_name = "figures/results/toy_data_polynomial.png"
+    fig.write_image(fig_file_name)
+    
 
 if __name__ == "__main__":
     #plot_dataset()
     #plot_loss()
     #plot_p()
     #combine_gifs()
-    plot_results()
+    #plot_results()
+    plot_poly_results()

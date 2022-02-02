@@ -37,7 +37,7 @@ torch.cat(B, out=B_final,dim=0)
 l_file = open("data/L_values.txt",'r')
 L = []
 for line in l_file:
-    L.append(float(line.strip()))
+    L.append(int(float(line.strip())))
 
 
 #Create feature fusion dataset
@@ -45,11 +45,34 @@ X = torch.cat((A_final,B_final),dim=1)
 
 X_prime = torch.mm(X,torch.transpose(p_values[0],0,1))
 
-print(X_prime)
 
+encrypted_method_values = []
+enc_file = open("results/toy_data_polynomial.txt")
+for line in enc_file:
+    line = line.strip().split(";")[0]
+    line = line.split()
+    encrypted_method_values.append((float(line[0]),float(line[1])))
+    
+
+largest_error = 0
+total_error = 0
+count = 40
+
+print(X_prime)
 for i in range(X_prime.shape[0]):
-    result = (X_prime[i][0]**2 + X_prime[i][1]**2)
-    print(result)
+    result = (X_prime[i][0]**2 + X_prime[i][1]**2)**0.5
+    true_x = float(X_prime[i][0]/result)
+    true_y = float(X_prime[i][1]/result)
+    test_x = encrypted_method_values[i][0]
+    test_y = encrypted_method_values[i][1]
+    dist = ((true_x-test_x)**2+(true_y-test_y)**2)**0.5
+    total_error += dist
+    if dist > largest_error:
+        largest_error = dist
+print("Worst error:",largest_error)
+print("Average error:",total_error/count)
+    
+    #print(float(X_prime[i][0]/result), str(float(X_prime[i][1]/result))+";"+str(L[i]))
 
 """
 results = []

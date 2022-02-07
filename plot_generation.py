@@ -323,6 +323,7 @@ def plot_poly_results():
 
 
     enc_results_file = open("results/toy_data_polynomial.txt",'r')
+    #enc_results_file = open("results/toy_data_gold_1.txt",'r')
     enc_results = []
     L = []
     for line in enc_results_file:

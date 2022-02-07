@@ -9,7 +9,7 @@ import torch
 from encrypted_normalization import normalize, efficient_normalize
 
 import os
-
+import traceback
 
 
 
@@ -34,7 +34,8 @@ def Inference_Time_Encrypted_Fusion():
         os.mkdir("results")
     
     
-    m_poly_mod = 32768
+    #m_poly_mod = 32768
+    m_poly_mod = 8192*2
     #m_coeff_mod = [60]
     #m_poly_mod = 32768//2
     m_coeff_mod = [60]
@@ -42,7 +43,8 @@ def Inference_Time_Encrypted_Fusion():
     
     #for i in range(15):
     #for i in range(15):
-    for i in range(13):
+    #for i in range(13):
+    for i in range(3):
         m_coeff_mod.append(40)
     m_coeff_mod.append(60)
     
@@ -64,7 +66,7 @@ def Inference_Time_Encrypted_Fusion():
     print("time elapsed to create context:",toc - tic)
     
     
-    
+    """
     ##encrypted test
     #
     #[37.4037, -21.0916]
@@ -74,7 +76,7 @@ def Inference_Time_Encrypted_Fusion():
     print("true norm:",s**0.5)
     inverse_norm = 1/(s**0.5)
     print("truth:",vector * inverse_norm)
-    0/0
+    0/0"""
     
     
     
@@ -113,6 +115,10 @@ def Inference_Time_Encrypted_Fusion():
     for i in range(count):
         enc_query = enc_queries[i]
         result = enc_query.matmul(P_T)
+        print("trace")
+        traceback.print_stack()
+        print("end trace")
+        0/0
         result = normalize(result, context, dimensionality=5)
         #result = result.decrypt()
         #result = torch.tensor(result)

@@ -44,35 +44,61 @@ for line in l_file:
 X = torch.cat((A_final,B_final),dim=1)
 
 X_prime = torch.mm(X,torch.transpose(p_values[0],0,1))
+#1 for the mult
+#1 for the finding squared norm
+worst_errors = []
 
+#(enc_mults,plain_mults) = total_mult_depth
+#polynomial = (2,2) = 4
+#inv norm mult depth = (0,2) = 2
+#inv norm but with estimation = ()
+#linear approx = (0,1) = 1 //not used in current build
+#goldschmidt overhead = (x:(1,0),h:(0,1)) = 1
+#goldschmidt per iteration = (2,) = 2
+#goldschmidt ending = (0,1) = 1
+#goldschmidt 1 = 6
+#g 2 = 8
+#g 3 = 10
+#g 4 = 12
+mult_depth = [4, 6, 8, 10, 12]
 
-encrypted_method_values = []
-enc_file = open("results/toy_data_polynomial.txt")
-for line in enc_file:
-    line = line.strip().split(";")[0]
-    line = line.split()
-    encrypted_method_values.append((float(line[0]),float(line[1])))
-    
+file_names = ["results/toy_data_polynomial.txt","results/toy_data_gold_1.txt",
+"results/toy_data_gold_2.txt", "results/toy_data_gold_3.txt", "results/toy_data_gold_4.txt"]
+for file_name in file_names:
+    print()
+    print(file_name)
+    encrypted_method_values = []
+    enc_file = open(file_name)
+    for line in enc_file:
+        line = line.strip().split(";")[0]
+        line = line.split()
+        encrypted_method_values.append((float(line[0]),float(line[1])))
+        
 
-largest_error = 0
-total_error = 0
-count = 40
+    largest_error = 0
+    total_error = 0
+    count = 40
 
-print(X_prime)
-for i in range(X_prime.shape[0]):
-    result = (X_prime[i][0]**2 + X_prime[i][1]**2)**0.5
-    true_x = float(X_prime[i][0]/result)
-    true_y = float(X_prime[i][1]/result)
-    test_x = encrypted_method_values[i][0]
-    test_y = encrypted_method_values[i][1]
-    dist = ((true_x-test_x)**2+(true_y-test_y)**2)**0.5
-    total_error += dist
-    if dist > largest_error:
-        largest_error = dist
-print("Worst error:",largest_error)
-print("Average error:",total_error/count)
-    
+    #print(X_prime)
+    for i in range(X_prime.shape[0]):
+        result = (X_prime[i][0]**2 + X_prime[i][1]**2)**0.5
+        true_x = float(X_prime[i][0]/result)
+        true_y = float(X_prime[i][1]/result)
+        test_x = encrypted_method_values[i][0]
+        test_y = encrypted_method_values[i][1]
+        dist = ((true_x-test_x)**2+(true_y-test_y)**2)**0.5
+        total_error += dist
+        if dist > largest_error:
+            largest_error = dist
+    print("Worst error:",largest_error)
+    print("Average error:",total_error/count)
+    worst_errors.append(largest_error)
     #print(float(X_prime[i][0]/result), str(float(X_prime[i][1]/result))+";"+str(L[i]))
+
+print()
+print(worst_errors)
+print(mult_depth)
+
 
 """
 results = []

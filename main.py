@@ -14,6 +14,8 @@ from model import Linear_Feature_Fusion
 from data_generation import data_gen
 
 def main():
+    random.seed(0)
+    torch.manual_seed(0)
     A,B,L = data_gen(10)
     alpha = A.shape[1]
     beta = B.shape[1]

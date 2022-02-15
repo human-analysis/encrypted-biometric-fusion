@@ -1,0 +1,11 @@
+*** CompilerOutput.log ***
+*** building GenConfigInfo
+g++ -I../include -I.  -g -O2   -o  GenConfigInfo GenConfigInfo.cpp -lm
+*** checking -std=c++11 flag
+g++ -I../include -I.  -g -O2 -std=c++11  -o  CheckCompile CheckCompile.cpp -lm
+*** checking -pthread flag
+g++ -I../include -I.  -g -O2 -std=c++11 -pthread  -o  CheckCompile CheckCompile.cpp -lm
+*** checking -march=native flag
+g++ -I../include -I.  -g -O2 -std=c++11 -pthread -march=native  -o  CheckCompile CheckCompile.cpp -lm
+g++ -I../include -I.  -g -O2 -std=c++11 -pthread -march=native   -o  CheckContract CheckContract.cpp CheckContractAux.cpp -lm
+g++ -I../include -I.  -g -O2 -std=c++11 -pthread -march=native  -o  CheckThreads CheckThreads.cpp -lm

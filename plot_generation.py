@@ -464,6 +464,11 @@ def plot_errors():
     df = pandas.DataFrame(data_dict)
     fig = px.scatter(df,x="Multiplicative Depth",y="Worst L2 Error",color="colors")
     
+    fig.update_traces(marker=dict(size=12,
+                              line=dict(width=2,
+                                        color='DarkSlateGrey')),
+                  selector=dict(mode='markers'))
+    
     """
     fig = go.Figure(layout = go.Layout(title = go.layout.Title(text="Multiplicative Depth vs Error")))
     fig.add_trace(
@@ -479,6 +484,20 @@ def plot_errors():
     fig_file_name = "figures/MultDepthVsError.png"
     fig.write_image(fig_file_name)
     
+def plot_matmul_performance():
+    dims = [2,4,8,16,32,64]
+    times_actual = [13.311,16.124,20.485,32.765,61.457,107.449]
+    data_dict = {"Output Dimensionality":dims, "Time (ms)":times_actual}
+    df = pandas.DataFrame(data_dict)
+    fig = px.line(df,x="Output Dimensionality",y="Time (ms)", title="Matrix-Vector Multiplication Scaling (Hybrid)")
+    
+    fig.update_traces(marker=dict(size=12,
+                              line=dict(width=2,
+                                        color='DarkSlateGrey')),
+                  selector=dict(mode='markers'))
+    
+    fig_file_name = "figures/HybridPerformance.png"
+    fig.write_image(fig_file_name)
 
 if __name__ == "__main__":
     #plot_dataset()
@@ -487,4 +506,5 @@ if __name__ == "__main__":
     #combine_gifs()
     #plot_results()
     #plot_poly_results()
-    plot_errors()
+    #plot_errors()
+    plot_matmul_performance();

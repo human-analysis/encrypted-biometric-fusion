@@ -1,0 +1,3 @@
+/Users/sperling/documents/SEAL/native/examples/build/CMakeFiles/rebuild_cache.dir
+/Users/sperling/documents/SEAL/native/examples/build/CMakeFiles/edit_cache.dir
+/Users/sperling/documents/SEAL/native/examples/build/CMakeFiles/sealexamples.dir

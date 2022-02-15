@@ -6,11 +6,14 @@ Created on Fri Nov  5 11:22:50 2021
 """
 import torch
 class Linear_Feature_Fusion():
-    def __init__(self,X,M,V,gamma,margin,lamb):
+    def __init__(self,X,M,V,gamma,margin,lamb,indim=None):
         self.V = V
         self.M = M
         self.X = X
-        alpha_beta = X.shape[1]
+        if not indim:
+            alpha_beta = X.shape[1]
+        else:
+            alpha_beta = indim
         self.margin = margin
         self.P = torch.rand(alpha_beta,gamma)
         self.lamb = lamb

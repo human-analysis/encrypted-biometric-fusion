@@ -485,6 +485,8 @@ def plot_errors():
     fig.write_image(fig_file_name)
     
 def plot_matmul_performance():
+    
+    #hybrid
     dims = [2,4,8,16,32,64]
     times_actual = [13.311,16.124,20.485,32.765,61.457,107.449]
     data_dict = {"Output Dimensionality":dims, "Time (ms)":times_actual}
@@ -497,6 +499,21 @@ def plot_matmul_performance():
                   selector=dict(mode='markers'))
     
     fig_file_name = "figures/HybridPerformance.png"
+    fig.write_image(fig_file_name)
+    
+    #vector rows
+    dims = [2,4,8,16,32,64,128]
+    times_actual = [0.679,1.358,2.18,4.158,7.506,14.841,29.257]
+    data_dict = {"Input Dimensionality times Output Dimensionality":dims, "Time (ms)":times_actual}
+    df = pandas.DataFrame(data_dict)
+    fig = px.line(df,x="Input Dimensionality times Output Dimensionality",y="Time (ms)", title="Matrix-Vector Multiplication Scaling (Vector Rows)")
+    
+    fig.update_traces(marker=dict(size=12,
+                              line=dict(width=2,
+                                        color='DarkSlateGrey')),
+                  selector=dict(mode='markers'))
+    
+    fig_file_name = "figures/VectorRowsPerformance.png"
     fig.write_image(fig_file_name)
 
 if __name__ == "__main__":

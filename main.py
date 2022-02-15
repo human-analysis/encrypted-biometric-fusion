@@ -26,6 +26,7 @@ def main():
     
     if not os.path.exists("data"):
         os.mkdir("data")
+        
     outfile_a = open("data/A_values.txt",'w')
     for i in range(A.shape[0]):
         outfile_a.write(str(A[i].tolist()))
@@ -44,7 +45,20 @@ def main():
         outfile_l.write("\n")
     outfile_l.close()
     
+    A_t = A.T
+    B_t = B.T
     
+    outfile_a_t = open("data/A_values_transpose.txt",'w')
+    for i in range(A_t.shape[0]):
+        outfile_a_t.write(str(A_t[i].tolist()))
+        outfile_a_t.write("\n")
+    outfile_a_t.close()
+    
+    outfile_b_t = open("data/B_values_transpose.txt",'w')
+    for i in range(B_t.shape[0]):
+        outfile_b_t.write(str(B_t[i].tolist()))
+        outfile_b_t.write("\n")
+    outfile_b_t.close()
     
     
     #lamb = 0.2

@@ -1528,6 +1528,300 @@ void encrypted_feature_fusion_goldschmidt()
 }
 
 
+void encrypted_feature_fusion_vector_rows()
+{
+
+    cout << "setting up context" << endl;
+    //all time measurement code from https://www.geeksforgeeks.org/measure-execution-time-function-cpp/
+    auto start = high_resolution_clock::now();
+    
+    EncryptionParameters parms(scheme_type::ckks);
+
+    size_t poly_modulus_degree = 8192;//16384;
+    parms.set_poly_modulus_degree(poly_modulus_degree);
+    parms.set_coeff_modulus(CoeffModulus::Create(poly_modulus_degree, { 60, 40, 60 }));
+
+    double scale = pow(2.0, 40);
+
+    SEALContext context(parms);
+    auto stop = high_resolution_clock::now();
+    auto duration = duration_cast<microseconds>(stop - start);
+    print_parameters(context);
+    cout << endl;
+    cout << "time to create context: " << duration.count() / 1000.0 << " milliseconds" << endl;
+
+    KeyGenerator keygen(context);
+    auto secret_key = keygen.secret_key();
+    PublicKey public_key;
+    keygen.create_public_key(public_key);
+    RelinKeys relin_keys;
+    keygen.create_relin_keys(relin_keys);
+    GaloisKeys gal_keys;
+    keygen.create_galois_keys(gal_keys);
+    Encryptor encryptor(context, public_key);
+    Evaluator evaluator(context);
+    Decryptor decryptor(context, secret_key);
+
+    CKKSEncoder encoder(context);
+    size_t slot_count = encoder.slot_count();
+    slot_count = 8;
+    cout << "Number of slots: " << slot_count << endl;
+    size_t slots = encoder.slot_count();
+    
+    
+    vector<double> query_message;
+    Plaintext query_plain;
+    Ciphertext query_enc;
+    vector<Ciphertext> enc_queries;
+    
+    
+    string row;
+    ifstream A_file ("../../data/A_values_transpose.txt");
+    string A_values_str;
+    
+    
+    vector<double> message_temp;
+    Plaintext plain_temp;
+    Ciphertext enc_temp;
+    
+    if (A_file.is_open())
+    {
+      cout << "build A" << endl;
+      while ( getline (A_file,row) )
+      {
+          //remove commas, source: https://stackoverflow.com/questions/20326356/how-to-remove-all-the-occurrences-of-a-char-in-c-string
+          row.erase(remove(row.begin(), row.end(), ','), row.end());
+          
+          //zeroes_to_add = slot_count;
+          //strip off start and end brackets
+          row = row.substr(1,A_values_str.length()-2);
+          row.push_back(' ');
+          size_t pos = 0;
+          string A_sub_value;
+          while((pos = row.find(' ')) != -1)
+          {
+              //zeroes_to_add--;
+              A_sub_value = row.substr(0, pos-1);
+              double A_sub_value_final = stod(A_sub_value);
+              message_temp.push_back(A_sub_value_final);
+              row.erase(0, pos+1);
+          }
+          encoder.encode(message_temp, scale, plain_temp);
+          encryptor.encrypt(plain_temp, enc_temp);
+          enc_queries.push_back(enc_temp);
+          message_temp.clear();
+      }
+    A_file.close();
+    }
+    
+    ifstream B_file ("../../data/B_values_transpose.txt");
+    string A_values_str;
+    
+    vector<double> message_temp;
+    Plaintext plain_temp;
+    Ciphertext enc_temp;
+    
+    if (B_file.is_open())
+    {
+      cout << "build B" << endl;
+      while ( getline (A_file,row) )
+      {
+          //remove commas, source: https://stackoverflow.com/questions/20326356/how-to-remove-all-the-occurrences-of-a-char-in-c-string
+          row.erase(remove(row.begin(), row.end(), ','), row.end());
+          
+          //zeroes_to_add = slot_count;
+          //strip off start and end brackets
+          row = row.substr(1,A_values_str.length()-2);
+          row.push_back(' ');
+          size_t pos = 0;
+          string B_sub_value;
+          while((pos = row.find(' ')) != -1)
+          {
+              //zeroes_to_add--;
+              B_sub_value = row.substr(0, pos-1);
+              double B_sub_value_final = stod(B_sub_value);
+              message_temp.push_back(B_sub_value_final);
+              row.erase(0, pos+1);
+          }
+          encoder.encode(message_temp, scale, plain_temp);
+          encryptor.encrypt(plain_temp, enc_temp);
+          enc_queries.push_back(enc_temp);
+          message_temp.clear();
+      }
+    B_file.close();
+    }
+    
+    
+    /*
+    for(int i=0; i<slots; i++)
+    {
+        query_message.push_back(0.123);
+    }
+    encoder.encode(query_message, scale, query_plain);
+    encryptor.encrypt(query_plain, query_enc);
+    */
+    
+    //vector<string> filenames{"../data/random_P_value_transpose_indim=2_outdim=1.txt",
+        //"../data/random_P_value_transpose_indim=4_outdim=1.txt","../data/random_P_value_transpose_indim=8_outdim=1.txt",
+        //"../data/random_P_value_transpose_indim=16_outdim=1.txt","../data/random_P_value_transpose_indim=32_outdim=1.txt",
+        //"../data/random_P_value_transpose_indim=64_outdim=1.txt","../data/random_P_value_transpose_indim=128_outdim=1.txt"
+    //};
+    vector<string> filenames{"../../data/best_P_value_transpose_lambda=0.5_margin=0.5.txt"};
+    
+    ///
+    vector<double> message_zeroes;
+    vector<double> message_ones;
+    message_ones.clear();
+    vector<double> message_zeroes2;
+    Plaintext plain_zeroes;
+    Plaintext plain_ones;
+    Plaintext plain_zeroes2;
+    //for (int i = 0; i < slot_count*2; i++)//doubled slot count
+    for (int i = 0; i < slots; i++)
+    {
+        message_zeroes.push_back(0.0);
+        message_ones.push_back(1.0);
+        message_zeroes2.push_back(0.0);
+    }
+    encoder.encode(message_zeroes, scale, plain_zeroes);
+    encoder.encode(message_ones, scale, plain_ones);
+    encoder.encode(message_zeroes2, scale, plain_zeroes2);
+    ///
+    
+    for(int q = 0; q < 1; q++)
+    {
+        cout << pow(2,q+1) << endl;
+        vector<double> message_temp;
+        Plaintext plain_temp;
+        Ciphertext enc_temp;
+        
+        
+        vector<Ciphertext> p_matrix;
+        vector<Plaintext> p_matrix_plain;
+        vector<vector<double>> p_matrix_message;
+        p_matrix.reserve(slot_count);
+        
+        cout << "building P" << endl;
+        int index_of_filenames = q;
+        ifstream P_file (filenames[index_of_filenames]);
+        
+        string P_values_str;
+        //string row;
+        int packed_words = 0;
+        int max_packed_words = 1;
+        int max_dim = 128;
+        if (P_file.is_open())
+        {
+          while ( getline (P_file,row) )
+          {
+              size_t pos = 0;
+              string P_sub_value;
+              
+              //format of row-order files is a little different
+              row = row.substr(2,row.size()-3);
+              row = row + " ";
+              
+              while((pos = row.find(' ')) != -1)
+              {
+                  P_sub_value = row.substr(0, pos-1);
+                  double P_sub_value_final = stod(P_sub_value);
+                  for(int i=0;i<max_dim;i++)
+                      message_temp.push_back(P_sub_value_final);
+                  row.erase(0, pos+1);
+                  
+                  encoder.encode(message_temp, scale, plain_temp);
+                  encryptor.encrypt(plain_temp, enc_temp);
+                  p_matrix.push_back(enc_temp);
+                  p_matrix_plain.push_back(plain_temp);
+                  p_matrix_message.push_back(message_temp);
+                  
+                  message_temp.clear();
+              }
+              
+              //int to_replicate = message_temp.size();
+              //for(int i=0;i<to_replicate;i++)
+                  //message_temp.push_back(message_temp[i]);
+              
+              //for(int i=0;i<(max_packed_words-1);i++)
+              //{
+                  //for(int i=0;i<to_replicate*2;i++)
+                      //message_temp.push_back(message_temp[i]);
+              //}
+
+              
+              //packed_words = 0;
+          }
+
+        P_file.close();
+        }
+
+        //p matrix is d_0 by d_1
+        //calculate later
+        int d_0 = 2;//out dimension
+        int d_1 = 8;//in dimension
+        int logd_0 = 1;
+        int logd_1 = 3;
+        
+        cout << "begin fusion" << endl;
+        //all time measurement code from https://www.geeksforgeeks.org/measure-execution-time-function-cpp/
+        
+        
+        //vector<Ciphertext> enc_fusions;
+        
+        start = high_resolution_clock::now();
+
+        vector<Ciphertext> enc_fusions;
+        Ciphertext encrypted_result;
+        
+        //encryptor.encrypt(plain_zeroes, encrypted_result);
+        
+        //evaluator.multiply_plain(encrypted_result, plain_ones, encrypted_result);
+        //evaluator.relinearize_inplace(encrypted_result, relin_keys);
+        //evaluator.rescale_to_next_inplace(encrypted_result); //level of encrypted_result must match sub result, which will be rescaled once
+        
+        for(int i=0; i<d_0; i++)
+        {
+            for(int j=0; j<d_1; j++)
+            {
+                Ciphertext encrypted_sub_result;
+
+                //cout << "iteration " << i << " of mat-vec mult" << endl;;
+                if(!zero_vector(p_matrix_message[i])) //cannot plainmult a vector of all zeroes
+                {
+                    //cout << "size: " << p_matrix_diagonal_plain.size() << endl;
+                    //cout << "d_0: " << d_0 << endl << endl;
+                    
+                    evaluator.multiply_plain(enc_queries[j], p_matrix_plain[j+i*d_1], encrypted_sub_result);
+                    evaluator.relinearize_inplace(encrypted_sub_result, relin_keys);
+                    evaluator.rescale_to_next_inplace(encrypted_sub_result);
+                    if(j!=0)
+                        evaluator.add_inplace(encrypted_result, encrypted_sub_result);
+                    else
+                        encrypted_result = encrypted_sub_result;
+                }
+                
+            }
+            enc_fusions.push_back(encrypted_result);
+        }
+        
+        //Ciphertext encrypted_final_result = hybrid_matmul(p_matrix_diagonal_plain, p_matrix_diagonal_message, query_enc, d_0, d_1, &encryptor, &evaluator, relin_keys, gal_keys, plain_zeroes, plain_ones);
+        //enc_fusions.push_back(encrypted_final_result);
+
+        stop = high_resolution_clock::now();
+        duration = duration_cast<microseconds>(stop - start);
+        cout << "time to fuse: " << duration.count() / 1000.0 << " milliseconds" << endl;
+        
+        //Plaintext plain_result1;
+        //decryptor.decrypt(enc_fusions[0], plain_result1);
+        //vector<double> result1;
+        //encoder.decode(plain_result1, result1);
+        //print_vector(result1, 3, 7);
+        
+        cout << endl;
+    }
+}
+
+
 void Matrix_Vector_Multiplication_Diagonal_Test()
 {
 
@@ -1917,8 +2211,9 @@ void Matrix_Vector_Multiplication_Vector_Rows_Test()
 
 void encrypted_feature_fusion()
 {
-    Matrix_Vector_Multiplication_Diagonal_Test();
-    Matrix_Vector_Multiplication_Vector_Rows_Test();
+    //Matrix_Vector_Multiplication_Diagonal_Test();
+    //Matrix_Vector_Multiplication_Vector_Rows_Test();
     //encrypted_feature_fusion_polynomial_approximation();
     //encrypted_feature_fusion_goldschmidt();
+    encrypted_feature_fusion_vector_rows();
 }

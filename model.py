@@ -37,4 +37,7 @@ class Linear_Feature_Fusion():
         push = push / len(self.V)
         
         loss = self.lamb * pull + (1-self.lamb) * push
+        
+        #loss = loss + 0.001 * torch.linalg.norm(self.P)
+        
         return loss

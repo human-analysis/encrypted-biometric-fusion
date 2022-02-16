@@ -21,16 +21,21 @@ import imageio
 
 #def poly(x, a1, b1, c1, d1, e1, a2, b2, c2, d2, e2):
 
+    
+def poly5(x, a1, b1, c1, d1, e1, f1, a2, b2, c2, d2, e2, f2):
+    x = a1 + b1 * x + c1 * x**2 + d1 * x**3 + e1 * x**4 + f1 * x**5
+    x = a2 + b2 * x + c2 * x**2 + d2 * x**3 + e2 * x**4 + f2 * x**5
+    return x
+
 def poly4(x, a1, b1, c1, d1, e1, a2, b2, c2, d2, e2):
     x = a1 + b1 * x + c1 * x**2 + d1 * x**3 + e1 * x**4
     x = a2 + b2 * x + c2 * x**2 + d2 * x**3 + e2 * x**4
     return x
 
 
-
 def poly3(x, a1, b1, c1, d1, a2, b2, c2, d2):
-    x = a1 + b1 * x + c1 * x**2 + d1 * x**3# + e1 * x**4
-    x = a2 + b2 * x + c2 * x**2 + d2 * x**3# + e2 * x**4
+    x = a1 + b1 * x + c1 * x**2 + d1 * x**3
+    x = a2 + b2 * x + c2 * x**2 + d2 * x**3
     return x
 
 
@@ -46,12 +51,11 @@ def poly1(x, a1, b1, c1, d1, a2, b2):
     x = a1 + b1 * x + c1 * x**2 + d1 * x**3
     x = a2 + b2 * x
     return x
-"""
-def poly(x, a1, b1, c1, a2, b2, c2):
-    x = a1 + b1 * x + c1 * x**2
-    x = a2 + b2 * x + c2 * x**2
+
+def poly0(x, a1, b1):
+    x = a1 + b1 * x
     return x
-    """
+    
 
 def poly_approximation():
     #np.random.seed(1000)
@@ -67,7 +71,8 @@ def poly_approximation():
     x = np.array(x)#.reshape(-1,1)
     y = np.array(y)
     
-    funs = [poly1, poly2, poly3, poly4]
+    funs = [poly0, poly1, poly2, poly3, poly4, poly5]
+    degrees = [1,4,5,6,8,10]
     for i, myfun in enumerate(funs):
         popt, pcov = curve_fit(myfun, x, y)
         
@@ -83,15 +88,15 @@ def poly_approximation():
             #print(i, result)
             #new_y.append(result)
         #print(x)
-        plt.plot(x, myfun(x, *popt), 'r-', label="label")
+        #plt.plot(x, myfun(x, *popt), 'r-', label="label")
         #plt.plot(x, new_y, 'r-', label="label")
-        plt.plot(x, y, 'r-', label="label")
+        #plt.plot(x, y, 'r-', label="label")
         
         #plt.show()
         
         
         
-        fig = go.Figure(layout = go.Layout(title = go.layout.Title(text="Polynomial Approximation")))
+        fig = go.Figure(layout = go.Layout(title = go.layout.Title(text="Polynomial Approximation, Degree="+str(degrees[i]))))
         fig.add_trace(
             go.Scatter(
                 mode='lines',
@@ -111,8 +116,21 @@ def poly_approximation():
             )
         )
         
-        fig_file_name = "figures/polynomial_approximations/approx" + str(i) + ".png"
+        fig_file_name = "figures/polynomial_approximations/approx_degree=" + str(degrees[i]) + ".png"
         fig.write_image(fig_file_name)
+        
+        data_dict = {"Error":abs(myfun(x, *popt)-y), "X":x}
+        df = pandas.DataFrame(data_dict)
+        fig = px.line(df,x="X",y="Error")
+        
+        fig_file_name = "figures/polynomial_approximations/approx_error_degree=" + str(degrees[i]) + ".png"
+        fig.write_image(fig_file_name)
+        
+        #data_dict = {"Y":myfun(x, *popt), "X":x}
+        #df = pandas.DataFrame(data_dict)
+        #fig = px.line(df,x="X",y="Y")
+        
+        
     #print(poly(4000, *popt), y[3499])
     
     """

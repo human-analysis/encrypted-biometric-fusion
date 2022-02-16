@@ -79,8 +79,8 @@ for file_name in file_names:
     total_error = 0
     count = 40
 
-    #print(X_prime)
-    #0/0
+    print(X_prime)
+    0/0
     for i in range(X_prime.shape[0]):
         result = (X_prime[i][0]**2 + X_prime[i][1]**2)**0.5
         true_x = float(X_prime[i][0]/result)

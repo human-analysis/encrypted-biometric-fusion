@@ -116,12 +116,17 @@ def poly_approximation():
             )
         )
         
+        fig.update_layout(
+            xaxis_title="X",
+            yaxis_title="Y"
+        )
+        
         fig_file_name = "figures/polynomial_approximations/approx_degree=" + str(degrees[i]) + ".png"
         fig.write_image(fig_file_name)
         
-        data_dict = {"Error":abs(myfun(x, *popt)-y), "X":x}
+        data_dict = {"Relative Error":abs(myfun(x, *popt)-y)/y, "X":x}
         df = pandas.DataFrame(data_dict)
-        fig = px.line(df,x="X",y="Error")
+        fig = px.line(df,x="X",y="Relative Error")
         
         fig_file_name = "figures/polynomial_approximations/approx_error_degree=" + str(degrees[i]) + ".png"
         fig.write_image(fig_file_name)

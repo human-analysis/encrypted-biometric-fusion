@@ -516,6 +516,39 @@ def plot_matmul_performance():
     fig_file_name = "figures/VectorRowsPerformance.png"
     fig.write_image(fig_file_name)
 
+def plot_matmul_performance_theoretical():
+    ns = [i for i in range(600)]
+    gamma = [2**i for i in range(9,15)]*100
+    time = []
+    
+    for gam in gamma:
+        temp = []
+        for n in ns:
+            temp.append(2*n*gam + n*gam)
+        time.append(temp)
+    
+    print(len(ns),len(gamma),len(time))
+    data_dictTime = {"n":ns,"γ":gamma,"Time (ms)":time}
+
+    dfTime = pandas.DataFrame(data_dictTime)
+    
+    
+    #print(data_dictTime["Time (ms)"])
+    figTime = px.scatter_3d(dfTime,x="n",y="γ",z="Time (ms)")#,color=" ")
+    
+    #figTime = go.Figure(go.Surface(x = ns, y = gamma, z = time))
+
+    #this line from https://plotly.com/python/3d-surface-plots/
+    """figTime.update_layout(
+        scene = {
+            "xaxis": {"nticks": 20, "label":"dog"},
+            "zaxis": {"nticks": 4},
+            #'camera_eye': {"x": 0.5, "y": -1, "z": -0.5},
+            "aspectratio": {"x": 1, "y": 1, "z": 0.5}
+        })"""
+    
+    figTime.write_image("figures/TheoreticalTime_Naive.png")
+
 if __name__ == "__main__":
     #plot_dataset()
     #plot_loss()
@@ -524,4 +557,5 @@ if __name__ == "__main__":
     #plot_results()
     #plot_poly_results()
     #plot_errors()
-    plot_matmul_performance();
+    #plot_matmul_performance();
+    plot_matmul_performance_theoretical();

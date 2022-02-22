@@ -460,9 +460,9 @@ def plot_errors():
     color2 = "red"
     color1 = "Polynomial Approx"
     color2 = "Goldschmidt"
-    data_dict = {"Worst L2 Error":worst_errors, "Multiplicative Depth":mult_depth, "colors":[color1,color2,color2,color2,color2]}
+    data_dict = {"Max L2 Error":worst_errors, "Multiplicative Depth":mult_depth, "colors":[color1,color2,color2,color2,color2]}
     df = pandas.DataFrame(data_dict)
-    fig = px.scatter(df,x="Multiplicative Depth",y="Worst L2 Error",color="colors")
+    fig = px.scatter(df,x="Multiplicative Depth",y="Max L2 Error",color="colors")
     
     fig.update_traces(marker=dict(size=12,
                               line=dict(width=2,
@@ -517,37 +517,137 @@ def plot_matmul_performance():
     fig.write_image(fig_file_name)
 
 def plot_matmul_performance_theoretical():
-    ns = [i for i in range(600)]
-    gamma = [2**i for i in range(9,15)]*100
+
+    #these values are the averages of 10,000 runs with coef modulus of 200 to allow mult depth of 2
+    mult_time_plain_naive = 0.622412
+    mult_time_naive = 2.41118
+    rot_time_naive = 1.66967
+    
+    #these values are the averages of 10,000 runs with coef modulus of 160 to allow mult depth of 1
+    mult_time_plain = 0.431768
+    mult_time = 1.5252
+    rot_time = 1.01993
+
+    ns = [i for i in range(0,1000)]
+    gamma = [2**i for i in range(9,13)]#*100
+    
+    
     time = []
-    
+    N = []
+    Gamma = []
     for gam in gamma:
-        temp = []
         for n in ns:
-            temp.append(2*n*gam + n*gam)
-        time.append(temp)
+            time.append((n*gam*mult_time_naive + n*gam*mult_time_plain_naive + n*gam*rot_time_naive)/1000)
+            N.append(n)
+            Gamma.append(gam)
     
-    print(len(ns),len(gamma),len(time))
-    data_dictTime = {"n":ns,"γ":gamma,"Time (ms)":time}
-
+    data_dictTime = {"n":N,"γ":Gamma,"Time (s)":time}
     dfTime = pandas.DataFrame(data_dictTime)
+    figTime = px.scatter(dfTime,x="n",y="γ",color="Time (s)",title="Naive - Theoretical")
     
-    
-    #print(data_dictTime["Time (ms)"])
-    figTime = px.scatter_3d(dfTime,x="n",y="γ",z="Time (ms)")#,color=" ")
-    
-    #figTime = go.Figure(go.Surface(x = ns, y = gamma, z = time))
-
-    #this line from https://plotly.com/python/3d-surface-plots/
-    """figTime.update_layout(
-        scene = {
-            "xaxis": {"nticks": 20, "label":"dog"},
-            "zaxis": {"nticks": 4},
-            #'camera_eye': {"x": 0.5, "y": -1, "z": -0.5},
-            "aspectratio": {"x": 1, "y": 1, "z": 0.5}
-        })"""
+    figTime.update_traces(marker=dict(size=15),
+              selector=dict(mode='markers'))
     
     figTime.write_image("figures/TheoreticalTime_Naive.png")
+    
+    time = []
+    for gam in gamma:
+        for n in ns:
+            time.append((n*gam*mult_time_plain + n*rot_time)/1000)
+
+    
+    data_dictTime = {"n":N,"γ":Gamma,"Time (s)":time}
+    dfTime = pandas.DataFrame(data_dictTime)
+    figTime = px.scatter(dfTime,x="n",y="γ",color="Time (s)",title="Hybrid - Theoretical")
+    
+    figTime.update_traces(marker=dict(size=15),
+              selector=dict(mode='markers'))
+    
+    figTime.write_image("figures/TheoreticalTime_Hybrid.png")
+    
+    
+    time = []
+    for gam in gamma:
+        for n in ns:
+            time.append((gam*mult_time_plain)/1000)
+
+    
+    data_dictTime = {"n":N,"γ":Gamma,"Time (s)":time}
+    dfTime = pandas.DataFrame(data_dictTime)
+    figTime = px.scatter(dfTime,x="n",y="γ",color="Time (s)",title="SIMD - Theoretical")
+    
+    figTime.update_traces(marker=dict(size=15),
+              selector=dict(mode='markers'))
+    
+    figTime.write_image("figures/TheoreticalTime_SIMD.png")
+    
+def plot_matmul_performance_theoretical_subplots():
+
+    #these values are the averages of 10,000 runs with coef modulus of 200 to allow mult depth of 2
+    mult_time_plain_naive = 0.622412
+    mult_time_naive = 2.41118
+    rot_time_naive = 1.66967
+    
+    #these values are the averages of 10,000 runs with coef modulus of 160 to allow mult depth of 1
+    mult_time_plain = 0.431768
+    mult_time = 1.5252
+    rot_time = 1.01993
+
+    ns = [i for i in range(0,1000)]
+    gamma = [2**i for i in range(9,13)]#*100
+    
+    
+    time = []
+    N = []
+    Gamma = []
+    for gam in gamma:
+        for n in ns:
+            time.append((n*gam*mult_time_naive + n*gam*mult_time_plain_naive + n*gam*rot_time_naive)/1000)
+            N.append(n)
+            Gamma.append(gam)
+    
+    data_dictTime = {"n":N,"γ":Gamma,"Time (s)":time}
+    dfTime = pandas.DataFrame(data_dictTime)
+    
+    figTime = make_subplots(rows=1, cols=3)
+    
+    figTime.add_trace(go.Scatter(dfTime,x="n",y="γ",color="Time (s)", row=1, col=1))
+    
+    
+    
+    #figTime.write_image("figures/TheoreticalTime_Naive.png")
+    
+    time = []
+    for gam in gamma:
+        for n in ns:
+            time.append((n*gam*mult_time_plain + n*rot_time)/1000)
+
+    
+    data_dictTime = {"n":N,"γ":Gamma,"Time (s)":time}
+    dfTime = pandas.DataFrame(data_dictTime)
+    #figTime = px.scatter(dfTime,x="n",y="γ",color="Time (s)",title="Hybrid - Theoretical")
+    figTime.add_trace(go.Scatter(dfTime,x="n",y="γ",color="Time (s)", row=1, col=2))
+
+    
+    #figTime.write_image("figures/TheoreticalTime_Hybrid.png")
+    
+    
+    time = []
+    for gam in gamma:
+        for n in ns:
+            time.append((gam*mult_time_plain)/1000)
+
+    
+    data_dictTime = {"n":N,"γ":Gamma,"Time (s)":time}
+    dfTime = pandas.DataFrame(data_dictTime)
+    #figTime = px.scatter(dfTime,x="n",y="γ",color="Time (s)",title="SIMD - Theoretical")
+    figTime.add_trace(go.Scatter(dfTime,x="n",y="γ",color="Time (s)", row=1, col=3))
+        
+    figTime.update_traces(marker=dict(size=15),
+              selector=dict(mode='markers'))
+    
+    figTime.write_image("figures/TheoreticalTimes.png")
+    
 
 if __name__ == "__main__":
     #plot_dataset()
@@ -557,5 +657,6 @@ if __name__ == "__main__":
     #plot_results()
     #plot_poly_results()
     #plot_errors()
-    #plot_matmul_performance();
-    plot_matmul_performance_theoretical();
+    #plot_matmul_performance()
+    #plot_matmul_performance_theoretical()
+    plot_matmul_performance_theoretical_subplots()

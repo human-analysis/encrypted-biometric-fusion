@@ -13,6 +13,7 @@ import os
 from plotly.subplots import make_subplots
 import imageio
 import numpy as np
+import math
 
 import model
 
@@ -527,29 +528,33 @@ def plot_matmul_performance_theoretical():
     mult_time_plain = 0.431768
     mult_time = 1.5252
     rot_time = 1.01993
-
-    ns = [i for i in range(0,1000)]
-    gamma = [2**i for i in range(9,13)]#*100
     
+    deltas = [2**i for i in range(10,14)]
+    gammas = [2**i for i in range(9,13)]
+    ms = [8192]*4
+    ps = [1]*4#placeholder
+    
+    ns = [i for i in range(0,1000000,10)]
     
     time = []
-    N = []
-    Gamma = []
-    for gam in gamma:
-        for n in ns:
-            time.append((n*gam*mult_time_naive + n*gam*mult_time_plain_naive + n*gam*rot_time_naive)/1000)
-            N.append(n)
-            Gamma.append(gam)
+
+    delta = deltas[0]
+    m = ms[0]
+    gamma = gammas[0]
+    for n in ns:
+        n_prime = math.ceil(n/math.floor(m/(2*delta)))
+        time.append((n_prime*gamma*mult_time_naive + n_prime*gamma*mult_time_plain_naive + n_prime*gamma*rot_time_naive)/1000)
+
     
-    data_dictTime = {"n":N,"γ":Gamma,"Time (s)":time}
+    data_dictTime = {"n":ns,"Time (s)":time}
     dfTime = pandas.DataFrame(data_dictTime)
-    figTime = px.scatter(dfTime,x="n",y="γ",color="Time (s)",title="Naive - Theoretical")
+    figTime = px.line(dfTime,x="n",y="Time (s)",title="Naive - Theoretical")
     
-    figTime.update_traces(marker=dict(size=15),
-              selector=dict(mode='markers'))
+    #figTime.update_traces(marker=dict(size=15),
+    #          selector=dict(mode='markers'))
     
     figTime.write_image("figures/TheoreticalTime_Naive.png")
-    
+    """
     time = []
     for gam in gamma:
         for n in ns:
@@ -580,6 +585,7 @@ def plot_matmul_performance_theoretical():
               selector=dict(mode='markers'))
     
     figTime.write_image("figures/TheoreticalTime_SIMD.png")
+    """
     
 def plot_matmul_performance_theoretical_subplots():
 
@@ -658,5 +664,5 @@ if __name__ == "__main__":
     #plot_poly_results()
     #plot_errors()
     #plot_matmul_performance()
-    #plot_matmul_performance_theoretical()
-    plot_matmul_performance_theoretical_subplots()
+    plot_matmul_performance_theoretical()
+    #plot_matmul_performance_theoretical_subplots()

@@ -519,6 +519,12 @@ def plot_matmul_performance():
 
 def plot_matmul_performance_theoretical():
 
+
+    if not os.path.exists("figures"):
+        os.mkdir("figures")
+    if not os.path.exists("figures/TheoreticalPlots"):
+        os.mkdir("figures/TheoreticalPlots")
+
     #these values are the averages of 10,000 runs with coef modulus of 200 to allow mult depth of 2
     mult_time_plain_naive = 0.622412
     mult_time_naive = 2.41118
@@ -529,63 +535,115 @@ def plot_matmul_performance_theoretical():
     mult_time = 1.5252
     rot_time = 1.01993
     
-    deltas = [2**i for i in range(10,14)]
-    gammas = [2**i for i in range(9,13)]
-    ms = [8192]*4
+    deltas = [2**i for i in range(10,13)]
+    gammas = [2**i for i in range(9,12)]
+    ms = [8192]*3
     ps = [1]*4#placeholder
     
-    ns = [i for i in range(0,1000000,10)]
+    ns = [i for i in range(0,100000,10)]
     
-    time = []
 
-    delta = deltas[0]
-    m = ms[0]
-    gamma = gammas[0]
-    for n in ns:
-        n_prime = math.ceil(n/math.floor(m/(2*delta)))
-        time.append((n_prime*gamma*mult_time_naive + n_prime*gamma*mult_time_plain_naive + n_prime*gamma*rot_time_naive)/1000)
 
-    
-    data_dictTime = {"n":ns,"Time (s)":time}
-    dfTime = pandas.DataFrame(data_dictTime)
-    figTime = px.line(dfTime,x="n",y="Time (s)",title="Naive - Theoretical")
-    
-    #figTime.update_traces(marker=dict(size=15),
-    #          selector=dict(mode='markers'))
-    
-    figTime.write_image("figures/TheoreticalTime_Naive.png")
-    """
-    time = []
-    for gam in gamma:
+    for i in range(len(deltas)):
+        delta = deltas[i]
+        m = ms[i]
+        gamma = gammas[i]
+        
+        figTime = go.Figure()
+        
+        #NAIVE
+        time = []
         for n in ns:
-            time.append((n*gam*mult_time_plain + n*rot_time)/1000)
+            n_prime = math.ceil(n/math.floor(m/(2*delta)))
+            time.append((n_prime*gamma*mult_time_naive + n_prime*gamma*mult_time_plain_naive + n_prime*gamma*rot_time_naive)/1000)
 
-    
-    data_dictTime = {"n":N,"γ":Gamma,"Time (s)":time}
-    dfTime = pandas.DataFrame(data_dictTime)
-    figTime = px.scatter(dfTime,x="n",y="γ",color="Time (s)",title="Hybrid - Theoretical")
-    
-    figTime.update_traces(marker=dict(size=15),
-              selector=dict(mode='markers'))
-    
-    figTime.write_image("figures/TheoreticalTime_Hybrid.png")
-    
-    
-    time = []
-    for gam in gamma:
+        data_dictTime = {"n":ns,"Time (s)":time}
+        dfTime = pandas.DataFrame(data_dictTime)
+
+        figTime.add_trace(go.Scatter(x=data_dictTime["n"],y=data_dictTime["Time (s)"], mode="lines",name="Naive"))
+        
+        #HYBRID
+        time = []
         for n in ns:
-            time.append((gam*mult_time_plain)/1000)
+            n_prime = math.ceil(n/math.floor(m/(2*delta)))
+            time.append((n_prime*gamma*mult_time_plain + n_prime*(math.log2(delta)-math.log2(gamma))*rot_time)/1000)
 
-    
-    data_dictTime = {"n":N,"γ":Gamma,"Time (s)":time}
-    dfTime = pandas.DataFrame(data_dictTime)
-    figTime = px.scatter(dfTime,x="n",y="γ",color="Time (s)",title="SIMD - Theoretical")
-    
-    figTime.update_traces(marker=dict(size=15),
-              selector=dict(mode='markers'))
-    
-    figTime.write_image("figures/TheoreticalTime_SIMD.png")
-    """
+        data_dictTime = {"n":ns,"Time (s)":time}
+        dfTime = pandas.DataFrame(data_dictTime)
+
+        figTime.add_trace(go.Scatter(x=data_dictTime["n"],y=data_dictTime["Time (s)"], mode="lines",name="Hybrid"))
+        
+        #SIMD
+        time = []
+        for n in ns:
+            n_prime = math.ceil(n/m)
+            time.append((n_prime*delta*gamma*mult_time_plain)/1000)
+
+        data_dictTime = {"n":ns,"Time (s)":time}
+        dfTime = pandas.DataFrame(data_dictTime)
+
+        figTime.add_trace(go.Scatter(x=data_dictTime["n"],y=data_dictTime["Time (s)"], mode="lines",name="SIMD"))
+        
+        
+        
+        
+        
+        
+        figMem = go.Figure()
+        
+        p=1
+        
+        #NAIVE
+        mem = []
+        for n in ns:
+            n_prime = math.ceil(n/math.floor(m/(2*delta)))
+            mem.append((gamma*p+n_prime*p)/1000)
+
+        data_dictMem = {"n":ns,"Mem":time}
+
+        figMem.add_trace(go.Scatter(x=data_dictMem["n"],y=data_dictMem["Mem"], mode="lines",name="Naive"))
+        
+        #HYBRID
+        mem = []
+        for n in ns:
+            n_prime = math.ceil(n/math.floor(m/(2*delta)))
+            mem.append((gamma*p+n_prime*p)/1000)
+
+        data_dictMem = {"n":ns,"Mem":time}
+
+        figMem.add_trace(go.Scatter(x=data_dictMem["n"],y=data_dictMem["Mem"], mode="lines",name="Hybrid"))
+        
+        #SIMD
+        mem = []
+        for n in ns:
+            n_prime = math.ceil(n/m)
+            mem.append((delta*gamma*p+gamma*n_prime*p)/1000)
+
+        data_dictMem = {"n":ns,"Mem":time}
+
+        figMem.add_trace(go.Scatter(x=data_dictMem["n"],y=data_dictMem["Mem"], mode="lines",name="SIMD"))
+        
+        
+        figTime.update_layout(
+            title="Matrix-Vector Runtimes (Theoretical)",
+            xaxis_title="n",
+            yaxis_title="Time (s)",
+            legend_title="Method",
+        )
+        figTime.update_yaxes(type="log")
+                
+        figTime.write_image("figures/TheoreticalPlots/TheoreticalTime_delta="+str(delta)+"_gamma="+str(gamma)+"_slots="+str(m)+".png")
+        
+        figMem.update_layout(
+            title="Matrix-Vector Memory Complexity (Theoretical)",
+            xaxis_title="n",
+            yaxis_title="Memory",
+            legend_title="Method",
+        )
+        figMem.update_yaxes(type="log")
+                
+        figMem.write_image("figures/TheoreticalPlots/TheoreticalMemory_delta="+str(delta)+"_gamma="+str(gamma)+"_slots="+str(m)+".png")
+
     
 def plot_matmul_performance_theoretical_subplots():
 

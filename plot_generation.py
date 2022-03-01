@@ -582,7 +582,7 @@ def plot_matmul_performance_theoretical():
         data_dictTime = {"n":ns,"Time (s)":time}
         dfTime = pandas.DataFrame(data_dictTime)
 
-        figTime.add_trace(go.Scatter(x=data_dictTime["n"],y=data_dictTime["Time (s)"], mode="lines",name="SIMD"))
+        figTime.add_trace(go.Scatter(x=data_dictTime["n"],y=data_dictTime["Time (s)"], mode="lines",name="SIMD",line=dict(color='green')))
         
         
         
@@ -599,19 +599,21 @@ def plot_matmul_performance_theoretical():
             n_prime = math.ceil(n/math.floor(m/(2*delta)))
             mem.append((gamma*p+n_prime*p)/1000)
 
-        data_dictMem = {"n":ns,"Mem":time}
+        data_dictMem = {"n":ns,"Mem":mem}
 
-        figMem.add_trace(go.Scatter(x=data_dictMem["n"],y=data_dictMem["Mem"], mode="lines",name="Naive"))
+        figMem.add_trace(go.Scatter(x=data_dictMem["n"],y=data_dictMem["Mem"], mode="lines",name="Naive, Hybrid"))
         
+        """
         #HYBRID
         mem = []
         for n in ns:
             n_prime = math.ceil(n/math.floor(m/(2*delta)))
             mem.append((gamma*p+n_prime*p)/1000)
 
-        data_dictMem = {"n":ns,"Mem":time}
+        data_dictMem = {"n":ns,"Mem":mem}
 
         figMem.add_trace(go.Scatter(x=data_dictMem["n"],y=data_dictMem["Mem"], mode="lines",name="Hybrid"))
+        """
         
         #SIMD
         mem = []
@@ -619,28 +621,30 @@ def plot_matmul_performance_theoretical():
             n_prime = math.ceil(n/m)
             mem.append((delta*gamma*p+gamma*n_prime*p)/1000)
 
-        data_dictMem = {"n":ns,"Mem":time}
+        data_dictMem = {"n":ns,"Mem":mem}
 
-        figMem.add_trace(go.Scatter(x=data_dictMem["n"],y=data_dictMem["Mem"], mode="lines",name="SIMD"))
+        figMem.add_trace(go.Scatter(x=data_dictMem["n"],y=data_dictMem["Mem"], mode="lines",name="SIMD",line=dict(color='green')))
         
         
         figTime.update_layout(
-            title="Matrix-Vector Runtimes (Theoretical)",
+            title="Matrix-Vector Runtimes (Theoretical) Delta="+str(delta)+" Gamma="+str(gamma)+" Slots="+str(m),
             xaxis_title="n",
             yaxis_title="Time (s)",
             legend_title="Method",
         )
         figTime.update_yaxes(type="log")
+        figTime.update_xaxes(type="log")
                 
         figTime.write_image("figures/TheoreticalPlots/TheoreticalTime_delta="+str(delta)+"_gamma="+str(gamma)+"_slots="+str(m)+".png")
         
         figMem.update_layout(
-            title="Matrix-Vector Memory Complexity (Theoretical)",
+            title="Matrix-Vector Memory Complexity Delta="+str(delta)+" Gamma="+str(gamma)+" Slots="+str(m),
             xaxis_title="n",
             yaxis_title="Memory",
             legend_title="Method",
         )
         figMem.update_yaxes(type="log")
+        figMem.update_xaxes(type="log")
                 
         figMem.write_image("figures/TheoreticalPlots/TheoreticalMemory_delta="+str(delta)+"_gamma="+str(gamma)+"_slots="+str(m)+".png")
 

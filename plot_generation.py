@@ -537,14 +537,17 @@ def plot_matmul_performance_theoretical():
     
     deltas = [2**i for i in range(10,13)]
     gammas = [2**i for i in range(9,12)]
-    ms = [8192]*3
+    print("Deltas:", deltas)
+    print("Gammas:",gammas)
+    ms = [4096,4096,8192]
     ps = [1]*4#placeholder
     
-    ns = [i for i in range(0,100000,10)]
+    ns = [i for i in range(1,100000,10)]
     
 
 
     for i in range(len(deltas)):
+        print("Iteration:",i)
         delta = deltas[i]
         m = ms[i]
         gamma = gammas[i]
@@ -555,23 +558,36 @@ def plot_matmul_performance_theoretical():
         time = []
         for n in ns:
             n_prime = math.ceil(n/math.floor(m/(2*delta)))
-            time.append((n_prime*gamma*mult_time_naive + n_prime*gamma*mult_time_plain_naive + n_prime*gamma*rot_time_naive)/1000)
+            time.append((n_prime*gamma*mult_time_naive + n_prime*gamma*mult_time_plain_naive + n_prime*math.log2(delta)*gamma*rot_time_naive)/1000)
 
         data_dictTime = {"n":ns,"Time (s)":time}
         dfTime = pandas.DataFrame(data_dictTime)
 
-        figTime.add_trace(go.Scatter(x=data_dictTime["n"],y=data_dictTime["Time (s)"], mode="lines",name="Naive"))
+        figTime.add_trace(go.Scatter(x=data_dictTime["n"],y=data_dictTime["Time (s)"], mode="lines",name="Naïve (theoretical)",line=dict(color='blue', dash='dot')))
         
         #HYBRID
         time = []
         for n in ns:
             n_prime = math.ceil(n/math.floor(m/(2*delta)))
-            time.append((n_prime*gamma*mult_time_plain + n_prime*(math.log2(delta)-math.log2(gamma))*rot_time)/1000)
+            time.append((n_prime*gamma*mult_time_plain + n_prime*(gamma+math.log2(delta)-math.log2(gamma))*rot_time)/1000)
 
         data_dictTime = {"n":ns,"Time (s)":time}
         dfTime = pandas.DataFrame(data_dictTime)
 
-        figTime.add_trace(go.Scatter(x=data_dictTime["n"],y=data_dictTime["Time (s)"], mode="lines",name="Hybrid"))
+        figTime.add_trace(go.Scatter(x=data_dictTime["n"],y=data_dictTime["Time (s)"], mode="lines",name="Hybrid (theoretical)",line=dict(color='red', dash='dot')))
+        
+        if i==0:
+            #HYBRID Experimental
+            time = []
+            experimental_ns = [1,100,1000]
+            times = [764.534, 37505, 376595]
+            time = [t/1000 for t in times]
+    
+            data_dictTime = {"n":experimental_ns,"Time (s)":time}
+            dfTime = pandas.DataFrame(data_dictTime)
+    
+            figTime.add_trace(go.Scatter(x=data_dictTime["n"],y=data_dictTime["Time (s)"], mode="lines",name="Hybrid (experimental)",line=dict(color='red')))
+        
         
         #SIMD
         time = []
@@ -582,11 +598,20 @@ def plot_matmul_performance_theoretical():
         data_dictTime = {"n":ns,"Time (s)":time}
         dfTime = pandas.DataFrame(data_dictTime)
 
-        figTime.add_trace(go.Scatter(x=data_dictTime["n"],y=data_dictTime["Time (s)"], mode="lines",name="SIMD",line=dict(color='green')))
+        figTime.add_trace(go.Scatter(x=data_dictTime["n"],y=data_dictTime["Time (s)"], mode="lines",name="SIMD (theoretical)",line=dict(color='green', dash='dot')))
         
-        
-        
-        
+        if i==0:
+            #SIMD Experimental
+            time = []
+            experimental_ns = [1,100,1000]
+            times = [247473]*3
+            time = [t/1000 for t in times]
+    
+            data_dictTime = {"n":experimental_ns,"Time (s)":time}
+            dfTime = pandas.DataFrame(data_dictTime)
+    
+            figTime.add_trace(go.Scatter(x=data_dictTime["n"],y=data_dictTime["Time (s)"], mode="lines",name="SIMD (experimental)",line=dict(color='green')))
+            
         
         
         figMem = go.Figure()
@@ -601,7 +626,7 @@ def plot_matmul_performance_theoretical():
 
         data_dictMem = {"n":ns,"Mem":mem}
 
-        figMem.add_trace(go.Scatter(x=data_dictMem["n"],y=data_dictMem["Mem"], mode="lines",name="Naive, Hybrid"))
+        figMem.add_trace(go.Scatter(x=data_dictMem["n"],y=data_dictMem["Mem"], mode="lines",name="Naïve, Hybrid"))
         
         """
         #HYBRID
@@ -627,20 +652,25 @@ def plot_matmul_performance_theoretical():
         
         
         figTime.update_layout(
-            title="Matrix-Vector Runtimes (Theoretical) Delta="+str(delta)+" Gamma="+str(gamma)+" Slots="+str(m),
+            title="Matrix-Vector Runtimes δ="+str(delta)+" γ="+str(gamma)+" m="+str(m),
             xaxis_title="n",
             yaxis_title="Time (s)",
             legend_title="Method",
         )
+        
+        
         figTime.update_yaxes(type="log")
         figTime.update_xaxes(type="log")
-                
+        
+        #figTime.update_xaxes(range=[1, 5])
+        #figTime.update_yaxes(range=[1, 5])
+        
         figTime.write_image("figures/TheoreticalPlots/TheoreticalTime_delta="+str(delta)+"_gamma="+str(gamma)+"_slots="+str(m)+".png")
         
         figMem.update_layout(
-            title="Matrix-Vector Memory Complexity Delta="+str(delta)+" Gamma="+str(gamma)+" Slots="+str(m),
+            title="Matrix-Vector Memory Complexity δ="+str(delta)+" γ="+str(gamma)+" m="+str(m),
             xaxis_title="n",
-            yaxis_title="Memory",
+            yaxis_title="O(p)",
             legend_title="Method",
         )
         figMem.update_yaxes(type="log")
@@ -648,7 +678,7 @@ def plot_matmul_performance_theoretical():
                 
         figMem.write_image("figures/TheoreticalPlots/TheoreticalMemory_delta="+str(delta)+"_gamma="+str(gamma)+"_slots="+str(m)+".png")
 
-    
+"""
 def plot_matmul_performance_theoretical_subplots():
 
     #these values are the averages of 10,000 runs with coef modulus of 200 to allow mult depth of 2
@@ -715,7 +745,7 @@ def plot_matmul_performance_theoretical_subplots():
               selector=dict(mode='markers'))
     
     figTime.write_image("figures/TheoreticalTimes.png")
-    
+    """
 
 if __name__ == "__main__":
     #plot_dataset()
@@ -727,4 +757,3 @@ if __name__ == "__main__":
     #plot_errors()
     #plot_matmul_performance()
     plot_matmul_performance_theoretical()
-    #plot_matmul_performance_theoretical_subplots()

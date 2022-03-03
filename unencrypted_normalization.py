@@ -1,6 +1,10 @@
 import tenseal as ts
-import math
+#import math
 import torch
+
+import plotly.express as px
+import plotly.graph_objects as go
+import pandas
 
 def reencrypt(enc_vector, context):
     plain = enc_vector.decrypt()
@@ -62,13 +66,16 @@ def normalize(vector, context, dimensionality):
     linear_weight = -0.00029703#-4.40369448e-05
     linear_bias = 0.1586186138991184#0.08852906761144604
     
+    linear_weight = -0.00032523
+    linear_bias = 0.16795745
+    
     #print("mult")
     linear_approximation = linear_weight * s
     linear_approximation = linear_approximation + linear_bias
     
     
     
-    linear_approximation = 0.01
+    #linear_approximation = 0.01
     
     print("linear approx:",linear_approximation)
     
@@ -85,7 +92,34 @@ def normalize(vector, context, dimensionality):
     #print("inverse norm:",inverse_norm)
     #print(torch.dot(vector * inverse_norm,vector * inverse_norm))
     #print(torch.linalg.norm(vector * inverse_norm))
+    #return inverse_norm
     return vector * inverse_norm
+
+
+def gold_test(s, context, iters):
+    linear_weight = -0.00032523
+    linear_bias = 0.16795745
+    
+    #print("mult")
+    linear_approximation = linear_weight * s
+    linear_approximation = linear_approximation + linear_bias
+    
+    
+    
+    #linear_approximation = 0.01
+    
+    #print("linear approx:",linear_approximation)
+    
+    #initial_estimate = NewtonsMethod(linear_approximation, s, context, iters=10)
+    initial_estimate = InvNormApprox(linear_approximation, s, context, iters=1)
+    
+    
+    
+    inverse_norm = Goldschmidt(s, initial_estimate, context, iters=iters)
+    
+    inverse_norm *= 2
+
+    return inverse_norm
 
 def efficient_normalize(vector, context, dimensionality):
     #0.8178302654835186
@@ -115,3 +149,39 @@ def efficient_normalize(vector, context, dimensionality):
     inverse_norm = x
     print("inv norm",inverse_norm)
     return vector * inverse_norm
+
+worsts = []
+stds = []
+for j in range(1,5):
+    worst = 0
+    errors = []
+    for i in range(1,500):
+        error = ((1/(i**0.5))-gold_test(i,None,j))/(1/(i**0.5))
+        if error > worst:
+            worst = error
+        errors.append(error)
+    mean = sum(errors)/len(errors)
+    total = 0
+    for error in errors:
+        total += (error-mean)**2
+    std = (total/len(errors))**0.5
+    stds.append(std)
+    print(worst)
+    worsts.append(mean)
+mult_depths = [9,12,15,18]
+data_dict = {"Multiplicative Depth":mult_depths, r'$\frac{|G(x)-y|}{|y|}$':worsts}
+df = pandas.DataFrame(data_dict)
+
+fig = px.scatter(df,x="Multiplicative Depth",y=r'$\frac{|G(x)-y|}{|y|}$',title="Goldschmidt's Mult. Depth vs Relative Error",error_y=stds)
+
+fig.update_yaxes(range=[0,0.25])
+
+
+fig_file_name = "figures/GoldschmidtsErrors.png"
+fig.write_image(fig_file_name)
+
+fig2 = px.scatter(df,x="Multiplicative Depth",y=r'$\frac{|G(x)-y|}{|y|}$',title="Goldschmidt's Mult. Depth vs Relative Error",error_y=stds)
+fig2.update_yaxes(type="log")
+
+fig_file_name = "figures/GoldschmidtsErrorsLog.png"
+fig2.write_image(fig_file_name)

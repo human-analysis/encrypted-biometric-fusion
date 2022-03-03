@@ -124,9 +124,13 @@ def poly_approximation():
         fig_file_name = "figures/polynomial_approximations/approx_degree=" + str(degrees[i]) + ".png"
         fig.write_image(fig_file_name)
         
-        data_dict = {"Relative Error":abs(myfun(x, *popt)-y)/y, "X":x}
+        data_dict = {r'$\frac{|f(x)-y|}{|y|}$':abs(myfun(x, *popt)-y)/y, "X":x}
         df = pandas.DataFrame(data_dict)
-        fig = px.line(df,x="X",y="Relative Error")
+        fig = px.line(df,x="X",y=r'$\frac{|f(x)-y|}{|y|}$')
+        
+        #fig.update_xaxes(title_font=dict(size=18))
+        fig.update_yaxes(title_font=dict(size=40))
+        
         
         fig_file_name = "figures/polynomial_approximations/approx_error_degree=" + str(degrees[i]) + ".png"
         fig.write_image(fig_file_name)

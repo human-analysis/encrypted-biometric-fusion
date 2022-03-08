@@ -13,7 +13,7 @@ from torch.distributions.multivariate_normal import MultivariateNormal
 from model import Linear_Feature_Fusion
 from data_generation import data_gen
 
-def train():
+def train(gamma,iters):
     random.seed(0)
     torch.manual_seed(0)
     #A,B,L = data_gen(10)
@@ -80,11 +80,11 @@ def train():
     outfile_X.close()
     
     #Hyperparameters
-    gamma = 512
+    #gamma = 512
     lambs = [0.1,0.25,0.5,0.75,0.9]
     lambs = [0.5]
     margin = 0.5
-    iterations = 100
+    iterations = iters
     #iterations = 100
     #break_point = 0.005
     rates = {2:1000, 256:10000, 512:10000}
@@ -160,23 +160,23 @@ def train():
             rate *= 0.95
         print("final loss:",model.loss())
         
-        #print(P_history[1]-P_history[0])
-        
-        p_file_name = "data/features_P_values_lambda=" + str(lamb) + "_margin=" + str(margin) + ".txt"
+
+        #P values file gets too large for github
+        p_file_name = "data/features_P_values_lambda=" + str(lamb) + "_margin=" + str(margin) + "_gamma=" + str(gamma) + ".txt"
         outfile_p = open(p_file_name,'w')
-        for P_value in P_history:
-            outfile_p.write(P_value)
-            outfile_p.write("\n")
+        #for P_value in P_history:
+            #outfile_p.write(P_value)
+            #outfile_p.write("\n")
         outfile_p.close()
         
-        p_best_file_name = "data/features_best_P_value_transpose_lambda=" + str(lamb) + "_margin=" + str(margin) + ".txt"
+        p_best_file_name = "data/features_best_P_value_transpose_lambda=" + str(lamb) + "_margin=" + str(margin) + "_gamma=" + str(gamma)  + ".txt"
         outfile_p_t = open(p_best_file_name,'w')
         P_final_t = best_P.T
         P_final_t = str(P_final_t.tolist())
         outfile_p_t.write(P_final_t)
         outfile_p_t.close()
         
-        loss_file_name = "data/features_loss_values_lambda=" + str(lamb) + "_margin=" + str(margin) + ".txt"
+        loss_file_name = "data/features_loss_values_lambda=" + str(lamb) + "_margin=" + str(margin) + "_gamma=" + str(gamma)  + ".txt"
         outfile_loss = open(loss_file_name,'w')
         for loss_value in losses:
             outfile_loss.write(str(loss_value.tolist()))
@@ -201,6 +201,6 @@ def train():
         outfile_x.close()
 
 if __name__ == "__main__":
-    train()
+    train(2,200)
 
 

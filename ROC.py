@@ -238,4 +238,5 @@ if __name__ == "__main__":
     ROC("data/features_X_values.txt", "X", "ROC - MMU Iris 1536-dimensional Concatenated Features")
     ROC2("data/features_labels_best_P_value_transpose_lambda=0.5_margin=0.5_gamma=2.txt", 2, "ROC Projected Dataset γ=2 (Normalized)")
     ROC2("data/features_labels_best_P_value_transpose_lambda=0.5_margin=0.5_gamma=256.txt", 256, "ROC Projected Dataset γ=256 (Normalized)")
+    ROC2("data/features_labels_best_P_value_transpose_lambda=0.5_margin=0.5_gamma=512.txt", 512, "ROC Projected Dataset γ=512 (Normalized)")
 

@@ -17,7 +17,7 @@ import math
 
 import model
 
-def plot_loss():
+def plot_loss(gamma):
     
     lambs = [0.1,0.25,0.5,0.75,0.9]
     margin = 0.5
@@ -30,7 +30,7 @@ def plot_loss():
     
     for lamb in lambs:
         loss_file_name = "data/loss_values_lambda=" + str(lamb) + "_margin=" + str(margin) + ".txt"
-        loss_file_name = "data/features_loss_values_lambda=0.5_margin=0.5.txt"
+        loss_file_name = "data/features_loss_values_lambda=0.5_margin=0.5_gamma=" + str(gamma) + ".txt"
         loss_file = open(loss_file_name,'r')
         losses = []
         for line in loss_file:
@@ -42,7 +42,7 @@ def plot_loss():
         fig = px.line(df,x="Epoch",y="Loss",
                       title="Train Loss")
         
-        fig_file_name = "figures/loss/train_loss_lambda=" + str(lamb) + "_margin=" + str(margin) + ".png"
+        fig_file_name = "figures/loss/train_loss_lambda=" + str(lamb) + "_margin=" + str(margin) + "_gamma=" + str(gamma) + ".png"
         fig.write_image(fig_file_name)
 
 
@@ -834,7 +834,7 @@ def plot_x_prime():
 
 if __name__ == "__main__":
     #plot_dataset()
-    plot_loss()
+    plot_loss(2)
     #plot_p()
     #combine_gifs()
     #plot_results()

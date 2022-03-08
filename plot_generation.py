@@ -565,6 +565,21 @@ def plot_matmul_performance_theoretical():
 
         figTime.add_trace(go.Scatter(x=data_dictTime["n"],y=data_dictTime["Time (s)"], mode="lines",name="Naïve (theoretical)",line=dict(color='blue', dash='dot')))
         
+        if i==0:
+            #Naive Experimental
+            time = []
+            experimental_ns = [1,100]
+            times = [7807.18,328179]
+            time = [t/1000 for t in times]
+    
+            data_dictTime = {"n":experimental_ns,"Time (s)":time}
+            dfTime = pandas.DataFrame(data_dictTime)
+    
+            figTime.add_trace(go.Scatter(x=data_dictTime["n"],y=data_dictTime["Time (s)"], mode="lines",name="Naïve (experimental)",line=dict(color='blue')))
+            
+        
+        
+        
         #HYBRID
         time = []
         for n in ns:
@@ -622,7 +637,7 @@ def plot_matmul_performance_theoretical():
         mem = []
         for n in ns:
             n_prime = math.ceil(n/math.floor(m/(2*delta)))
-            mem.append((gamma*p+n_prime*p)/1000)
+            mem.append((gamma*p+n_prime*p))
 
         data_dictMem = {"n":ns,"Mem":mem}
 
@@ -644,7 +659,7 @@ def plot_matmul_performance_theoretical():
         mem = []
         for n in ns:
             n_prime = math.ceil(n/m)
-            mem.append((delta*gamma*p+gamma*n_prime*p)/1000)
+            mem.append((delta*gamma*p+gamma*n_prime*p))
 
         data_dictMem = {"n":ns,"Mem":mem}
 

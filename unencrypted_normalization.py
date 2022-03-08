@@ -6,6 +6,12 @@ import plotly.express as px
 import plotly.graph_objects as go
 import pandas
 
+import os
+
+import numpy as np
+
+from scipy.optimize import curve_fit
+
 def reencrypt(enc_vector, context):
     plain = enc_vector.decrypt()
     return ts.ckks_vector(context,plain)
@@ -150,24 +156,177 @@ def efficient_normalize(vector, context, dimensionality):
     print("inv norm",inverse_norm)
     return vector * inverse_norm
 
+def poly5(x, a1, b1, c1, d1, e1, f1, a2, b2, c2, d2, e2, f2):
+    x = a1 + b1 * x + c1 * x**2 + d1 * x**3 + e1 * x**4 + f1 * x**5
+    x = a2 + b2 * x + c2 * x**2 + d2 * x**3 + e2 * x**4 + f2 * x**5
+    return x
+
+def poly4(x, a1, b1, c1, d1, e1, a2, b2, c2, d2, e2):
+    x = a1 + b1 * x + c1 * x**2 + d1 * x**3 + e1 * x**4
+    x = a2 + b2 * x + c2 * x**2 + d2 * x**3 + e2 * x**4
+    return x
+
+
+def poly3(x, a1, b1, c1, d1, a2, b2, c2, d2):
+    x = a1 + b1 * x + c1 * x**2 + d1 * x**3
+    x = a2 + b2 * x + c2 * x**2 + d2 * x**3
+    return x
+
+
+def poly2(x, a1, b1, c1, d1, a2, b2, c2):
+    x = a1 + b1 * x + c1 * x**2 + d1 * x**3
+    x = a2 + b2 * x + c2 * x**2
+    return x
+
+
+def poly1(x, a1, b1, c1, d1, a2, b2):
+    #if abs(b2) < 1e-12:
+        #b2 = 0
+    x = a1 + b1 * x + c1 * x**2 + d1 * x**3
+    x = a2 + b2 * x
+    return x
+
+def poly0(x, a1, b1):
+    x = a1 + b1 * x
+    return x
+    
+
+def poly_approximation():
+    #np.random.seed(1000)
+    
+    if not os.path.exists("figures"):
+        os.mkdir("figures")
+    if not os.path.exists("figures/polynomial_approximations"):
+        os.mkdir("figures/polynomial_approximations")
+    #x = [1.0 * i for i in range(500,4000)]
+    x = [1.0 * i for i in range(1,500)]
+    #x = [1 * i for i in range(1000,5000)]
+    y = [1/(i**0.5) for i in x]
+    x = np.array(x)#.reshape(-1,1)
+    y = np.array(y)
+    
+    funs = [poly1, poly2, poly3, poly4]
+    degrees = [4,5,6,8]
+    worsts = []
+    stds = []
+    for i, myfun in enumerate(funs):
+        print(degrees[i])
+        popt, pcov = curve_fit(myfun, x, y)
+        errors = []
+        worst = 0
+        for j in range(1,499):
+            error = abs(myfun(x[j], *popt)-y[j])/y[j]
+            if error > worst:
+                worst = error
+            errors.append(error)
+        mean = sum(errors)/len(errors)
+        total = 0
+        #errors_list.append(errors)
+        for error in errors:
+            total += (error-mean)**2
+        std = (total/len(errors))**0.5
+        stds.append(std)
+        worsts.append(mean)
+        
+    mult_depths_gold = [9,12,15,18]
+    mult_depth_poly = [4,5,6,8]
+        
+    data_dict = {"Multiplicative Depth":mult_depth_poly, r'$\frac{|G(x)-y|}{|y|}$':worsts}
+    df = pandas.DataFrame(data_dict)
+    fig = go.Figure(layout = go.Layout(title = go.layout.Title(text="Mult. Depth vs Relative Error")))
+    fig.add_trace(
+        go.Scatter(
+            mode='markers',
+            x=data_dict["Multiplicative Depth"],
+            y=data_dict[r'$\frac{|G(x)-y|}{|y|}$'],
+            error_y=dict(type='data', array=stds),
+            name="Polynomial"
+            #marker={'color':'red'},
+            #showlegend=False
+        )
+    )
+    
+        
+
+    worsts = []
+    stds = []
+    errors_list = []
+    y_lists = []
+    for j in range(1,5):
+        worst = 0
+        errors = []
+        y = []
+        for i in range(1,500):
+            y.append(gold_test(i,None,j))
+            error = ((1/(i**0.5))-gold_test(i,None,j))/(1/(i**0.5))
+            if error > worst:
+                worst = error
+            errors.append(error)
+        mean = sum(errors)/len(errors)
+        total = 0
+        errors_list.append(errors)
+        for error in errors:
+            total += (error-mean)**2
+        std = (total/len(errors))**0.5
+        stds.append(std)
+        print(worst)
+        worsts.append(mean)
+    
+    
+    fig.add_trace(
+        go.Scatter(
+            mode='markers',
+            x=mult_depths_gold,
+            y=worsts,
+            error_y=dict(type='data', array=stds),
+            name="Goldschmidt's Algorithm"
+            #marker={'color':'red'},
+            #showlegend=False
+        )
+    )
+    
+    #fig = px.scatter(df,x="Multiplicative Depth",y=r'$\frac{|G(x)-y|}{|y|}$',title="Mult. Depth vs Relative Error",error_y=stds)
+    
+    #fig.update_yaxes(range=[0,0.25])
+    
+    fig.update_yaxes(range=[0,0.35])
+    
+    fig.update_xaxes(title="Multiplicative Depth")
+    fig.update_yaxes(title=r'$\frac{|f(x)-y|}{|y|}$')
+    
+    fig_file_name = "figures/ErrorComparison.png"
+    fig.write_image(fig_file_name)
+    print("done")
+        
+
+#poly_approximation()       
+
 worsts = []
 stds = []
+errors_list = []
+y_lists = []
 for j in range(1,5):
     worst = 0
     errors = []
+    y = []
     for i in range(1,500):
+        y.append(gold_test(i,None,j))
         error = ((1/(i**0.5))-gold_test(i,None,j))/(1/(i**0.5))
         if error > worst:
             worst = error
         errors.append(error)
     mean = sum(errors)/len(errors)
     total = 0
+    errors_list.append(errors)
     for error in errors:
         total += (error-mean)**2
     std = (total/len(errors))**0.5
     stds.append(std)
+    y_lists.append(y)
     print(worst)
     worsts.append(mean)
+    
+    
 mult_depths = [9,12,15,18]
 data_dict = {"Multiplicative Depth":mult_depths, r'$\frac{|G(x)-y|}{|y|}$':worsts}
 df = pandas.DataFrame(data_dict)
@@ -185,3 +344,45 @@ fig2.update_yaxes(type="log")
 
 fig_file_name = "figures/GoldschmidtsErrorsLog.png"
 fig2.write_image(fig_file_name)
+
+
+true_y = [1/i**0.5 for i in range(1,500)]
+x = [i for i in range(1,500)]
+for i, errors in enumerate(errors_list):
+    data_dict = {r'$\frac{|G(x)-y|}{|y|}$':errors, "X":x}
+    df = pandas.DataFrame(data_dict)
+    fig = px.line(df,x="X",y=r'$\frac{|G(x)-y|}{|y|}$',title="Goldschmidt's Relative Error Mult Depth="+str(9+3*i))
+    
+    #fig.update_xaxes(title_font=dict(size=18))
+    fig.update_yaxes(title_font=dict(size=40))
+    
+    fig_file_name = "figures/goldschmidts_errors_multdepth=" + str(9+3*i) + ".png"
+    fig.write_image(fig_file_name)
+    
+    fig = go.Figure(layout = go.Layout(title = go.layout.Title(text="Goldschmidt's, Mult Depth="+str(9+3*i))))
+    fig.add_trace(
+        go.Scatter(
+            mode='lines',
+            x=x,
+            y=y_lists[i],
+            marker={'color':'red'},
+            showlegend=False
+        )
+    )
+    fig.add_trace(
+        go.Scatter(
+            mode='lines',
+            x=x,
+            y=true_y,
+            marker={'color':'black'},
+            showlegend=False
+        )
+    )
+    
+    fig.update_layout(
+        xaxis_title="X",
+        yaxis_title="Y"
+    )
+    
+    fig_file_name = "figures/goldschmidts_multdepth=" + str(9+3*i) + ".png"
+    fig.write_image(fig_file_name)

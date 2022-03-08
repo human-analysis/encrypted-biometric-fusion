@@ -1,1 +1,0 @@
-g++ -I../include -I.  -g -O2 -std=c++11 -pthread -march=native  -o  CheckThreads CheckThreads.cpp -lm

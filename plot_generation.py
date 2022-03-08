@@ -746,6 +746,75 @@ def plot_matmul_performance_theoretical_subplots():
     
     figTime.write_image("figures/TheoreticalTimes.png")
     """
+    
+def plot_x_prime():
+    
+    lambs = [0.5]
+    margin = 0.5
+    
+    if not os.path.exists("figures"):
+        os.mkdir("figures")
+    if not os.path.exists("figures/projected_dataset"):
+        os.mkdir("figures/projected_dataset")
+        
+    for lamb in lambs:
+        if not os.path.exists("figures/projected_dataset/features_lambda=" + str(lamb) + "_margin=" + str(margin)):
+            os.mkdir("figures/projected_dataset/features_lambda=" + str(lamb) + "_margin=" + str(margin))
+        filenames = [] #this will be for creating the animation at the end
+        
+        
+        L = []
+        x_file = open("data/features_labels_best_P_value_transpose_lambda=0.5_margin=0.5.txt",'r')
+        X = []
+        for line in x_file:
+            line, label = line.split(";")
+            x = torch.tensor(ast.literal_eval(line.strip())).unsqueeze(dim=0)
+            X.append(x)
+            L.append(int(label))
+        X_prime = torch.Tensor(len(X),X[0].shape[0])
+        torch.cat(X, out=X_prime,dim=0)
+        
+        
+        #Create feature fusion dataset
+        #X = torch.cat((A_final,B_final),dim=1)
+    
+        circle_x = [c*0.005 for c in range(-200,201)]
+        circle_y_pos = [(1-c**2)**0.5 for c in circle_x]
+        circle_y_neg = [-1*(1-c**2)**0.5 for c in circle_x]
+        
+        circle_x_final = circle_x+circle_x[::-1]
+        circle_y = circle_y_pos+circle_y_neg
+    
+        for j in range(1):
+            #X_prime = torch.mm(X,p_values[j])
+            #for i in range(X_prime.shape[0]):
+                #X_prime[i,:]=torch.div(X_prime[i,:], torch.linalg.norm(X_prime[i,:]))
+            fig = go.Figure(layout = go.Layout(title = go.layout.Title(text="Lambda: "+str(lamb))))
+            fig.add_trace(
+                go.Scatter(
+                    mode='lines',
+                    x=circle_x_final,
+                    y=circle_y,
+                    marker={'color':'black'},
+                    showlegend=False
+                )   
+            )
+            num_class = len(set(L))
+            samples_per_class = L.count(L[0])
+            colors = list(set(L))
+            colors = [3*color for color in colors]
+            titles = ["class "+str(i) for i in range(num_class)]
+            for i in range(num_class):
+                fig.add_scatter(name=titles[i],x=X_prime[i*samples_per_class:i*samples_per_class+samples_per_class,0],y=X_prime[i*samples_per_class:i*samples_per_class+samples_per_class,1],mode="markers",marker={'size': 15,'color': colors[i]})#,legendgrouptitle={'text':titles[i]})
+            fig.update_yaxes(scaleanchor="x",scaleratio=1)
+            fig.update_xaxes(range=[-1.1,1.1],constrain="domain")
+            fig.update_yaxes(scaleanchor = "x",scaleratio = 1)    
+            
+            fig_file_name = "figures/projected_dataset/features_lambda=" + str(lamb) + "_margin=" + str(margin) + "/" + str(j) + ".png"
+            filenames.append(fig_file_name)
+            fig.write_image(fig_file_name)
+        
+        
 
 if __name__ == "__main__":
     #plot_dataset()
@@ -756,4 +825,5 @@ if __name__ == "__main__":
     #plot_poly_results()
     #plot_errors()
     #plot_matmul_performance()
-    plot_matmul_performance_theoretical()
+    #plot_matmul_performance_theoretical()
+    plot_x_prime()

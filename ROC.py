@@ -90,13 +90,13 @@ def Cosine_Distance(vec1, vec2):
     #assumes vec1 and vec2 are unit vectors
     return 1 - torch.dot(torch.div(vec1, torch.linalg.norm(vec1)), torch.div(vec2, torch.linalg.norm(vec2)))
 
-def ROC():
+def ROC(filename, tag, title):
     
     
     
     
     #enc_results_file = open("results/toy_data_1_4.txt",'r')
-    enc_results_file = open("data/features_B_values.txt",'r')
+    enc_results_file = open(filename,'r')
     enc_results = []
     L = []
     for line in enc_results_file:
@@ -149,9 +149,9 @@ def ROC():
     data_dict = {"False Positive Rate":fps,"True Positive Rate":tps}
     df = pandas.DataFrame(data_dict)
     fig = px.line(df,x="False Positive Rate",y="True Positive Rate",
-                  title="ROC")
-    
-    fig_file_name = "figures/ROC.png"
+                  title=title)
+    fig.update_yaxes(range=[0,1])
+    fig_file_name = "figures/ROC_" + tag + ".png"
     fig.write_image(fig_file_name)
     
     """
@@ -173,7 +173,7 @@ def ROC():
     print(fps)
     print(tps)
 
-def ROC2(filename, gamma):
+def ROC2(filename, gamma, title):
     enc_results_file = open(filename,'r')
     enc_results = []
     L = []
@@ -222,7 +222,8 @@ def ROC2(filename, gamma):
     data_dict = {"False Positive Rate":fps,"True Positive Rate":tps}
     df = pandas.DataFrame(data_dict)
     fig = px.line(df,x="False Positive Rate",y="True Positive Rate",
-                  title="ROC")
+                  title=title)
+    fig.update_yaxes(range=[0,1])
     
     fig_file_name = "figures/ROC_projected_gamma=" + str(gamma) + ".png"
     fig.write_image(fig_file_name)
@@ -232,6 +233,9 @@ def ROC2(filename, gamma):
 
 
 if __name__ == "__main__":
-    ROC2("data/features_labels_best_P_value_transpose_lambda=0.5_margin=0.5_gamma=2.txt", gamma=2)
-    ROC2("data/features_labels_best_P_value_transpose_lambda=0.5_margin=0.5_gamma=256.txt", gamma=256)
+    ROC("data/features_A_values.txt", "A", "ROC - MMU Iris Resnet 1024-dimensional Features")
+    ROC("data/features_B_values.txt", "B", "ROC - MMU Iris VGG 512-dimensional Features")
+    ROC("data/features_X_values.txt", "X", "ROC - MMU Iris 1536-dimensional Concatenated Features")
+    ROC2("data/features_labels_best_P_value_transpose_lambda=0.5_margin=0.5_gamma=2.txt", 2, "ROC Projected Dataset γ=2 (Normalized)")
+    ROC2("data/features_labels_best_P_value_transpose_lambda=0.5_margin=0.5_gamma=256.txt", 256, "ROC Projected Dataset γ=256 (Normalized)")
 

@@ -66,19 +66,28 @@ def train():
         outfile_b.write("\n")
     outfile_b.close()
     
-    alpha = A.shape[1]
-    beta = B.shape[1]
+    #alpha = A.shape[1]
+    #beta = B.shape[1]
     X = torch.cat((A,B),dim=1)
     
+    
+    outfile_X = open("data/features_X_values.txt",'w')
+    for i in range(B.shape[0]):
+        outfile_X.write(str(X[i].tolist()))
+        outfile_X.write(";")
+        outfile_X.write(str(L.tolist()[i]))
+        outfile_X.write("\n")
+    outfile_X.close()
+    
     #Hyperparameters
-    gamma = 256
+    gamma = 512
     lambs = [0.1,0.25,0.5,0.75,0.9]
     lambs = [0.5]
     margin = 0.5
     iterations = 100
     #iterations = 100
     #break_point = 0.005
-    rates = {2:1000, 256:10000}
+    rates = {2:1000, 256:10000, 512:10000}
     rate = 10e-2
     rate = 10000
     rate = 1000

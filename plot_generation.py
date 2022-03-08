@@ -30,6 +30,7 @@ def plot_loss():
     
     for lamb in lambs:
         loss_file_name = "data/loss_values_lambda=" + str(lamb) + "_margin=" + str(margin) + ".txt"
+        loss_file_name = "data/features_loss_values_lambda=0.5_margin=0.5.txt"
         loss_file = open(loss_file_name,'r')
         losses = []
         for line in loss_file:
@@ -833,7 +834,7 @@ def plot_x_prime():
 
 if __name__ == "__main__":
     #plot_dataset()
-    #plot_loss()
+    plot_loss()
     #plot_p()
     #combine_gifs()
     #plot_results()
@@ -841,4 +842,4 @@ if __name__ == "__main__":
     #plot_errors()
     #plot_matmul_performance()
     #plot_matmul_performance_theoretical()
-    plot_x_prime()
+    #plot_x_prime()

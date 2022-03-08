@@ -156,6 +156,11 @@ def efficient_normalize(vector, context, dimensionality):
     print("inv norm",inverse_norm)
     return vector * inverse_norm
 
+def poly6(x, a1, b1, c1, d1, e1, f1, g1, a2, b2, c2, d2, e2, f2):
+    x = a1 + b1 * x + c1 * x**2 + d1 * x**3 + e1 * x**4 + f1 * x**5 + g1 * x**6
+    x = a2 + b2 * x + c2 * x**2 + d2 * x**3 + e2 * x**4 + f2 * x**5
+    return x
+
 def poly5(x, a1, b1, c1, d1, e1, f1, a2, b2, c2, d2, e2, f2):
     x = a1 + b1 * x + c1 * x**2 + d1 * x**3 + e1 * x**4 + f1 * x**5
     x = a2 + b2 * x + c2 * x**2 + d2 * x**3 + e2 * x**4 + f2 * x**5
@@ -228,6 +233,7 @@ def poly_approximation():
         stds.append(std)
         worsts.append(mean)
         
+    print(worsts)
     mult_depths_gold = [9,12,15,18]
     mult_depth_poly = [4,5,6,8]
         
@@ -299,8 +305,8 @@ def poly_approximation():
     print("done")
         
 
-#poly_approximation()       
-
+poly_approximation()       
+"""
 worsts = []
 stds = []
 errors_list = []
@@ -385,4 +391,4 @@ for i, errors in enumerate(errors_list):
     )
     
     fig_file_name = "figures/goldschmidts_multdepth=" + str(9+3*i) + ".png"
-    fig.write_image(fig_file_name)
+    fig.write_image(fig_file_name)"""

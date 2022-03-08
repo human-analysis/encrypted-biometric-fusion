@@ -22,6 +22,11 @@ import imageio
 #def poly(x, a1, b1, c1, d1, e1, a2, b2, c2, d2, e2):
 
     
+def poly6(x, a1, b1, c1, d1, e1, f1, g1, a2, b2, c2, d2, e2, f2):
+    x = a1 + b1 * x + c1 * x**2 + d1 * x**3 + e1 * x**4 + f1 * x**5 + g1 * x**6
+    x = a2 + b2 * x + c2 * x**2 + d2 * x**3 + e2 * x**4 + f2 * x**5
+    return x
+
 def poly5(x, a1, b1, c1, d1, e1, f1, a2, b2, c2, d2, e2, f2):
     x = a1 + b1 * x + c1 * x**2 + d1 * x**3 + e1 * x**4 + f1 * x**5
     x = a2 + b2 * x + c2 * x**2 + d2 * x**3 + e2 * x**4 + f2 * x**5
@@ -71,8 +76,8 @@ def poly_approximation():
     x = np.array(x)#.reshape(-1,1)
     y = np.array(y)
     
-    funs = [poly0, poly1, poly2, poly3, poly4, poly5]
-    degrees = [1,4,5,6,8,10]
+    funs = [poly0, poly1, poly2, poly3, poly4, poly6]
+    degrees = [1,4,5,6,8,11]
     for i, myfun in enumerate(funs):
         popt, pcov = curve_fit(myfun, x, y)
         

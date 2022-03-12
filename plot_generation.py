@@ -40,9 +40,10 @@ def plot_loss(gamma):
         df = pandas.DataFrame(data_dict)
     
         fig = px.line(df,x="Epoch",y="Loss",
-                      title="Train Loss")
+                      title="Train Loss γ="+str(gamma))
         
         fig_file_name = "figures/loss/train_loss_lambda=" + str(lamb) + "_margin=" + str(margin) + "_gamma=" + str(gamma) + ".png"
+        fig_file_name = "figures/loss/train_loss_lambda=0.5_margin=0.5_gamma=" + str(gamma) + ".png"
         fig.write_image(fig_file_name)
 
 
@@ -536,6 +537,10 @@ def plot_matmul_performance_theoretical():
     mult_time = 1.5252
     rot_time = 1.01993
     
+    mult_time_plain_3 = 1.75
+    mult_time_3 = 7.44343
+    rot_time_3 = 5.28174
+    
     deltas = [2**i for i in range(10,13)]
     gammas = [2**i for i in range(9,12)]
     print("Deltas:", deltas)
@@ -628,7 +633,30 @@ def plot_matmul_performance_theoretical():
     
             figTime.add_trace(go.Scatter(x=data_dictTime["n"],y=data_dictTime["Time (s)"], mode="lines",name="SIMD (experimental)",line=dict(color='green')))
             
+        """
+        #MatMat
+        time = []
+        for n in ns:
+            n_prime = math.ceil(n/m)
+            time.append((*mult_time_plain_3)/1000)
+
+        data_dictTime = {"n":ns,"Time (s)":time}
+        dfTime = pandas.DataFrame(data_dictTime)
+
+        figTime.add_trace(go.Scatter(x=data_dictTime["n"],y=data_dictTime["Time (s)"], mode="lines",name="Mat-Mat (theoretical)",line=dict(color='black', dash='dot')))
+        """
         
+        if i==0:
+            #SIMD Experimental
+            time = []
+            experimental_ns = [1,100,1000]
+            times = [247473]*3
+            time = [t/1000 for t in times]
+    
+            data_dictTime = {"n":experimental_ns,"Time (s)":time}
+            dfTime = pandas.DataFrame(data_dictTime)
+    
+            figTime.add_trace(go.Scatter(x=data_dictTime["n"],y=data_dictTime["Time (s)"], mode="lines",name="SIMD (experimental)",line=dict(color='green')))
         
         figMem = go.Figure()
         
@@ -763,7 +791,7 @@ def plot_matmul_performance_theoretical_subplots():
     figTime.write_image("figures/TheoreticalTimes.png")
     """
     
-def plot_x_prime():
+def plot_x_prime(gamma):
     
     lambs = [0.5]
     margin = 0.5
@@ -774,13 +802,13 @@ def plot_x_prime():
         os.mkdir("figures/projected_dataset")
         
     for lamb in lambs:
-        if not os.path.exists("figures/projected_dataset/features_lambda=" + str(lamb) + "_margin=" + str(margin)):
-            os.mkdir("figures/projected_dataset/features_lambda=" + str(lamb) + "_margin=" + str(margin))
+        if not os.path.exists("figures/projected_dataset/features_lambda=" + str(lamb) + "_margin=" + str(margin)+ "_gamma=" + str(gamma)):
+            os.mkdir("figures/projected_dataset/features_lambda=" + str(lamb) + "_margin=" + str(margin)+ "_gamma=" + str(gamma))
         filenames = [] #this will be for creating the animation at the end
         
         
         L = []
-        x_file = open("data/features_labels_best_P_value_transpose_lambda=0.5_margin=0.5.txt",'r')
+        x_file = open("data/features_labels_best_P_value_transpose_lambda=0.5_margin=0.5_gamma="+str(gamma)+".txt",'r')
         X = []
         for line in x_file:
             line, label = line.split(";")
@@ -826,7 +854,7 @@ def plot_x_prime():
             fig.update_xaxes(range=[-1.1,1.1],constrain="domain")
             fig.update_yaxes(scaleanchor = "x",scaleratio = 1)    
             
-            fig_file_name = "figures/projected_dataset/features_lambda=" + str(lamb) + "_margin=" + str(margin) + "/" + str(j) + ".png"
+            fig_file_name = "figures/projected_dataset/features_lambda=" + str(lamb) + "_margin=" + str(margin) + "_gamma=" + str(gamma) + "/" + str(j) + ".png"
             filenames.append(fig_file_name)
             fig.write_image(fig_file_name)
         
@@ -834,7 +862,9 @@ def plot_x_prime():
 
 if __name__ == "__main__":
     #plot_dataset()
-    plot_loss(2)
+    #plot_loss(2)
+    #plot_loss(256)
+    #plot_loss(512)
     #plot_p()
     #combine_gifs()
     #plot_results()
@@ -842,4 +872,4 @@ if __name__ == "__main__":
     #plot_errors()
     #plot_matmul_performance()
     #plot_matmul_performance_theoretical()
-    #plot_x_prime()
+    plot_x_prime(2)

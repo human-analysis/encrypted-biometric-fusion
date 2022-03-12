@@ -116,6 +116,7 @@ def ROC(filename, tag, title):
     
     count = num_class * samples_per_class
     count = 90
+    count = len(L)
     fps = []
     tps = []
     for threshold in thresholds:
@@ -173,7 +174,7 @@ def ROC(filename, tag, title):
     print(fps)
     print(tps)
 
-def ROC2(filename, gamma, title):
+def ROC2(filename, gamma, lamb, title):
     enc_results_file = open(filename,'r')
     enc_results = []
     L = []
@@ -192,8 +193,10 @@ def ROC2(filename, gamma, title):
     num_class = len(set(L))
     samples_per_class = L.count(L[0])
     
-    count = num_class * samples_per_class
-    count = 90
+    #count = num_class * samples_per_class
+    #count = 90
+    #count = 10
+    count = len(L)
     fps = []
     tps = []
     for threshold in thresholds:
@@ -225,7 +228,7 @@ def ROC2(filename, gamma, title):
                   title=title)
     fig.update_yaxes(range=[0,1])
     
-    fig_file_name = "figures/ROC_projected_gamma=" + str(gamma) + ".png"
+    fig_file_name = "figures/ROC_projected_gamma=" + str(gamma) + "_lambda=" + str(lamb) + ".png"
     fig.write_image(fig_file_name)
     
     print(fps)
@@ -233,10 +236,13 @@ def ROC2(filename, gamma, title):
 
 
 if __name__ == "__main__":
-    ROC("data/features_A_values.txt", "A", "ROC - MMU Iris Resnet 1024-dimensional Features")
-    ROC("data/features_B_values.txt", "B", "ROC - MMU Iris VGG 512-dimensional Features")
-    ROC("data/features_X_values.txt", "X", "ROC - MMU Iris 1536-dimensional Concatenated Features")
-    ROC2("data/features_labels_best_P_value_transpose_lambda=0.5_margin=0.5_gamma=2.txt", 2, "ROC Projected Dataset γ=2 (Normalized)")
-    ROC2("data/features_labels_best_P_value_transpose_lambda=0.5_margin=0.5_gamma=256.txt", 256, "ROC Projected Dataset γ=256 (Normalized)")
-    ROC2("data/features_labels_best_P_value_transpose_lambda=0.5_margin=0.5_gamma=512.txt", 512, "ROC Projected Dataset γ=512 (Normalized)")
+    ROC("data/features_A_values_test.txt", "A", "ROC - MMU Iris Resnet 1024-dimensional Features")
+    ROC("data/features_B_values_test.txt", "B", "ROC - MMU Iris VGG 512-dimensional Features")
+    ROC("data/features_X_values_test.txt", "X", "ROC - MMU Iris 1536-dimensional Concatenated Features")
+    #ROC2("data/features_labels_best_P_value_transpose_lambda=0.5_margin=0.5_gamma=2.txt", 2, "ROC Projected Dataset γ=2 (Normalized)")
+    #ROC2("data/features_labels_best_P_value_transpose_lambda=0.5_margin=0.5_gamma=256.txt", 256, 0.5, "ROC Projected Dataset γ=256 (Normalized) λ=0.5")
+    ROC2("data/features_labels_X_prime_test_lambda=0.25_margin=0.5_gamma=256.txt", 256, 0.25, "ROC Projected Test Dataset γ=256 (Normalized) λ=0.25")
+    #ROC2("data/features_labels_best_P_value_transpose_lambda=0.75_margin=0.5_gamma=256.txt", 256, 0.75, "ROC Projected Dataset γ=256 (Normalized) λ=0.75")
+    #ROC2("data/features_labels_best_P_value_transpose_lambda=0.99_margin=0.5_gamma=256.txt", 256, 0.99, "ROC Projected Dataset γ=256 (Normalized) λ=0.99")
+    #ROC2("data/features_labels_best_P_value_transpose_lambda=0.5_margin=0.5_gamma=512.txt", 512, "ROC Projected Dataset γ=512 (Normalized)")
 

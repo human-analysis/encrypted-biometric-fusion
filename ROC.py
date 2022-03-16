@@ -173,8 +173,8 @@ def ROC(filename, tag, title):
     print(fps)
     print(tps)
     """
-    print(fps)
-    print(tps)
+    #print(fps)
+    #print(tps)
     
     auc = 0
     
@@ -267,8 +267,8 @@ def ROC2(filename, gamma, lamb, title):
     #print(auc_list)
     print("AUC:",auc)
     
-    print(fps)
-    print(tps)
+    #print(fps)
+    #print(tps)
     #print()
     
 def ROC_P_Matrix(filename, gamma, lamb, title):
@@ -322,7 +322,7 @@ def ROC_P_Matrix(filename, gamma, lamb, title):
     #Create feature fusion dataset
     X = torch.cat((A_final,B_final),dim=1)
     
-    X_prime = torch.mm(p_final,X.T)
+    X_prime = torch.mm(X, p_final.T)
     for i in range(X_prime.shape[0]):
         X_prime[i,:]=torch.div(X_prime[i,:], torch.linalg.norm(X_prime[i,:]))
     
@@ -382,8 +382,8 @@ def ROC_P_Matrix(filename, gamma, lamb, title):
     #print(auc_list)
     print("AUC:",auc)
     
-    print(fps)
-    print(tps)
+    #print(fps)
+    #print(tps)
     #print()
 
 def ROC_AUC(data, L):
@@ -450,7 +450,9 @@ if __name__ == "__main__":
     #ROC2("data/features_labels_best_P_value_transpose_lambda=0.75_margin=0.5_gamma=256.txt", 256, 0.75, "ROC Projected Dataset γ=256 (Normalized) λ=0.75")
     #ROC2("data/features_labels_best_P_value_transpose_lambda=0.99_margin=0.5_gamma=256.txt", 256, 0.99, "ROC Projected Dataset γ=256 (Normalized) λ=0.99")
     #ROC2("data/features_labels_best_P_value_transpose_lambda=0.5_margin=0.5_gamma=512.txt", 512, "ROC Projected Dataset γ=512 (Normalized)")
-    #ROC_P_Matrix("data/features_best_P_value_transpose_lambda=0.1_margin=0.25_gamma=128.txt", 128, 0.1, "ROC Projected Test Dataset γ=128 (Normalized) λ=0.1, margin=0.25")
-    #ROC_P_Matrix("data/features_best_P_value_transpose_lambda=0.1_margin=0.25_gamma=256.txt", 256, 0.1, "ROC Projected Test Dataset γ=256 (Normalized) λ=0.1, margin=0.25")
-    #ROC_P_Matrix("data/features_best_P_value_transpose_lambda=0.25_margin=0.5_gamma=256.txt", 256, 0.1, "ROC Projected Test Dataset γ=256 (Normalized) λ=0.1, margin=0.25")
+    print("lambda = 128")
+    ROC_P_Matrix("data/features_best_P_value_transpose_lambda=0.1_margin=0.25_gamma=128.txt", 128, 0.1, "ROC Projected Test Dataset γ=128 (Normalized) λ=0.1, margin=0.25")
+    print("lambda = 256")
+    ROC_P_Matrix("data/features_best_P_value_transpose_lambda=0.1_margin=0.25_gamma=256.txt", 256, 0.1, "ROC Projected Test Dataset γ=256 (Normalized) λ=0.1, margin=0.25")
+    #ROC_P_Matrix("data/features_best_P_value_transpose_lambda=0.25_margin=0.5_gamma=256.txt", 256, 0.25, "ROC Projected Test Dataset γ=256 (Normalized) λ=0.25, margin=0.5")
 

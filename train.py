@@ -120,9 +120,9 @@ def train(gamma,iters,spec_margin=None,spec_lamb=None):
     #Hyperparameters
     #gamma = 512
     lambs = [0.1,0.25,0.5,0.75,0.99]
-    #lambs = [0.25]
     margins = [0.0,0.25,0.5]
-    #lambs = [0.5]
+    margins = [0.25]
+    lambs = [0.1]
     margin = 0.5
     iterations = iters
     #iterations = 100
@@ -154,7 +154,7 @@ def train(gamma,iters,spec_margin=None,spec_lamb=None):
             print("Same class",len(M))
             print("Trios:",len(V))
             
-            model = Linear_Feature_Fusion(X_train,M,V,gamma,margin,lamb)
+            model = Linear_Feature_Fusion(X_train,M,V,gamma,margin,lamb,regularization=0.0001)
             
             best_loss = model.loss()
             best_P = model.P
@@ -173,9 +173,10 @@ def train(gamma,iters,spec_margin=None,spec_lamb=None):
                 P_history_matrices.append(model.P)
                 loss.backward()
                 optim.step()
-                print(model.loss())
+                
                 if i%10 == 0:
                     print("Iteration",str(i) + "/" + str(iterations))
+                    print(model.loss())
                 rate *= 0.95
             print("final loss:",model.loss())
             

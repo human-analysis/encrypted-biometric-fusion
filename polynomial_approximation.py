@@ -51,13 +51,31 @@ def poly2(x, a1, b1, c1, d1, a2, b2, c2):
 
 
 def poly1(x, a1, b1, c1, d1, a2, b2):
-    #if abs(b2) < 1e-12:
-        #b2 = 0
+    """
+    if abs(a1) < 1e12:
+        a1 = 0
+    if abs(b1) < 1e12:
+        b1 = 0
+    if abs(c1) < 1e12:
+        c1 = 0
+    if abs(d1) < 1e12:
+        d1 = 0
+    if abs(a2) < 1e12:
+        a2 = 0"""
+    if abs(b2) < 1e12:
+        b2 += 10
+    if abs(d1) < 1e12:
+        d1 += 10
     x = a1 + b1 * x + c1 * x**2 + d1 * x**3
     x = a2 + b2 * x
     return x
 
 def poly0(x, a1, b1):
+    """if abs(a1) < 1e12:
+        a1 = 0
+    if abs(b1) < 1e12:
+        b1 = 0
+    """
     x = a1 + b1 * x
     return x
     
@@ -71,6 +89,7 @@ def poly_approximation():
         os.mkdir("figures/polynomial_approximations")
     #x = [1.0 * i for i in range(500,4000)]
     x = [1.0 * i for i in range(1,500)]
+    x = [1.0 * i for i in range(30000000, 50000000,10000)]
     #x = [1 * i for i in range(1000,5000)]
     y = [1/(i**0.5) for i in x]
     x = np.array(x)#.reshape(-1,1)
@@ -83,7 +102,7 @@ def poly_approximation():
         
         #popt, pcov = curve_fit(poly, x, y,bounds=((1e-30,1e-30,1e-30,1e-30,1e-30,1e-30), (np.inf,np.inf,np.inf,np.inf,np.inf,np.inf)))
         
-        print(popt)
+        print(degrees[i],popt)
         
         #new_y = [poly(i, *popt) for i in x]
         #x = [0.1 * i for i in range(5000,40000)]

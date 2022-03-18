@@ -2,10 +2,11 @@
 import torch
 
 class Linear_Feature_Fusion():
-    def __init__(self,X,M,V,gamma,margin,lamb,indim=None):
+    def __init__(self,X,M,V,gamma,margin,lamb,indim=None,regularization=0):
         self.V = V
         self.M = M
         self.X = X
+        self.regularization = regularization
         if not indim:
             alpha_beta = X.shape[1]
         else:
@@ -39,6 +40,7 @@ class Linear_Feature_Fusion():
         
         loss = self.lamb * pull + (1-self.lamb) * push
         #print("pull loss:",pull,"push loss:",push)
-        #loss = loss + 0.001 * torch.linalg.norm(self.P)
+        loss = loss + self.regularization * torch.linalg.norm(self.P)
+        #print(torch.linalg.norm(self.P))
         
         return loss

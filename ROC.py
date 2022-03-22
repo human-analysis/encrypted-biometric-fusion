@@ -93,11 +93,6 @@ def Cosine_Distance(vec1, vec2):
     return 1 - torch.dot(torch.div(vec1, torch.linalg.norm(vec1)), torch.div(vec2, torch.linalg.norm(vec2)))
 
 def ROC(filename, tag, title):
-    
-    
-    
-    
-    #enc_results_file = open("results/toy_data_1_4.txt",'r')
     enc_results_file = open(filename,'r')
     enc_results = []
     L = []
@@ -156,25 +151,6 @@ def ROC(filename, tag, title):
     fig.update_yaxes(range=[0,1])
     fig_file_name = "figures/ROC_" + tag + ".png"
     fig.write_image(fig_file_name)
-    
-    """
-    fig = go.Figure(layout = go.Layout(title = go.layout.Title(text="ROC")))
-    fig.add_trace(
-        go.Scatter(
-            mode='lines',
-            x=fps,
-            y=tps,
-            marker={'color':'black'},
-            showlegend=False
-        )   
-    )
-    fig_file_name = "figures/ROC.png"
-    fig.write_image(fig_file_name)
-    print(fps)
-    print(tps)
-    """
-    #print(fps)
-    #print(tps)
     
     auc = 0
     
@@ -323,6 +299,16 @@ def ROC_P_Matrix(filename, gamma, lamb, title):
     X = torch.cat((A_final,B_final),dim=1)
     
     X_prime = torch.mm(X, p_final.T)
+    
+    print("p:",torch.linalg.norm(p_final**2))
+    print()
+    for i in range(X_prime.shape[0]):
+        print(torch.linalg.norm(X_prime[i,:])**2)
+    print()
+    
+    
+    print(X_prime[0].shape)
+    print(X_prime[0])
     for i in range(X_prime.shape[0]):
         X_prime[i,:]=torch.div(X_prime[i,:], torch.linalg.norm(X_prime[i,:]))
     
@@ -439,8 +425,87 @@ def ROC_AUC(data, L):
         auc += interval*auc_list[i-1][1]
         auc += 0.5 * interval * (auc_list[i][1]-auc_list[i-1][1])
     return auc
+    
+    
+def ROC_Labels(filename, L):
+    enc_results_file = open(filename,'r')
+    enc_results = []
+    for line in enc_results_file:
+        result = line.strip()
+        #print(result)
+        result = torch.tensor([float(i) for i in result.split()])
+        #result = torch.tensor(ast.literal_eval(result)).unsqueeze(dim=0)
+        #print(result)
+        enc_results.append(result)
+    enc_results_final = torch.Tensor(len(enc_results),enc_results[0].shape[0])
+    torch.stack(enc_results, out=enc_results_final,dim=0)
+    print(enc_results_final[0].shape)
+    print(enc_results[0])
+    thresholds = [0.01 * i for i in range(201)]
+    
+    num_class = len(set(L))
+    
+    
+    
+    #necessary?
+    for i in range(enc_results_final.shape[0]):
+        enc_results_final[i,:]=torch.div(enc_results_final[i,:], torch.linalg.norm(enc_results_final[i,:]))
+    
+    count = len(L)
+    fps = []
+    tps = []
+    for threshold in thresholds:
+        fp = 0
+        tp = 0
+        pc = 0
+        nc = 0
+        for i in range(count):
+            for j in range(i,count):
+                guess = False
+                if Cosine_Distance(enc_results_final[i],enc_results_final[j]) <= threshold:
+                    guess = True
+                if L[i]==L[j]:
+                    pc += 1
+                    if guess:
+                        tp += 1
+                else:
+                    nc += 1
+                    if guess:
+                        fp += 1
+        fp = fp/nc
+        tp = tp/pc
+        fps.append(fp)
+        tps.append(tp)
+    
+    
+    data_dict = {"False Positive Rate":fps,"True Positive Rate":tps}
+    df = pandas.DataFrame(data_dict)
+    fig = px.line(df,x="False Positive Rate",y="True Positive Rate",
+                  title="test")
+    fig.update_yaxes(range=[0,1])
+    
+    fig_file_name = "figures/test_ROC.png"
+    fig.write_image(fig_file_name)
+    
+    auc = 0
+    
+    auc_dict = {}
+    for i in range(len(tps)):
+        auc_dict[fps[i]] = tps[i]
+    auc_list = list(auc_dict.items())
+    auc_list.sort(key=itemgetter(0))
+    
+    for i in range(1,len(auc_list)):
+        interval = abs(auc_list[i][0]-auc_list[i-1][0])
+        auc += interval*auc_list[i-1][1]
+        auc += 0.5 * interval * (auc_list[i][1]-auc_list[i-1][1])
+        
+    #print()
+    #print(auc_list)
+    print("AUC:",auc)
 
 if __name__ == "__main__":
+    """
     ROC("data/features_A_values_test.txt", "A", "ROC - MMU Iris Resnet 1024-dimensional Features")
     ROC("data/features_B_values_test.txt", "B", "ROC - MMU Iris VGG 512-dimensional Features")
     ROC("data/features_X_values_test.txt", "X", "ROC - MMU Iris 1536-dimensional Concatenated Features")
@@ -455,4 +520,7 @@ if __name__ == "__main__":
     print("lambda = 256")
     ROC_P_Matrix("data/features_best_P_value_transpose_lambda=0.1_margin=0.25_gamma=256.txt", 256, 0.1, "ROC Projected Test Dataset γ=256 (Normalized) λ=0.1, margin=0.25")
     #ROC_P_Matrix("data/features_best_P_value_transpose_lambda=0.25_margin=0.5_gamma=256.txt", 256, 0.25, "ROC Projected Test Dataset γ=256 (Normalized) λ=0.25, margin=0.5")
-
+    """
+    ROC_P_Matrix("data/features_best_P_value_transpose_lambda=0.1_margin=0.25_gamma=128_reg=100000.txt", 128, 0.1, "ROC Projected Test Dataset γ=128 (Normalized) λ=0.1, margin=0.25")
+    
+    #ROC_Labels("data/features_best_P_value_diagonal_lambda=0.1_margin=0.25_gamma=128_reg=0.1.txt",[13, 13, 40, 40,  3,  3, 24, 24, 29, 29, 34, 34, 36, 36, 15, 15, 33, 33, 4, 4])

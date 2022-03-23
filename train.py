@@ -42,6 +42,27 @@ def train(gamma,iters,spec_margin=None,spec_lamb=None):
     print(L.shape)
 
     
+    """
+    print()
+    print()
+    print()
+    
+    t1 = torch.tensor([[1.,2.],[2.,4.]])
+    t2 = torch.tensor([[56.,50.],[30.,32.]])
+    t3 = torch.mm(t1,t2)
+    
+    print(torch.div(t3,torch.linalg.norm(t3)))
+    
+    t1 = torch.tensor([[1.,2.],[2.,4.]])
+    t1 = torch.div(t1,torch.linalg.norm(t1))
+    t2 = torch.tensor([[56.,50.],[30.,32.]])
+    t3 = torch.mm(t1,t2)
+    
+    print(torch.div(t3,torch.linalg.norm(t3)))
+    #print(torch.linalg.norm(t3))
+    
+    0/0
+    """
     
     """
     
@@ -166,11 +187,11 @@ def train(gamma,iters,spec_margin=None,spec_lamb=None):
     lambs = [0.1]
     #margin = 0.5
     iterations = iters
-    regularizers = [1,0.1,0.001,0.0001,0.00001,0.000001,0.0000001]
+    #regularizers = [1,0.1,0.001,0.0001,0.00001,0.000001,0.0000001]
     #regularizers = [0.1]
     #regularizers = [1,10,100]
     #regularizers = [1000,10000,100000]
-    #regularizers = [1e8]
+    regularizers = [0]
     #regularizers = [0.0001,0.1,10]
     #iterations = 100
     #break_point = 0.005
@@ -227,7 +248,9 @@ def train(gamma,iters,spec_margin=None,spec_lamb=None):
                         print(model.loss())
                     rate *= 0.95
                 print("final loss:",model.loss())
-                
+                print("old best p norm:",torch.linalg.norm(best_P))
+                best_P = torch.div(best_P,torch.linalg.norm(best_P))
+                print("new best p norm:",torch.linalg.norm(best_P))
                 X_prime = torch.mm(X_val,best_P)
                 print("new NOT normalized validation X_prime:", X_prime)
                 for i in range(X_prime.shape[0]):

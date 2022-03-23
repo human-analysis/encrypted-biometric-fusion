@@ -871,5 +871,5 @@ if __name__ == "__main__":
     #plot_poly_results()
     #plot_errors()
     #plot_matmul_performance()
-    #plot_matmul_performance_theoretical()
-    plot_x_prime(2)
+    plot_matmul_performance_theoretical()
+    #plot_x_prime(2)

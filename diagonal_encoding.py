@@ -378,12 +378,12 @@ def diagonal_encoding_arbitrary(in_name, out_name):
     
     i = 0
     j = 0
-    for k in range(m):
+    for k in range(n):
         temp = []
-        i = k
-        j = 0
-        for l in range(n):
-            temp.append(float(p_final[j][i]))
+        i = 0
+        j = k
+        for l in range(m):
+            temp.append(float(p_final[i][j]))
             i+=1
             j+=1
             if i >= n:
@@ -393,13 +393,13 @@ def diagonal_encoding_arbitrary(in_name, out_name):
         p_diag.append(torch.tensor(temp))
         #i+=1
     p_diag = torch.stack(p_diag)
-    p_diag = p_diag.T
+    #p_diag = p_diag.T
     print("final=",p_diag.shape)
     
     outfile_p = open(out_name,'w')
     for row in p_diag.tolist():
         for item in row:
-            outfile_p.write(str(item))
+            outfile_p.write(str(f'{item:.9f}'))
             outfile_p.write(" ")
         outfile_p.write("\n")
     #P_final = str(p_diag.tolist())
@@ -420,5 +420,5 @@ if __name__ == "__main__":
     """
     #diagonal_encoding_transposed_arbitrary("data/features_best_P_value_transpose_lambda=0.1_margin=0.25_gamma=128.txt","data/features_best_P_value_transpose_diagonal_lambda=0.1_margin=0.25_gamma=128.txt")
     #diagonal_encoding_arbitrary("data/features_best_P_value_transpose_lambda=0.1_margin=0.25_gamma=128.txt","data/features_best_P_value_diagonal_lambda=0.1_margin=0.25_gamma=128.txt")
-    diagonal_encoding_arbitrary("data/features_best_P_value_transpose_lambda=0.1_margin=0.25_gamma=128_reg=0.1.txt","data/features_best_P_value_diagonal_lambda=0.1_margin=0.25_gamma=128_reg=0.1.txt")
+    diagonal_encoding_arbitrary("data/features_best_P_value_transpose_lambda=0.1_margin=0.25_gamma=128_reg=0.txt","data/features_best_P_value_diagonal_lambda=0.1_margin=0.25_gamma=128_reg=0.txt")
     

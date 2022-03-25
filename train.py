@@ -141,7 +141,7 @@ def train(gamma,iters,spec_margin=None,spec_lamb=None):
     
     
     outfile_a_test = open("data/features_A_values_test.txt",'w')
-    for i in range(70,90):
+    for i in range(split2,len(A)):
         outfile_a_test.write(str(A[i].tolist()))
         outfile_a_test.write(";")
         outfile_a_test.write(str(L.tolist()[i]))
@@ -149,8 +149,24 @@ def train(gamma,iters,spec_margin=None,spec_lamb=None):
     outfile_a_test.close()
 
 
+    outfile_b_test = open("data/features_B_values_val.txt",'w')
+    for i in range(split1,split2):
+        outfile_b_test.write(str(B[i].tolist()))
+        outfile_b_test.write(";")
+        outfile_b_test.write(str(L.tolist()[i]))
+        outfile_b_test.write("\n")
+    outfile_b_test.close()
+    
+    outfile_a_test = open("data/features_A_values_val.txt",'w')
+    for i in range(split1,split2):
+        outfile_a_test.write(str(A[i].tolist()))
+        outfile_a_test.write(";")
+        outfile_a_test.write(str(L.tolist()[i]))
+        outfile_a_test.write("\n")
+    outfile_a_test.close()
+
     outfile_b_test = open("data/features_B_values_test.txt",'w')
-    for i in range(70,90):
+    for i in range(split2, len(B)):
         outfile_b_test.write(str(B[i].tolist()))
         outfile_b_test.write(";")
         outfile_b_test.write(str(L.tolist()[i]))
@@ -158,7 +174,15 @@ def train(gamma,iters,spec_margin=None,spec_lamb=None):
     outfile_b_test.close()
     
     outfile_x_test = open("data/features_X_values_test.txt",'w')
-    for i in range(70,90):
+    for i in range(split2, len(X)):
+        outfile_x_test.write(str(X[i].tolist()))
+        outfile_x_test.write(";")
+        outfile_x_test.write(str(L.tolist()[i]))
+        outfile_x_test.write("\n")
+    outfile_x_test.close()
+    
+    outfile_x_test = open("data/features_X_values_val.txt",'w')
+    for i in range(split1,split2):
         outfile_x_test.write(str(X[i].tolist()))
         outfile_x_test.write(";")
         outfile_x_test.write(str(L.tolist()[i]))
@@ -250,6 +274,9 @@ def train(gamma,iters,spec_margin=None,spec_lamb=None):
                 print("final loss:",model.loss())
                 print("old best p norm:",torch.linalg.norm(best_P))
                 best_P = torch.div(best_P,torch.linalg.norm(best_P))
+                best_P = torch.mul(best_P, 3)
+                #for i in range(best_P.shape[1]):
+                    #best_P[:,i]=torch.div(best_P[:,i], torch.linalg.norm(best_P[:,1]))
                 print("new best p norm:",torch.linalg.norm(best_P))
                 X_prime = torch.mm(X_val,best_P)
                 print("new NOT normalized validation X_prime:", X_prime)

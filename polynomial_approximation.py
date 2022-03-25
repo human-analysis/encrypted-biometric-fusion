@@ -102,10 +102,14 @@ def poly_approximation():
         os.mkdir("figures/polynomial_approximations")
     #x = [1.0 * i for i in range(500,4000)]
     x = [1.0 * i for i in range(1,500)]
+    x = [0.1 * i for i in range(10,1500)]
+    x = [0.1 * i for i in range(810,13500)]
     #x = [1.0 * i for i in range(int(12e3),int(19e3),100)]
     #x = [1.0 * i for i in range(30000000, 50000000,10000)]
     #x = [1.0 * i for i in range(int(6.4e9), int(1.69e10),10000000)]
-    x = [1.0 * i for i in range(int(1.8e8), int(3.7e8),int(1e6))]
+    
+    #x = [1.0 * i for i in range(600, 1600,1)]
+    #x = [1.0 * i for i in range(int(6e5), int(1.8e6),int(1e4))]
     print(len(x))
     #x = [1 * i for i in range(1000,5000)]
     y = [1/(i**0.5) for i in x]
@@ -115,11 +119,11 @@ def poly_approximation():
     funs = [poly0, polyhalf, polyhalf2, poly1, poly2, poly3, poly4, poly6]
     degrees = [1,2,3,4,5,6,8,11]
     for i, myfun in enumerate(funs):
-        popt, pcov = curve_fit(myfun, x, y)
+        popt, pcov = curve_fit(myfun, x, y, maxfev=100000)
         
         #popt, pcov = curve_fit(poly, x, y,bounds=((1e-30,1e-30,1e-30,1e-30,1e-30,1e-30), (np.inf,np.inf,np.inf,np.inf,np.inf,np.inf)))
         
-        print(degrees[i],popt)
+        print(degrees[i],popt, sum(abs(myfun(x, *popt)-y)/y)/len(abs(myfun(x, *popt)-y)/y))
         
         #new_y = [poly(i, *popt) for i in x]
         #x = [0.1 * i for i in range(5000,40000)]

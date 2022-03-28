@@ -10,28 +10,40 @@ import math
 
 import torch
 from torch.distributions.multivariate_normal import MultivariateNormal
-from model import Linear_Feature_Fusion
+from model import Linear_Feature_Fusion_Approximate, Linear_Feature_Fusion
 from data_generation import data_gen
 
-from ROC import ROC_AUC
+from ROC import New_ROC_AUC
 
 def train(gamma,iters,spec_margin=None,spec_lamb=None):
     random.seed(0)
     torch.manual_seed(0)
     #A,B,L = data_gen(10)
     
+    """
     A = np.load("data/features/MMU_gallery_resnet.npy")
     A = np.reshape(A,(A.shape[0],A.shape[2]))
     A = torch.tensor(A)
     #A = torch.ones((A.shape))
     print(A)
     print(A.shape)
+    """
+    
+    a = []
+    A_infile = open("feature-extraction/extractions/VGG16_lfw-deepfunneled.txt",'r')
+    for line in A_infile:
+        line = line.strip().split()
+        a.append(torch.tensor([float(char) for char in line]))
+    A = torch.stack(a)
+    #print(A)
+    print("A:",A.shape)
+    
     
     B = np.load("data/features/MMU_gallery_vgg.npy")
     B = np.reshape(B,(B.shape[0],B.shape[2]))
     B = torch.tensor(B)
     #B = torch.ones((B.shape))
-    print(B.shape)
+    print("B:",B.shape)
     
     
     L = np.load("data/features/MMU_label_gallery.npy")
@@ -92,8 +104,8 @@ def train(gamma,iters,spec_margin=None,spec_lamb=None):
     
     X = torch.cat((A,B),dim=1)
     
-    num_samples = L.shape[0]
-    num_each_class = 8
+    #num_samples = L.shape[0]
+    #num_each_class = 8
     num_classes = 45
     num_each_class = 2
     
@@ -205,22 +217,20 @@ def train(gamma,iters,spec_margin=None,spec_lamb=None):
     #Hyperparameters
     #gamma = 512
     lambs = [0.1,0.25,0.5,0.75,0.99]
-    margins = [0.0,0.25,0.5]
+    #lambs = [0.75,0.99]
+    #margins = [0.0,0.25,0.5]
     margins = [0.25,0.5]
-    margins = [0.25]
-    lambs = [0.1]
-    #margin = 0.5
+    #margins = [0.5]
+    #margins = [0.25]
+    #lambs = [0.1]
     iterations = iters
-    #regularizers = [1,0.1,0.001,0.0001,0.00001,0.000001,0.0000001]
-    #regularizers = [0.1]
-    #regularizers = [1,10,100]
-    #regularizers = [1000,10000,100000]
+
     regularizers = [0]
-    #regularizers = [0.0001,0.1,10]
-    #iterations = 100
-    #break_point = 0.005
+
     rates = {2:1000, 128: 10000, 256:10000, 512:10000}
-    
+    #rates[128] = 15000
+    anneal_rate = 0.995
+    #anneal_rate = 0.95
     if spec_margin:
         margins = [spec_margin]
     if spec_lamb:
@@ -247,13 +257,14 @@ def train(gamma,iters,spec_margin=None,spec_lamb=None):
                 print("Same class",len(M))
                 print("Trios:",len(V))
                 
-                model = Linear_Feature_Fusion(X_train,M,V,gamma,margin,lamb,regularization=reg)
+                model = Linear_Feature_Fusion_Approximate(X_train,M,V,gamma,margin,lamb,regularization=reg)
+                #model = Linear_Feature_Fusion(X_train,M,V,gamma,margin,lamb,regularization=reg)
                 
                 best_loss = model.loss()
                 best_P = model.P
                 print("Initial loss:",best_loss)
-                P_history = []
-                P_history_matrices = []
+                #P_history = []
+                #P_history_matrices = []
                 losses = []
                 optim = torch.optim.SGD(model.parameters(), lr=rate)#, momentum=0.9)
                 for i in range(iterations):
@@ -262,27 +273,27 @@ def train(gamma,iters,spec_margin=None,spec_lamb=None):
                         best_loss = loss
                         best_P = model.P
                     losses.append(loss)
-                    P_history.append(str(model.P.tolist()))
-                    P_history_matrices.append(model.P)
+                    #P_history.append(str(model.P.tolist()))
+                    #P_history_matrices.append(model.P)
                     loss.backward()
                     optim.step()
-                    
+                    #model.P = torch.mul(torch.div(model.P,torch.linalg.norm(model.P)),3.0)
                     if i%10 == 0:
                         print("Iteration",str(i) + "/" + str(iterations))
                         print(model.loss())
-                    rate *= 0.95
-                print("final loss:",model.loss())
-                print("old best p norm:",torch.linalg.norm(best_P))
+                    rate *= anneal_rate
+                #print("final loss:",model.loss())
+                #print("old best p norm:",torch.linalg.norm(best_P))
                 best_P = torch.div(best_P,torch.linalg.norm(best_P))
-                best_P = torch.mul(best_P, 3)
+                #best_P = torch.mul(best_P, 3)
                 #for i in range(best_P.shape[1]):
                     #best_P[:,i]=torch.div(best_P[:,i], torch.linalg.norm(best_P[:,1]))
-                print("new best p norm:",torch.linalg.norm(best_P))
+                #print("new best p norm:",torch.linalg.norm(best_P))
                 X_prime = torch.mm(X_val,best_P)
-                print("new NOT normalized validation X_prime:", X_prime)
+                #print("new NOT normalized validation X_prime:", X_prime)
                 for i in range(X_prime.shape[0]):
                     X_prime[i,:]=torch.div(X_prime[i,:], torch.linalg.norm(X_prime[i,:]))
-                auc = ROC_AUC(X_prime, L_val)
+                auc = New_ROC_AUC(X_prime, L_val)
                 aucs.append((margin,lamb,auc))
                 print("AUC of lambda="+str(lamb)+", margin="+str(margin)+ "_reg=" + str(reg) + ":", auc)
                 #P values file gets too large for github
@@ -293,30 +304,30 @@ def train(gamma,iters,spec_margin=None,spec_lamb=None):
                     #outfile_p.write("\n")
                 #outfile_p.close()
                 
-                p_best_file_name = "data/features_best_P_value_transpose_lambda=" + str(lamb) + "_margin=" + str(margin) + "_gamma=" + str(gamma)  + "_reg=" + str(reg) + ".txt"
+                p_best_file_name = "data/approximate_best_P_value_transpose_lambda=" + str(lamb) + "_margin=" + str(margin) + "_gamma=" + str(gamma)  + "_reg=" + str(reg) + ".txt"
                 outfile_p_t = open(p_best_file_name,'w')
                 P_final_t = best_P.T
                 P_final_t = str(P_final_t.tolist())
                 outfile_p_t.write(P_final_t)
                 outfile_p_t.close()
                 
-                loss_file_name = "data/features_loss_values_lambda=" + str(lamb) + "_margin=" + str(margin) + "_gamma=" + str(gamma)  + "_reg=" + str(reg) + ".txt"
+                loss_file_name = "data/approximate_loss_values_lambda=" + str(lamb) + "_margin=" + str(margin) + "_gamma=" + str(gamma)  + "_reg=" + str(reg) + ".txt"
                 outfile_loss = open(loss_file_name,'w')
                 for loss_value in losses:
                     outfile_loss.write(str(loss_value.tolist()))
                     outfile_loss.write("\n")
                 outfile_loss.close()
-                print()
+                #print()
                 
                 #X_prime = torch.mm(X_val,P_history_matrices[-1])
                 #X_prime = torch.mm(X_val,best_P)
                 #for i in range(X_prime.shape[0]):
                     #X_prime[i,:]=torch.div(X_prime[i,:], torch.linalg.norm(X_prime[i,:]))
-                print("new normalized validation X_prime:", X_prime)
+                #print("new normalized validation X_prime:", X_prime)
                 
-                print("norm of best P:",torch.linalg.norm(best_P))
+                #print("norm of best P:",torch.linalg.norm(best_P))
                 
-                X_prime_filename = "data/features_labels_X_prime_val_lambda=" + str(lamb) + "_margin=" + str(margin) + "_gamma=" + str(gamma) + "_reg=" + str(reg) + ".txt"
+                X_prime_filename = "data/approximate_labels_X_prime_val_lambda=" + str(lamb) + "_margin=" + str(margin) + "_gamma=" + str(gamma) + "_reg=" + str(reg) + ".txt"
                 outfile_x = open(X_prime_filename,'w')
                 x_list = X_prime.tolist()
                 for i in range(len(x_list)):
@@ -331,9 +342,9 @@ def train(gamma,iters,spec_margin=None,spec_lamb=None):
                 X_prime = torch.mm(X_test,best_P)
                 for i in range(X_prime.shape[0]):
                     X_prime[i,:]=torch.div(X_prime[i,:], torch.linalg.norm(X_prime[i,:]))
-                print("new normalized test x_prime:", X_prime)
+                #print("new normalized test x_prime:", X_prime)
                 
-                X_prime_filename = "data/features_labels_X_prime_test_lambda=" + str(lamb) + "_margin=" + str(margin) + "_gamma=" + str(gamma) + "_reg=" + str(reg) + ".txt"
+                X_prime_filename = "data/approximate_labels_X_prime_test_lambda=" + str(lamb) + "_margin=" + str(margin) + "_gamma=" + str(gamma) + "_reg=" + str(reg) + ".txt"
                 outfile_x = open(X_prime_filename,'w')
                 x_list = X_prime.tolist()
                 for i in range(len(x_list)):
@@ -341,10 +352,11 @@ def train(gamma,iters,spec_margin=None,spec_lamb=None):
                     outfile_x.write(x_list[i])
                     outfile_x.write("\n")
                 outfile_x.close()
+                print()
     print("(margin, lambda, Validation AUC)")
     print(aucs)
 if __name__ == "__main__":
     #train(256,200)#for gamma=128, use margin=0.25,lamb=0.1)
-    train(128,200)#for gamma=128, use margin=0.25,lamb=0.1)
+    train(512,200)#for gamma=128, use margin=0.25,lamb=0.1)
 
 

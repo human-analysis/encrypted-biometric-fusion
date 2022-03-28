@@ -81,3 +81,103 @@ class Linear_Feature_Fusion():
         
         return loss
     """
+    
+class Linear_Feature_Fusion_Approximate():
+    def __init__(self,X,M,V,gamma,margin,lamb,indim=None,regularization=0):
+        random.seed(0)
+        self.V = V
+        self.M = M
+        self.X = X
+        self.regularization = regularization
+        if not indim:
+            alpha_beta = X.shape[1]
+        else:
+            alpha_beta = indim
+        self.margin = margin
+        self.P = torch.rand(alpha_beta,gamma)
+        #self.P = torch.ones((alpha_beta,gamma))
+        self.lamb = lamb
+        self.coeffs = [[1.28740283e+06, -3.30949673e+03, 3.49096065e+00, -1.25847377e-03], [1.70373014e-02, 7.58955955e-08]]
+        self.coeffs = [[-1.25847377e-03, 3.49096065e+00, -3.30949673e+03, 1.28740283e+06],[7.58955955e-08, 1.70373014e-02]]
+        
+        self.coeffs =[[-7.81259766e-09, 4.06252214e-03]]
+        
+        #[ 5.21696229e+07  3.51836911e+06 -1.66419686e+03  2.86054276e-01
+        #[6.89278658e-02 -1.70092408e-11]]
+        
+        self.coeffs = [[2.86054276e-01,-1.66419686e+03,3.51836911e+06,5.21696229e+07],[-1.70092408e-11,6.89278658e-02]]
+        #self.powers = [3,1]
+        
+        self.P.requires_grad = True
+    def parameters(self):
+        return [self.P]
+    def approximate_inv_norm(self,x_in):
+        #self.coeffs should be a list of lists whose coefficients order similar to:
+        #[[x^3, x^2, x, 1],[x, 1]]
+        x = torch.linalg.norm(x_in)**2
+        result = 0
+        for coeff_list in self.coeffs:
+            result = coeff_list[0]
+            for i in range(1,len(coeff_list)):
+                result = result * x
+                result += coeff_list[i]
+            x = result
+            result = 0
+        return x
+    def distance(self,x1,x2):
+        
+        #print("P norm:",torch.linalg.norm(P_temp))
+        
+        #to_mult = torch.linalg.norm(x1)/250.0
+        #P_temp = torch.mul(torch.div(self.P,torch.linalg.norm(self.P)),to_mult)
+        P_temp = torch.div(self.P,torch.linalg.norm(self.P))
+        
+        x1_tilde = torch.matmul(P_temp.T, x1.T)
+        x2_tilde = torch.matmul(P_temp.T, x2.T)
+        #print("old norm:",torch.linalg.norm(x1_tilde))
+        
+        #print("true inverse norm:", torch.linalg.norm(x1_tilde), "approximate:",self.approximate_norm(x1_tilde))
+        
+        x1_tilde = torch.mul(x1_tilde,self.approximate_inv_norm(x1_tilde))
+        
+        x2_tilde = torch.mul(x2_tilde,self.approximate_inv_norm(x2_tilde))
+        
+        #print("new norm:",torch.linalg.norm(x1_tilde))
+        #print()
+        return 1-torch.dot(x1_tilde,x2_tilde)
+        #return 1-torch.dot(x1_tilde, x2_tilde)/(self.approximate_norm(x1)*self.approximate_norm(x2))
+    
+    def loss(self):
+        pull = 0
+        for i, j in self.M:
+            pull += self.distance(self.X[i],self.X[j])
+        pull = pull / len(self.M)
+        
+        push = 0
+        for i, j, k in self.V:
+            push += max(0,self.margin + self.distance(self.X[i],self.X[j]) - self.distance(self.X[i],self.X[k]))
+            #print(self.distance(self.X[i],self.X[j]))
+            #print(self.distance(self.X[i],self.X[k]))
+            #print()
+        push = push / len(self.V)
+        
+        loss = self.lamb * pull + (1-self.lamb) * push
+        #print("pull loss:",pull,"push loss:",push)
+        loss = loss + self.regularization * torch.linalg.norm(self.P)
+        #print(torch.linalg.norm(self.P))
+        
+        return loss
+def approximate_norm(x_in):
+    x = torch.linalg.norm(x_in)**2
+    result = 0
+    for coeff_list in coeffs:
+        result = coeff_list[0]
+        for i in range(1,len(coeff_list)):
+            print(coeff_list[i])
+            result = result * x
+            result += coeff_list[i]
+            print(result)
+            print()
+        x = result
+        result = 0
+    return x

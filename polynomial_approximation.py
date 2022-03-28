@@ -103,7 +103,8 @@ def poly_approximation():
     #x = [1.0 * i for i in range(500,4000)]
     x = [1.0 * i for i in range(1,500)]
     x = [0.1 * i for i in range(10,1500)]
-    x = [0.1 * i for i in range(810,13500)]
+    x = [0.1 * i for i in range(810,13500)] #81 to 1350
+    x = [1.0 * i for i in range(20**2,50**2)] #20^2 to 50^2
     #x = [1.0 * i for i in range(int(12e3),int(19e3),100)]
     #x = [1.0 * i for i in range(30000000, 50000000,10000)]
     #x = [1.0 * i for i in range(int(6.4e9), int(1.69e10),10000000)]
@@ -119,7 +120,7 @@ def poly_approximation():
     funs = [poly0, polyhalf, polyhalf2, poly1, poly2, poly3, poly4, poly6]
     degrees = [1,2,3,4,5,6,8,11]
     for i, myfun in enumerate(funs):
-        popt, pcov = curve_fit(myfun, x, y, maxfev=100000)
+        popt, pcov = curve_fit(myfun, x, y, maxfev=10000)
         
         #popt, pcov = curve_fit(poly, x, y,bounds=((1e-30,1e-30,1e-30,1e-30,1e-30,1e-30), (np.inf,np.inf,np.inf,np.inf,np.inf,np.inf)))
         

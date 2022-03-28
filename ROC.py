@@ -9,7 +9,12 @@ import math
 
 from sklearn import metrics
 
+from sklearn.metrics import roc_curve, roc_auc_score
 
+
+
+def Cosine_Similarity(vec1, vec2):
+    return torch.dot(torch.div(vec1, torch.linalg.norm(vec1)), torch.div(vec2, torch.linalg.norm(vec2)))
 
 def Cosine_Distance(vec1, vec2):
     return 1 - torch.dot(torch.div(vec1, torch.linalg.norm(vec1)), torch.div(vec2, torch.linalg.norm(vec2)))
@@ -570,11 +575,184 @@ def ROC_Labels_Test(filename, L=None):
     print("AUC:",auc)
 
 
+def New_ROC(filename):
+    enc_results_file = open(filename,'r')
+    enc_results = []
+    L = []
+    for line in enc_results_file:
+        result, l = line.strip().split(";")
+        result = torch.tensor(ast.literal_eval(result)).unsqueeze(dim=0)
+        l = int(l)
+        enc_results.append(result)
+        L.append(l)
+    enc_results_final = torch.Tensor(len(enc_results),enc_results[0].shape[0])
+    torch.cat(enc_results, out=enc_results_final,dim=0)
+    
+    #for i in range(18):
+        #print(torch.linalg.norm(enc_results_final[i]))
+    
+    y_score = []
+    y_true = []
+    count = len(L)
+    for i in range(count):
+        for j in range(i,count):
+            score = Cosine_Similarity(enc_results_final[i],enc_results_final[j])
+            if L[i]==L[j]:
+                label = 1
+            else:
+                label = 0
+            y_score.append(score)
+            y_true.append(label)
+
+    
+    
+    #fpr, tpr, thresholds = roc_curve(y_true,y_score)
+    #print(fpr)
+    #print(tpr)
+    """
+    auc = 0
+    
+    auc_dict = {}
+    for i in range(len(tpr)):
+        auc_dict[fpr[i]] = tpr[i]
+    auc_list = list(auc_dict.items())
+    auc_list.sort(key=itemgetter(0))
+    
+    for i in range(1,len(auc_list)):
+        interval = abs(auc_list[i][0]-auc_list[i-1][0])
+        auc += interval*auc_list[i-1][1]
+        auc += 0.5 * interval * (auc_list[i][1]-auc_list[i-1][1])
+    """    
+    auc = roc_auc_score(y_true,y_score)
+    #print()
+    #print(auc_list)
+    print("AUC:",auc)
+    
+
+def New_ROC_AUC(data, L):
+    y_score = []
+    y_true = []
+    count = len(L)
+    for i in range(count):
+        for j in range(i,count):
+            score = Cosine_Similarity(data[i],data[j])
+            if L[i]==L[j]:
+                label = 1
+            else:
+                label = 0
+            y_score.append(score.detach().numpy())
+            y_true.append(label)
+    auc = roc_auc_score(y_true,y_score)
+    return auc    
+
+
+
+def New_ROC_P_Matrix(filename, gamma, lamb, title):
+    p_file = open(filename,'r')
+    p = []
+    #L = []
+    for line in p_file:
+        #result, l = line.strip().split(";")
+        #print(line)
+        result = torch.tensor(ast.literal_eval(line.strip()))
+        #l = int(l)
+        p.append(result)
+        #L.append(l)
+        p_final = torch.Tensor(len(p),p[0].shape[0])
+    torch.cat(p, out=p_final,dim=0)
+    
+    #num_class = len(set(L))
+    #samples_per_class = L.count(L[0])
+    
+    test = False
+    
+    if test:
+        a_file = open("data/features_A_values_test.txt",'r')
+        b_file = open("data/features_B_values_test.txt",'r')
+    else:
+        a_file = open("data/features_A_values_val.txt",'r')
+        b_file = open("data/features_B_values_val.txt",'r')
+    
+    A = []
+    L = []
+    for line in a_file:
+        line, l = line.strip().split(";")
+        L.append(float(l))
+        a = torch.tensor(ast.literal_eval(line.strip())).unsqueeze(dim=0)
+        A.append(a)
+    A_final = torch.Tensor(len(A),A[0].shape[0])
+    torch.cat(A, out=A_final,dim=0)
+    
+    
+    B = []
+    for line in b_file:
+        line, l = line.strip().split(";")
+        b = torch.tensor(ast.literal_eval(line.strip())).unsqueeze(dim=0)
+        B.append(b)
+    B_final = torch.Tensor(len(B),B[0].shape[0])
+    torch.cat(B, out=B_final,dim=0)
+        
+    #print("here")
+    #l_file = open("data/features_labels_X_prime_test_lambda=0.99_margin=0.5_gamma=128.txt",'r')
+    #L = []
+    #for line in l_file:
+        #L.append(float(line.strip().split(";")[1]))
+    
+    
+    #Create feature fusion dataset
+    X = torch.cat((A_final,B_final),dim=1)
+    #p_final = torch.mul(p_final,10)
+    p_final = torch.div(p_final,torch.linalg.norm(p_final))
+    X_prime = torch.mm(X, p_final.T)
+    #X_prime = torch.mm(p_final, X.T)
+    
+    print()
+    print("l2(p):",torch.linalg.norm(p_final))
+    
+    print()
+    for i in range(X_prime.shape[0]):
+        print(torch.linalg.norm(X_prime[i,:]))
+    print()
+    
+    print(L)
+    print(X_prime.shape)
+    
+    for i in range(X_prime.shape[0]):
+        X_prime[i,:]=torch.div(X_prime[i,:], torch.linalg.norm(X_prime[i,:]))
+    #X_prime = X_prime.T
+
+    count = len(L)
+    
+    
+    
+    y_score = []
+    y_true = []
+    count = len(L)
+    for i in range(count):
+        for j in range(i,count):
+            score = Cosine_Similarity(X_prime[i],X_prime[j])
+            if L[i]==L[j]:
+                label = 1
+            else:
+                label = 0
+            y_score.append(score.detach().numpy())
+            y_true.append(label)
+    auc = roc_auc_score(y_true,y_score)
+    print("AUC:",auc)
+
+
 if __name__ == "__main__":
     
-    ROC("data/features_A_values_test.txt", "A", "ROC - MMU Iris Resnet 1024-dimensional Features")
-    ROC("data/features_B_values_test.txt", "B", "ROC - MMU Iris VGG 512-dimensional Features")
-    ROC("data/features_X_values_test.txt", "X", "ROC - MMU Iris 1536-dimensional Concatenated Features")
+    #ROC("data/features_A_values_test.txt", "A", "ROC - MMU Iris Resnet 1024-dimensional Features")
+    print()
+    New_ROC("data/features_A_values_val.txt")
+    New_ROC("data/features_B_values_val.txt")
+    New_ROC("data/features_X_values_val.txt")
+    New_ROC("data/approx_labels_X_prime_val_lambda=0.99_margin=0.25_gamma=256_reg=0.txt")
+    New_ROC_P_Matrix("data/approx_best_P_value_transpose_lambda=0.99_margin=0.25_gamma=256_reg=0.txt", 256, 0.99, "title")
+    print()
+    #ROC("data/features_B_values_test.txt", "B", "ROC - MMU Iris VGG 512-dimensional Features")
+    #ROC("data/features_X_values_test.txt", "X", "ROC - MMU Iris 1536-dimensional Concatenated Features")
     """
     #ROC2("data/features_labels_best_P_value_transpose_lambda=0.5_margin=0.5_gamma=2.txt", 2, "ROC Projected Dataset γ=2 (Normalized)")
     #ROC2("data/features_labels_best_P_value_transpose_lambda=0.5_margin=0.5_gamma=256.txt", 256, 0.5, "ROC Projected Dataset γ=256 (Normalized) λ=0.5")
@@ -588,10 +766,10 @@ if __name__ == "__main__":
     ROC_P_Matrix("data/features_best_P_value_transpose_lambda=0.1_margin=0.25_gamma=256.txt", 256, 0.1, "ROC Projected Test Dataset γ=256 (Normalized) λ=0.1, margin=0.25")
     #ROC_P_Matrix("data/features_best_P_value_transpose_lambda=0.25_margin=0.5_gamma=256.txt", 256, 0.25, "ROC Projected Test Dataset γ=256 (Normalized) λ=0.25, margin=0.5")
     """
-    ROC_P_Matrix("data/features_best_P_value_transpose_lambda=0.1_margin=0.25_gamma=128_reg=0.txt", 128, 0.1, "ROC Projected Test Dataset γ=128 (Normalized) λ=0.1, margin=0.25")
+    ##ROC_P_Matrix("data/features_best_P_value_transpose_lambda=0.1_margin=0.25_gamma=128_reg=0.txt", 128, 0.1, "ROC Projected Test Dataset γ=128 (Normalized) λ=0.1, margin=0.25")
     
     #ROC_Labels("data/features_best_P_value_diagonal_lambda=0.1_margin=0.25_gamma=128_reg=0.1.txt",[13, 13, 40, 40,  3,  3, 24, 24, 29, 29, 34, 34, 36, 36, 15, 15, 33, 33, 4, 4])
     #ROC_Labels("data/normalized_encrypted_results_lambda=0.1_margin=0.25_gamma=128.txt")
-    ROC_Labels_Test("data/normalized_encrypted_results_test_lambda=0.1_margin=0.25_gamma=128.txt")
+    ##ROC_Labels_Test("data/normalized_encrypted_results_test_lambda=0.1_margin=0.25_gamma=128.txt")
     #ROC_Labels("data/normalized_encrypted_results_goldschmidt_lambda=0.1_margin=0.25_gamma=128.txt")
     #ROC_Labels("data/encrypted_results_lambda=0.1_margin=0.25_gamma=128.txt")

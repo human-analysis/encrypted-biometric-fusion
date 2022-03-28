@@ -38,6 +38,7 @@ def feature_extraction():
     print("Each feature vector is of length:",features_list[0].shape)
     outfile = open("extractions/VGG16_lfw-deepfunneled.txt",'w')
     for features in features_list:
+        #print(np.linalg.norm(features))
         features = features/np.linalg.norm(features) #are we allowed to normalize?
         #print(np.linalg.norm(features))
         for i in range(features.shape[1]):

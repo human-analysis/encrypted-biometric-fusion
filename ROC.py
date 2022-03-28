@@ -15,6 +15,8 @@ from sklearn.metrics import roc_curve, roc_auc_score
 
 def Cosine_Similarity(vec1, vec2):
     return torch.dot(torch.div(vec1, torch.linalg.norm(vec1)), torch.div(vec2, torch.linalg.norm(vec2)))
+def Cosine_Similarity_no_div(vec1, vec2):
+    return torch.dot(vec1, vec2)
 
 def Cosine_Distance(vec1, vec2):
     return 1 - torch.dot(torch.div(vec1, torch.linalg.norm(vec1)), torch.div(vec2, torch.linalg.norm(vec2)))
@@ -628,6 +630,60 @@ def New_ROC(filename):
     #print(auc_list)
     print("AUC:",auc)
     
+def New_ROC_Encrypted(filename,labels=True):
+    enc_results_file = open(filename,'r')
+    enc_results = []
+    if labels:
+        L = []
+        for line in enc_results_file:
+            result, l = line.strip().split(";")
+            result = torch.tensor(ast.literal_eval(result)).unsqueeze(dim=0)
+            l = int(l)
+            enc_results.append(result)
+            
+            L.append(l)
+        enc_results_final = torch.Tensor(len(enc_results),enc_results[0].shape[0])
+        torch.cat(enc_results, out=enc_results_final,dim=0)
+        print(enc_results_final.shape)
+        #for i in range(enc_results_final.shape[0]):
+            #print(enc_results_final[i,0])
+        #print(L)
+    else:
+        for line in enc_results_file:
+            result = [float(item) for item in line.strip().split()]
+            result = torch.tensor(result).unsqueeze(dim=0)
+            #print(result.shape)
+            enc_results.append(result)
+        enc_results_final = torch.Tensor(len(enc_results),enc_results[0].shape[1])
+        
+        torch.cat(enc_results, out=enc_results_final,dim=0)
+        
+        print(enc_results_final.shape)
+        #for i in range(enc_results_final.shape[0]):
+            #print(enc_results_final[i,0])
+        a_file = open("data/features_A_values_val.txt",'r')
+        L = []
+        for line in a_file:
+            line, l = line.strip().split(";")
+            L.append(int(l))
+        #print(L)
+    
+    y_score = []
+    y_true = []
+    count = len(L)
+    for i in range(count):
+        for j in range(i,count):
+            score = Cosine_Similarity_no_div(enc_results_final[i],enc_results_final[j])
+            if L[i]==L[j]:
+                label = 1
+            else:
+                label = 0
+            y_score.append(score)
+            y_true.append(label)
+
+    auc = roc_auc_score(y_true,y_score)
+    print("AUC:",auc)
+    
 
 def New_ROC_AUC(data, L):
     y_score = []
@@ -741,6 +797,8 @@ def New_ROC_P_Matrix(filename, gamma, lamb, title):
     print("AUC:",auc)
 
 
+
+#Cosine_Similarity_no_div
 if __name__ == "__main__":
     
     #ROC("data/features_A_values_test.txt", "A", "ROC - MMU Iris Resnet 1024-dimensional Features")
@@ -748,28 +806,21 @@ if __name__ == "__main__":
     New_ROC("data/features_A_values_val.txt")
     New_ROC("data/features_B_values_val.txt")
     New_ROC("data/features_X_values_val.txt")
-    New_ROC("data/approx_labels_X_prime_val_lambda=0.99_margin=0.25_gamma=256_reg=0.txt")
-    New_ROC_P_Matrix("data/approx_best_P_value_transpose_lambda=0.99_margin=0.25_gamma=256_reg=0.txt", 256, 0.99, "title")
+    New_ROC("data/approx_labels_X_prime_val_lambda=0.1_margin=0.5_gamma=256_reg=0.txt")
+    New_ROC_Encrypted("data/approximate_labels_X_prime_val_lambda=0.1_margin=0.5_gamma=256_reg=0.txt")
+    New_ROC_Encrypted("results/normalized_encrypted_results_val_lambda=0.1_margin=0.5_gamma=256.txt",labels=False)
     print()
-    #ROC("data/features_B_values_test.txt", "B", "ROC - MMU Iris VGG 512-dimensional Features")
-    #ROC("data/features_X_values_test.txt", "X", "ROC - MMU Iris 1536-dimensional Concatenated Features")
-    """
-    #ROC2("data/features_labels_best_P_value_transpose_lambda=0.5_margin=0.5_gamma=2.txt", 2, "ROC Projected Dataset γ=2 (Normalized)")
-    #ROC2("data/features_labels_best_P_value_transpose_lambda=0.5_margin=0.5_gamma=256.txt", 256, 0.5, "ROC Projected Dataset γ=256 (Normalized) λ=0.5")
-    ##ROC2("data/features_labels_X_prime_test_lambda=0.25_margin=0.5_gamma=256.txt", 256, 0.25, "ROC Projected Test Dataset γ=256 (Normalized) λ=0.25")
-    #ROC2("data/features_labels_best_P_value_transpose_lambda=0.75_margin=0.5_gamma=256.txt", 256, 0.75, "ROC Projected Dataset γ=256 (Normalized) λ=0.75")
-    #ROC2("data/features_labels_best_P_value_transpose_lambda=0.99_margin=0.5_gamma=256.txt", 256, 0.99, "ROC Projected Dataset γ=256 (Normalized) λ=0.99")
-    #ROC2("data/features_labels_best_P_value_transpose_lambda=0.5_margin=0.5_gamma=512.txt", 512, "ROC Projected Dataset γ=512 (Normalized)")
-    print("lambda = 128")
-    ROC_P_Matrix("data/features_best_P_value_transpose_lambda=0.1_margin=0.25_gamma=128.txt", 128, 0.1, "ROC Projected Test Dataset γ=128 (Normalized) λ=0.1, margin=0.25")
-    print("lambda = 256")
-    ROC_P_Matrix("data/features_best_P_value_transpose_lambda=0.1_margin=0.25_gamma=256.txt", 256, 0.1, "ROC Projected Test Dataset γ=256 (Normalized) λ=0.1, margin=0.25")
-    #ROC_P_Matrix("data/features_best_P_value_transpose_lambda=0.25_margin=0.5_gamma=256.txt", 256, 0.25, "ROC Projected Test Dataset γ=256 (Normalized) λ=0.25, margin=0.5")
-    """
-    ##ROC_P_Matrix("data/features_best_P_value_transpose_lambda=0.1_margin=0.25_gamma=128_reg=0.txt", 128, 0.1, "ROC Projected Test Dataset γ=128 (Normalized) λ=0.1, margin=0.25")
     
-    #ROC_Labels("data/features_best_P_value_diagonal_lambda=0.1_margin=0.25_gamma=128_reg=0.1.txt",[13, 13, 40, 40,  3,  3, 24, 24, 29, 29, 34, 34, 36, 36, 15, 15, 33, 33, 4, 4])
-    #ROC_Labels("data/normalized_encrypted_results_lambda=0.1_margin=0.25_gamma=128.txt")
-    ##ROC_Labels_Test("data/normalized_encrypted_results_test_lambda=0.1_margin=0.25_gamma=128.txt")
-    #ROC_Labels("data/normalized_encrypted_results_goldschmidt_lambda=0.1_margin=0.25_gamma=128.txt")
-    #ROC_Labels("data/encrypted_results_lambda=0.1_margin=0.25_gamma=128.txt")
+    
+    print()
+    New_ROC("data/features_A_values_test.txt")
+    New_ROC("data/features_B_values_test.txt")
+    New_ROC("data/features_X_values_test.txt")
+    New_ROC("data/approx_labels_X_prime_test_lambda=0.1_margin=0.5_gamma=256_reg=0.txt")
+    New_ROC_Encrypted("data/approximate_labels_X_prime_test_lambda=0.1_margin=0.5_gamma=256_reg=0.txt")
+    New_ROC_Encrypted("results/normalized_encrypted_results_test_lambda=0.1_margin=0.5_gamma=256.txt",labels=False)
+    print()
+    
+    #New_ROC_P_Matrix("data/approx_best_P_value_transpose_lambda=0.99_margin=0.25_gamma=256_reg=0.txt", 256, 0.99, "title")
+    print()
+

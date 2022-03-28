@@ -105,6 +105,7 @@ def poly_approximation():
     x = [0.1 * i for i in range(10,1500)]
     x = [0.1 * i for i in range(810,13500)] #81 to 1350
     x = [1.0 * i for i in range(20**2,50**2)] #20^2 to 50^2
+    x = [1.0 * i for i in range(15**2,60**2)] #20^2 to 50^2
     #x = [1.0 * i for i in range(int(12e3),int(19e3),100)]
     #x = [1.0 * i for i in range(30000000, 50000000,10000)]
     #x = [1.0 * i for i in range(int(6.4e9), int(1.69e10),10000000)]

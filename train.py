@@ -45,6 +45,11 @@ def train(gamma,iters,spec_margin=None,spec_lamb=None):
     #B = torch.ones((B.shape))
     print("B:",B.shape)
     
+    for i in range(B.shape[0]):
+        #print(torch.linalg.norm(torch.subtract(B[i,:],torch.div(B[i,:],torch.linalg.norm(B[i,:])))))
+        #print(torch.linalg.norm(B[i,:]))
+        B[i,:] = torch.div(B[i,:],torch.linalg.norm(B[i,:]))
+    
     
     L = np.load("data/features/MMU_label_gallery.npy")
     #L = np.reshape(B,(B.shape[0],B.shape[2]))
@@ -217,9 +222,10 @@ def train(gamma,iters,spec_margin=None,spec_lamb=None):
     #Hyperparameters
     #gamma = 512
     lambs = [0.1,0.25,0.5,0.75,0.99]
-    #lambs = [0.75,0.99]
+    #lambs = [0.99]
     #margins = [0.0,0.25,0.5]
     margins = [0.25,0.5]
+    #margins = [0.25]
     #margins = [0.5]
     #margins = [0.25]
     #lambs = [0.1]
@@ -227,7 +233,7 @@ def train(gamma,iters,spec_margin=None,spec_lamb=None):
 
     regularizers = [0]
 
-    rates = {2:1000, 128: 10000, 256:10000, 512:10000}
+    rates = {2:1000, 64:10000, 128: 10000, 256:10000, 512:10000}
     #rates[128] = 15000
     anneal_rate = 0.995
     #anneal_rate = 0.95
@@ -357,6 +363,6 @@ def train(gamma,iters,spec_margin=None,spec_lamb=None):
     print(aucs)
 if __name__ == "__main__":
     #train(256,200)#for gamma=128, use margin=0.25,lamb=0.1)
-    train(512,200)#for gamma=128, use margin=0.25,lamb=0.1)
+    train(64,200)#for gamma=128, use margin=0.25,lamb=0.1)
 
 

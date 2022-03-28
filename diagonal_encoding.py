@@ -420,5 +420,5 @@ if __name__ == "__main__":
     """
     #diagonal_encoding_transposed_arbitrary("data/features_best_P_value_transpose_lambda=0.1_margin=0.25_gamma=128.txt","data/features_best_P_value_transpose_diagonal_lambda=0.1_margin=0.25_gamma=128.txt")
     #diagonal_encoding_arbitrary("data/features_best_P_value_transpose_lambda=0.1_margin=0.25_gamma=128.txt","data/features_best_P_value_diagonal_lambda=0.1_margin=0.25_gamma=128.txt")
-    diagonal_encoding_arbitrary("data/features_best_P_value_transpose_lambda=0.1_margin=0.25_gamma=128_reg=0.txt","data/features_best_P_value_diagonal_lambda=0.1_margin=0.25_gamma=128_reg=0.txt")
+    diagonal_encoding_arbitrary("data/approximate_best_P_value_transpose_lambda=0.1_margin=0.5_gamma=256_reg=0.txt","data/diagonal_approximate_best_P_value_transpose_lambda=0.1_margin=0.5_gamma=256_reg=0.txt")
     

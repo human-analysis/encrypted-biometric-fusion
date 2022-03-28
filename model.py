@@ -106,6 +106,16 @@ class Linear_Feature_Fusion_Approximate():
         #[6.89278658e-02 -1.70092408e-11]]
         
         self.coeffs = [[2.86054276e-01,-1.66419686e+03,3.51836911e+06,5.21696229e+07],[-1.70092408e-11,6.89278658e-02]]
+        
+        
+        #[ 9.58797780e-01 -4.43025846e+01  5.54409918e+02 -2.52567888e+03
+        #5.46180222e+00  5.13593380e+00  3.20072049e-01  8.03850688e+00]
+        
+        self.coeffs= [[-2.52567888e+03,5.54409918e+02,-4.43025846e+01,9.58797780e-01],[8.03850688e+00,3.20072049e-01,5.13593380e+00,5.46180222e+00]]
+        #[ 0.83145916 -3.07507111  5.3092142  -4.42648824
+        #1.33883108  1.00840009 2.29174683  2.43985827]
+        self.coeffs= [[-4.42648824,5.3092142,-3.07507111,0.83145916],[2.43985827,2.29174683,1.00840009,1.33883108]]
+        
         #self.powers = [3,1]
         
         self.P.requires_grad = True
@@ -114,16 +124,24 @@ class Linear_Feature_Fusion_Approximate():
     def approximate_inv_norm(self,x_in):
         #self.coeffs should be a list of lists whose coefficients order similar to:
         #[[x^3, x^2, x, 1],[x, 1]]
+        #
         x = torch.linalg.norm(x_in)**2
+        #print("x:",x)
+        #print(self.coeffs)
         result = 0
         for coeff_list in self.coeffs:
             result = coeff_list[0]
             for i in range(1,len(coeff_list)):
-                result = result * x
-                result += coeff_list[i]
+                #print(coeff_list[i])
+            
+                result = result * x + coeff_list[i]
+                #result += coeff_list[i]
             x = result
+            #print(x)
             result = 0
+        #print("result:",x)
         return x
+        
     def distance(self,x1,x2):
         
         #print("P norm:",torch.linalg.norm(P_temp))
@@ -131,10 +149,10 @@ class Linear_Feature_Fusion_Approximate():
         #to_mult = torch.linalg.norm(x1)/250.0
         #P_temp = torch.mul(torch.div(self.P,torch.linalg.norm(self.P)),to_mult)
         P_temp = torch.div(self.P,torch.linalg.norm(self.P))
-        
+        #P_temp = self.P
         x1_tilde = torch.matmul(P_temp.T, x1.T)
         x2_tilde = torch.matmul(P_temp.T, x2.T)
-        #print("old norm:",torch.linalg.norm(x1_tilde))
+        #print("old squared norm:",torch.linalg.norm(x1_tilde)**2)
         
         #print("true inverse norm:", torch.linalg.norm(x1_tilde), "approximate:",self.approximate_norm(x1_tilde))
         
@@ -169,15 +187,18 @@ class Linear_Feature_Fusion_Approximate():
         return loss
 def approximate_norm(x_in):
     x = torch.linalg.norm(x_in)**2
+    print(x)
+    coeffs = [[3,2,1,4],[2,1,2,2]]
     result = 0
     for coeff_list in coeffs:
         result = coeff_list[0]
         for i in range(1,len(coeff_list)):
-            print(coeff_list[i])
             result = result * x
             result += coeff_list[i]
-            print(result)
-            print()
         x = result
         result = 0
     return x
+
+if __name__ == "__main__":
+    print(approximate_norm(torch.tensor([2**0.5])))
+    print("truth:",111266)

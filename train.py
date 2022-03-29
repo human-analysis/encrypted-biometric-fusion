@@ -15,6 +15,21 @@ from data_generation import data_gen
 
 from ROC import New_ROC_AUC
 
+
+
+def approximate_inv_norm(x_in):
+    coeffs= [[4.400171203929593, -9.438491353540634, 6.701697618379752, -0.2080454748840371], [-4.869694790507371, 12.833246397743965, -11.941356320502285, 5.9861811924000055]]
+    x = torch.linalg.norm(x_in)**2
+    result = 0
+    for coeff_list in coeffs:
+        result = coeff_list[0]
+        for i in range(1,len(coeff_list)):
+            result = result * x + coeff_list[i]
+        x = result
+        result = 0
+    return x
+
+
 def train(gamma,iters,spec_margin=None,spec_lamb=None):
     random.seed(0)
     torch.manual_seed(0)
@@ -277,14 +292,22 @@ def train(gamma,iters,spec_margin=None,spec_lamb=None):
         outfile_X.write("\n")
     outfile_X.close()
     
+    outfile_L = open("data/features_L_values_val.txt",'w')
+    outfile_L.write(str(L_val.tolist()))
+    outfile_L.close()
+    
+    outfile_L = open("data/features_L_values_test.txt",'w')
+    outfile_L.write(str(L_test.tolist()))
+    outfile_L.close()
+    
     #Hyperparameters
     #gamma = 512
-    lambs = [0.1,0.25,0.5,0.75,0.99]
+    lambs = [0.01,0.1,0.25,0.5,0.75,0.99]
     #lambs = [0.99]
     #margins = [0.0,0.25,0.5]
     margins = [0.25,0.5]
     #margins = [0.25]
-    #margins = [0.5]
+    margins = [0.5]
     #margins = [0.25]
     #lambs = [0.1]
     iterations = iters
@@ -354,9 +377,11 @@ def train(gamma,iters,spec_margin=None,spec_lamb=None):
                     #best_P[:,i]=torch.div(best_P[:,i], torch.linalg.norm(best_P[:,1]))
                 #print("new best p norm:",torch.linalg.norm(best_P))
                 X_prime = torch.mm(X_val,best_P)
+                print(X_prime.shape)
                 #print("new NOT normalized validation X_prime:", X_prime)
                 for i in range(X_prime.shape[0]):
-                    X_prime[i,:]=torch.div(X_prime[i,:], torch.linalg.norm(X_prime[i,:]))
+                    X_prime[i,:]=torch.mul(X_prime[i,:], approximate_inv_norm(X_prime[i,:]))
+                    #X_prime[i,:]=torch.div(X_prime[i,:], torch.linalg.norm(X_prime[i,:]))
                 auc = New_ROC_AUC(X_prime, L_val)
                 aucs.append((margin,lamb,auc))
                 print("AUC of lambda="+str(lamb)+", margin="+str(margin)+ "_reg=" + str(reg) + ":", auc)
@@ -405,7 +430,7 @@ def train(gamma,iters,spec_margin=None,spec_lamb=None):
                 #X_prime = torch.mm(X_val,P_history_matrices[-1])
                 X_prime = torch.mm(X_test,best_P)
                 for i in range(X_prime.shape[0]):
-                    X_prime[i,:]=torch.div(X_prime[i,:], torch.linalg.norm(X_prime[i,:]))
+                    X_prime[i,:]=torch.mul(X_prime[i,:], approximate_inv_norm(X_prime[i,:]))
                 #print("new normalized test x_prime:", X_prime)
                 
                 X_prime_filename = "data/approximate_labels_X_prime_test_lambda=" + str(lamb) + "_margin=" + str(margin) + "_gamma=" + str(gamma) + "_reg=" + str(reg) + ".txt"

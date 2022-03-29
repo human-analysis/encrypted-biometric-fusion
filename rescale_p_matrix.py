@@ -59,7 +59,7 @@ def view_norms(p_file_name, a_file_name, b_file_name):
     A = []
     L = []
     for line in a_file:
-        line, l = line.strip().split(";")
+        #line, l = line.strip().split(";")
         L.append(float(l))
         a = torch.tensor(ast.literal_eval(line.strip())).unsqueeze(dim=0)
         A.append(a)
@@ -69,7 +69,7 @@ def view_norms(p_file_name, a_file_name, b_file_name):
     
     B = []
     for line in b_file:
-        line, l = line.strip().split(";")
+        #line, l = line.strip().split(";")
         b = torch.tensor(ast.literal_eval(line.strip())).unsqueeze(dim=0)
         B.append(b)
     B_final = torch.Tensor(len(B),B[0].shape[0])
@@ -118,7 +118,7 @@ def view_norms(p_file_name, a_file_name, b_file_name):
         #X_prime[i,:]=torch.div(X_prime[i,:], torch.linalg.norm(X_prime[i,:]))
 
 if __name__ == "__main__":
-    rescale_p("data/approximate_best_P_value_transpose_lambda=0.1_margin=0.5_gamma=64_reg=0.txt",1.0)
+    #rescale_p("data/approximate_best_P_value_transpose_lambda=0.1_margin=0.5_gamma=64_reg=0.txt",1.0)
     view_norms("data/approximate_best_P_value_transpose_lambda=0.1_margin=0.5_gamma=64_reg=0.txt","data/features_A_values_val.txt","data/features_B_values_val.txt")
 
 

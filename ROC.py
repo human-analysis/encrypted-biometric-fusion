@@ -661,11 +661,10 @@ def New_ROC_Encrypted(filename,labels=True):
         print(enc_results_final.shape)
         #for i in range(enc_results_final.shape[0]):
             #print(enc_results_final[i,0])
-        a_file = open("data/features_A_values_val.txt",'r')
-        L = []
-        for line in a_file:
-            line, l = line.strip().split(";")
-            L.append(int(l))
+        a_file = open("data/features_L_values_val.txt",'r')
+        L = a_file.readline()
+        L = [int(i) for i in L[1:len(L)-2].split(", ")]
+        print(L)
         #print(L)
     
     y_score = []
@@ -691,7 +690,7 @@ def New_ROC_AUC(data, L):
     count = len(L)
     for i in range(count):
         for j in range(i,count):
-            score = Cosine_Similarity(data[i],data[j])
+            score = Cosine_Similarity_no_div(data[i],data[j])
             if L[i]==L[j]:
                 label = 1
             else:
@@ -801,6 +800,7 @@ def New_ROC_P_Matrix(filename, gamma, lamb, title):
 #Cosine_Similarity_no_div
 if __name__ == "__main__":
     
+    """
     #ROC("data/features_A_values_test.txt", "A", "ROC - MMU Iris Resnet 1024-dimensional Features")
     print()
     New_ROC("data/features_A_values_val.txt")
@@ -810,14 +810,14 @@ if __name__ == "__main__":
     New_ROC_Encrypted("data/approximate_labels_X_prime_val_lambda=0.1_margin=0.5_gamma=256_reg=0.txt")
     #New_ROC_Encrypted("results/normalized_encrypted_results_val_lambda=0.1_margin=0.5_gamma=256.txt",labels=False)
     print()
-    
+    """
     
     print()
-    New_ROC("data/features_A_values_test.txt")
-    New_ROC("data/features_B_values_test.txt")
-    New_ROC("data/features_X_values_test.txt")
-    New_ROC("data/approx_labels_X_prime_test_lambda=0.1_margin=0.5_gamma=256_reg=0.txt")
-    New_ROC_Encrypted("data/approximate_labels_X_prime_test_lambda=0.1_margin=0.5_gamma=64_reg=0.txt")
+    #New_ROC("data/features_A_values_test.txt")
+    #New_ROC("data/features_B_values_test.txt")
+    #New_ROC("data/features_X_values_test.txt")
+    #New_ROC("data/approx_labels_X_prime_test_lambda=0.1_margin=0.5_gamma=256_reg=0.txt")
+    #New_ROC_Encrypted("data/approximate_labels_X_prime_test_lambda=0.1_margin=0.5_gamma=64_reg=0.txt")
     New_ROC_Encrypted("results/normalized_encrypted_results_val_lambda=0.1_margin=0.5_gamma=64.txt",labels=False)
     print()
     

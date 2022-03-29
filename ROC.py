@@ -808,7 +808,7 @@ if __name__ == "__main__":
     New_ROC("data/features_X_values_val.txt")
     New_ROC("data/approx_labels_X_prime_val_lambda=0.1_margin=0.5_gamma=256_reg=0.txt")
     New_ROC_Encrypted("data/approximate_labels_X_prime_val_lambda=0.1_margin=0.5_gamma=256_reg=0.txt")
-    New_ROC_Encrypted("results/normalized_encrypted_results_val_lambda=0.1_margin=0.5_gamma=256.txt",labels=False)
+    #New_ROC_Encrypted("results/normalized_encrypted_results_val_lambda=0.1_margin=0.5_gamma=256.txt",labels=False)
     print()
     
     
@@ -817,8 +817,8 @@ if __name__ == "__main__":
     New_ROC("data/features_B_values_test.txt")
     New_ROC("data/features_X_values_test.txt")
     New_ROC("data/approx_labels_X_prime_test_lambda=0.1_margin=0.5_gamma=256_reg=0.txt")
-    New_ROC_Encrypted("data/approximate_labels_X_prime_test_lambda=0.1_margin=0.5_gamma=256_reg=0.txt")
-    New_ROC_Encrypted("results/normalized_encrypted_results_test_lambda=0.1_margin=0.5_gamma=256.txt",labels=False)
+    New_ROC_Encrypted("data/approximate_labels_X_prime_test_lambda=0.1_margin=0.5_gamma=64_reg=0.txt")
+    New_ROC_Encrypted("results/normalized_encrypted_results_val_lambda=0.1_margin=0.5_gamma=64.txt",labels=False)
     print()
     
     #New_ROC_P_Matrix("data/approx_best_P_value_transpose_lambda=0.99_margin=0.25_gamma=256_reg=0.txt", 256, 0.99, "title")

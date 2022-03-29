@@ -139,14 +139,25 @@ def train(gamma,iters,spec_margin=None,spec_lamb=None):
             total += abs(ls1[i]-ls2[i])
         print("total diff:", total)
 """
+
+    
+
+
     outfile_a = open("data/features_A_values.txt",'w')
+    for row in A.tolist():
+        for item in row:
+            outfile_a.write(str(f'{item:.9f}'))
+            outfile_a.write(" ")
+        outfile_a.write("\n")
+    outfile_a.close()
+    """
     for i in range(A.shape[0]):
         outfile_a.write(str(A[i].tolist()))
         outfile_a.write(";")
         outfile_a.write(str(L.tolist()[i]))
         outfile_a.write("\n")
     outfile_a.close()
-
+    """
 
     outfile_b = open("data/features_B_values.txt",'w')
     for i in range(B.shape[0]):
@@ -156,7 +167,7 @@ def train(gamma,iters,spec_margin=None,spec_lamb=None):
         outfile_b.write("\n")
     outfile_b.close()
     
-    
+    """
     outfile_a_test = open("data/features_A_values_test.txt",'w')
     for i in range(split2,len(A)):
         outfile_a_test.write(str(A[i].tolist()))
@@ -164,8 +175,19 @@ def train(gamma,iters,spec_margin=None,spec_lamb=None):
         outfile_a_test.write(str(L.tolist()[i]))
         outfile_a_test.write("\n")
     outfile_a_test.close()
+    """
+    outfile_a_test = open("data/features_A_values_test.txt",'w')
+    #outfile_a_test.write("[")
+    for row in A.tolist()[split2:]:
+        #outfile_a_test.write("[")
+        for item in row:
+            outfile_a_test.write(str(f'{item:.9f}'))
+            outfile_a_test.write(" ")
+        #outfile_a_test.write("]")
+        outfile_a_test.write("\n")
+    outfile_a_test.close()
 
-
+    """
     outfile_b_test = open("data/features_B_values_val.txt",'w')
     for i in range(split1,split2):
         outfile_b_test.write(str(B[i].tolist()))
@@ -173,7 +195,17 @@ def train(gamma,iters,spec_margin=None,spec_lamb=None):
         outfile_b_test.write(str(L.tolist()[i]))
         outfile_b_test.write("\n")
     outfile_b_test.close()
+    """
     
+    outfile_b_test = open("data/features_B_values_test.txt",'w')
+    for row in B.tolist()[split2:]:
+        for item in row:
+            outfile_b_test.write(str(f'{item:.9f}'))
+            outfile_b_test.write(" ")
+        outfile_b_test.write("\n")
+    outfile_b_test.close()
+    
+    """
     outfile_a_test = open("data/features_A_values_val.txt",'w')
     for i in range(split1,split2):
         outfile_a_test.write(str(A[i].tolist()))
@@ -181,7 +213,30 @@ def train(gamma,iters,spec_margin=None,spec_lamb=None):
         outfile_a_test.write(str(L.tolist()[i]))
         outfile_a_test.write("\n")
     outfile_a_test.close()
-
+    """
+    
+    outfile_a_val = open("data/features_A_values_val.txt",'w')
+    for row in A.tolist()[split1:split2]:
+        outfile_a_val.write("[")
+        for item in row:
+            outfile_a_val.write(str(f'{item:.9f}'))
+            outfile_a_val.write(" ")
+        outfile_a_val.write("]")
+        outfile_a_val.write("\n")
+    outfile_a_val.close()
+    
+    
+    outfile_b_val = open("data/features_B_values_val.txt",'w')
+    for row in B.tolist()[split1:split2]:
+        outfile_b_val.write("[")
+        for item in row:
+            outfile_b_val.write(str(f'{item:.9f}'))
+            outfile_b_val.write(" ")
+        outfile_b_val.write("]")
+        outfile_b_val.write("\n")
+    outfile_b_val.close()
+    
+    """
     outfile_b_test = open("data/features_B_values_test.txt",'w')
     for i in range(split2, len(B)):
         outfile_b_test.write(str(B[i].tolist()))
@@ -189,7 +244,10 @@ def train(gamma,iters,spec_margin=None,spec_lamb=None):
         outfile_b_test.write(str(L.tolist()[i]))
         outfile_b_test.write("\n")
     outfile_b_test.close()
+    """
     
+    """
+    #FIX THIS LATER
     outfile_x_test = open("data/features_X_values_test.txt",'w')
     for i in range(split2, len(X)):
         outfile_x_test.write(str(X[i].tolist()))
@@ -205,7 +263,7 @@ def train(gamma,iters,spec_margin=None,spec_lamb=None):
         outfile_x_test.write(str(L.tolist()[i]))
         outfile_x_test.write("\n")
     outfile_x_test.close()
-    
+    """
     #alpha = A.shape[1]
     #beta = B.shape[1]
 

@@ -78,33 +78,47 @@ def view_norms(p_file_name, a_file_name, b_file_name):
     #Create feature fusion dataset
     X = torch.cat((A_final,B_final),dim=1)
     #p_final = torch.mul(p_final,10)
-    X_prime = torch.mm(X, p_final.T)
-    #X_prime = torch.mm(p_final, X.T)
-    #X_prime = torch.mm(p_final, X.T)
+    print(X.shape)
+    #X_prime = torch.mm(X, p_final.T)
+    X_prime = torch.mm(p_final,X.T)
     
     print()
-    print("l2(p):",torch.linalg.norm(p_final))
+    #print("l2(p):",torch.linalg.norm(p_final))
+    print("P:",torch.linalg.norm(p_final))
+    print(p_final.shape)
+    print(p_final)
+    
+    print("AB:",torch.linalg.norm(X[:,0]))
+    print(X.shape)
+    print(X)
+    
+    print("X_prime:",torch.linalg.norm(X_prime))
     print(X_prime.shape)
+    print(X_prime)
+    #p_final = torch.div(p_final,torch.linalg.norm(p_final))
+    #print(p_final)
     print()
     
     
-    for i in range(X_prime.shape[0]):
-        print(X_prime[i,0])
-        #print(torch.linalg.norm(X_prime[i,:]))
+    for i in range(X_prime.shape[1]):
+        #print(X_prime[i,0])
+        #print(X_prime[:,i].shape)
+        print(torch.linalg.norm(X_prime[:,i]),torch.linalg.norm(X_prime[:,i])**2)
+        
     print()
     
-    for i in range(X_prime.shape[0]):
-        X_prime[i,:]=torch.div(X_prime[i,:], torch.linalg.norm(X_prime[i,:]))
+    #for i in range(X_prime.shape[0]):
+        #X_prime[i,:]=torch.div(X_prime[i,:], torch.linalg.norm(X_prime[i,:]))
     
     
-    print(L)
-    print(X_prime.shape)
+    #print(L)
+    #print(X_prime.shape)
     
-    for i in range(X_prime.shape[0]):
-        X_prime[i,:]=torch.div(X_prime[i,:], torch.linalg.norm(X_prime[i,:]))
+    #for i in range(X_prime.shape[0]):
+        #X_prime[i,:]=torch.div(X_prime[i,:], torch.linalg.norm(X_prime[i,:]))
 
 if __name__ == "__main__":
-    rescale_p("data/approximate_best_P_value_transpose_lambda=0.1_margin=0.5_gamma=256_reg=0.txt",2.5)
-    view_norms("data/approximate_best_P_value_transpose_lambda=0.1_margin=0.5_gamma=256_reg=0.txt","data/features_A_values_val.txt","data/features_B_values_val.txt")
+    rescale_p("data/approximate_best_P_value_transpose_lambda=0.1_margin=0.5_gamma=64_reg=0.txt",1.0)
+    view_norms("data/approximate_best_P_value_transpose_lambda=0.1_margin=0.5_gamma=64_reg=0.txt","data/features_A_values_val.txt","data/features_B_values_val.txt")
 
 

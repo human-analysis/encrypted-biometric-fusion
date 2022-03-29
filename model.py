@@ -116,6 +116,9 @@ class Linear_Feature_Fusion_Approximate():
         #1.33883108  1.00840009 2.29174683  2.43985827]
         self.coeffs= [[-4.42648824,5.3092142,-3.07507111,0.83145916],[2.43985827,2.29174683,1.00840009,1.33883108]]
         
+        #interval = 0.1,1.0
+        #relative error = 0.0527
+        self.coeffs= [[4.400171203929593, -9.438491353540634, 6.701697618379752, -0.2080454748840371], [-4.869694790507371, 12.833246397743965, -11.941356320502285, 5.9861811924000055]]
         #self.powers = [3,1]
         
         self.P.requires_grad = True
@@ -150,11 +153,18 @@ class Linear_Feature_Fusion_Approximate():
         #P_temp = torch.mul(torch.div(self.P,torch.linalg.norm(self.P)),to_mult)
         P_temp = torch.div(self.P,torch.linalg.norm(self.P))
         #P_temp = self.P
+        #print("P:",torch.linalg.norm(P_temp), "X1:",torch.linalg.norm(x1), "X2:",torch.linalg.norm(x2))
+        #print(P_temp.shape)
+        #print(P_temp)
         x1_tilde = torch.matmul(P_temp.T, x1.T)
         x2_tilde = torch.matmul(P_temp.T, x2.T)
+        #print("X1_tilde:",torch.linalg.norm(x1_tilde))
         #print("old squared norm:",torch.linalg.norm(x1_tilde)**2)
-        
+        #print()
         #print("true inverse norm:", torch.linalg.norm(x1_tilde), "approximate:",self.approximate_norm(x1_tilde))
+        r = random.randint(0,100000)
+        if r == 2:
+            print("approx:", self.approximate_inv_norm(x1_tilde), "true:",1/(torch.linalg.norm(x1_tilde)))
         
         x1_tilde = torch.mul(x1_tilde,self.approximate_inv_norm(x1_tilde))
         

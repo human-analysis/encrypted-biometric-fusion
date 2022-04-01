@@ -420,5 +420,14 @@ if __name__ == "__main__":
     """
     #diagonal_encoding_transposed_arbitrary("data/features_best_P_value_transpose_lambda=0.1_margin=0.25_gamma=128.txt","data/features_best_P_value_transpose_diagonal_lambda=0.1_margin=0.25_gamma=128.txt")
     #diagonal_encoding_arbitrary("data/features_best_P_value_transpose_lambda=0.1_margin=0.25_gamma=128.txt","data/features_best_P_value_diagonal_lambda=0.1_margin=0.25_gamma=128.txt")
-    diagonal_encoding_arbitrary("data/approximate_best_P_value_transpose_lambda=0.1_margin=0.5_gamma=64_reg=0.txt","data/diagonal_approximate_best_P_value_transpose_lambda=0.1_margin=0.5_gamma=64_reg=0.txt")
-    
+    diagonal_encoding_arbitrary("data/approximate_best_P_value_transpose_lambda=0.5_margin=0.25_gamma=64_reg=0.txt","data/diagonal_approximate_best_P_value_transpose_lambda=0.5_margin=0.25_gamma=64_reg=0.txt")
+    diagonal_encoding_arbitrary("data/exact_best_P_value_transpose_lambda=0.01_margin=0.25_gamma=64_reg=0.txt","data/diagonal_exact_best_P_value_transpose_lambda=0.01_margin=0.25_gamma=64_reg=0.txt")
+    diagonal_encoding_arbitrary("data/approximate_best_P_value_transpose_lambda=0.01_margin=0.25_gamma=64_reg=0.txt","data/diagonal_approximate_best_P_value_transpose_lambda=0.01_margin=0.25_gamma=64_reg=0.txt")
+    diagonal_encoding_arbitrary("data/1approximate_best_P_value_transpose_lambda=0.1_margin=0.75_gamma=64_reg=0.txt","data/diagonal_1approximate_best_P_value_transpose_lambda=0.1_margin=0.75_gamma=64_reg=0.txt")
+    diagonal_encoding_arbitrary("data/2approximate_best_P_value_transpose_lambda=0.1_margin=0.75_gamma=64_reg=0.txt","data/diagonal_2approximate_best_P_value_transpose_lambda=0.1_margin=0.75_gamma=64_reg=0.txt")
+    diagonal_encoding_arbitrary("data/degree=1_approximate_best_P_value_transpose_lambda=0.1_margin=0.25_gamma=64_reg=0.txt","data/diagonal_degree=1_approximate_best_P_value_transpose_lambda=0.1_margin=0.25_gamma=64_reg=0.txt")
+    diagonal_encoding_arbitrary("data/degree=3b_approximate_best_P_value_transpose_lambda=0.01_margin=0.1_gamma=64_reg=0.txt","data/diagonal_degree=3b_approximate_best_P_value_transpose_lambda=0.01_margin=0.1_gamma=64_reg=0.txt")
+    diagonal_encoding_arbitrary("data/degree=2replicated_approximate_best_P_value_transpose_lambda=0.1_margin=0.75_gamma=64_reg=0.txt","data/diagonal_degree=2replicated_approximate_best_P_value_transpose_lambda=0.1_margin=0.75_gamma=64_reg=0.txt")
+    diagonal_encoding_arbitrary("data/degree=3strict_approximate_best_P_value_transpose_lambda=0.01_margin=0.1_gamma=64_reg=0.txt","data/diagonal_degree=3strict_approximate_best_P_value_transpose_lambda=0.01_margin=0.1_gamma=64_reg=0.txt")
+    diagonal_encoding_arbitrary("data/degree=1strict_approximate_best_P_value_transpose_lambda=0.5_margin=0.5_gamma=64_reg=0.txt","data/diagonal_degree=1strict_approximate_best_P_value_transpose_lambda=0.5_margin=0.5_gamma=64_reg=0.txt")
+    #

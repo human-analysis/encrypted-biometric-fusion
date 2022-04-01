@@ -107,6 +107,7 @@ def poly_approximation():
     x = [1.0 * i for i in range(20**2,50**2)] #20^2 to 50^2
     x = [0.001 * i for i in range(10,1000)] #0.01 to 1.0
     x = [0.001 * i for i in range(100,700)] #0.01 to 1.0
+    x = [0.001 * i for i in range(10,700)] #0.01 to 7.0
     #x = [1.0 * i for i in range(int(12e3),int(19e3),100)]
     #x = [1.0 * i for i in range(30000000, 50000000,10000)]
     #x = [1.0 * i for i in range(int(6.4e9), int(1.69e10),10000000)]
@@ -145,7 +146,11 @@ def poly_approximation():
         
         #plt.show()
         
-        
+        #x_temp = [0.001 * i for i in range(1,1100)] #0.01 to 1.0
+        #y_temp = [1/(i**0.5) for i in x_temp]
+        #x_temp = np.array(x_temp)
+        #y_temp = np.array(y_temp)
+        #x_temp = [0.001 * i for i in range(100,700)] #0.01 to 1.0
         
         fig = go.Figure(layout = go.Layout(title = go.layout.Title(text="Polynomial Approximation, Degree="+str(degrees[i]))))
         fig.add_trace(
@@ -172,10 +177,13 @@ def poly_approximation():
             yaxis_title="Y"
         )
         
-        fig_file_name = "figures/polynomial_approximations/approx_degree=" + str(degrees[i]) + ".png"
+        fig_file_name = "figures/polynomial_approximations/approx_degree=" + str(degrees[i]) + "_large.png"
         fig.write_image(fig_file_name)
         
+        
+        
         data_dict = {r'$\frac{|f(x)-y|}{|y|}$':abs(myfun(x, *popt)-y)/y, "X":x}
+        #data_dict = {r'$\frac{|f(x)-y|}{|y|}$':abs(myfun(x, *popt)-y)/y, "X":x}
         df = pandas.DataFrame(data_dict)
         fig = px.line(df,x="X",y=r'$\frac{|f(x)-y|}{|y|}$')
         
@@ -183,7 +191,7 @@ def poly_approximation():
         fig.update_yaxes(title_font=dict(size=40))
         
         
-        fig_file_name = "figures/polynomial_approximations/approx_error_degree=" + str(degrees[i]) + ".png"
+        fig_file_name = "figures/polynomial_approximations/approx_error_degree=" + str(degrees[i]) + "_large.png"
         fig.write_image(fig_file_name)
         
         #data_dict = {"Y":myfun(x, *popt), "X":x}

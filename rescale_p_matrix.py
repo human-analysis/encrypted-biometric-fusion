@@ -159,5 +159,10 @@ if __name__ == "__main__":
     #rescale_p("data/degree=3strict_approximate_best_P_value_transpose_lambda=0.01_margin=0.1_gamma=64_reg=0.txt",4.0) #scale
     #view_norms("data/degree=3strict_approximate_best_P_value_transpose_lambda=0.01_margin=0.1_gamma=64_reg=0.txt","data/features_A_values_val.txt","data/features_B_values_val.txt")
     
-    rescale_p("data/degree=1strict_approximate_best_P_value_transpose_lambda=0.5_margin=0.5_gamma=64_reg=0.txt",8.603522662597202) #10?
-    view_norms("data/degree=1strict_approximate_best_P_value_transpose_lambda=0.5_margin=0.5_gamma=64_reg=0.txt","data/features_A_values_val.txt","data/features_B_values_val.txt")
+    #rescale_p("data/degree=1strict_approximate_best_P_value_transpose_lambda=0.5_margin=0.5_gamma=64_reg=0.txt",8.603522662597202) #10?
+    #view_norms("data/degree=1strict_approximate_best_P_value_transpose_lambda=0.5_margin=0.5_gamma=64_reg=0.txt","data/features_A_values_val.txt","data/features_B_values_val.txt")
+
+    #rescale_p("data/degree=2strict_approximate_best_P_value_transpose_lambda=0.01_margin=0.1_gamma=64_reg=0.txt",4.5)
+    rescale_p("data/degree=2strict_approximate_best_P_value_transpose_lambda=0.01_margin=0.1_gamma=64_reg=0.txt",3.323253455743364)
+    #3.323253455743364
+    view_norms("data/degree=2strict_approximate_best_P_value_transpose_lambda=0.01_margin=0.1_gamma=64_reg=0.txt","data/features_A_values_test.txt","data/features_B_values_val.txt")

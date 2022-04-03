@@ -693,7 +693,7 @@ def New_ROC(filename, title, labels=True):
     fig_file_name = "figures/" + title + ".png"
     fig.write_image(fig_file_name)
     
-def New_ROC_Encrypted(filename, title, labels=True):
+def New_ROC_Encrypted(filename, title, labels=True, debug=False):
     enc_results_file = open(filename,'r')
     enc_results = []
     if labels:
@@ -750,6 +750,8 @@ def New_ROC_Encrypted(filename, title, labels=True):
     auc = roc_auc_score(y_true,y_score)
     print("AUC:",auc)
     
+    if debug:
+        print(y_score)
     
     fpr, tpr, thresholds = roc_curve(y_true,y_score)
     
@@ -964,9 +966,26 @@ if __name__ == "__main__":
     New_ROC_Encrypted("data/2approximate_labels_X_prime_test_lambda=0.1_margin=0.75_gamma=64_reg=0.txt","ROC_Algo=Poly2_Enc=False",True)
     print()
     
-    print("Plaintext poly - degree=2, strict:")
+    #print("Plaintext poly - degree=2, strict:")
+    #New_ROC_Encrypted("data/degree=2strict_approximate_labels_X_prime_test_lambda=0.01_margin=0.1_gamma=64_reg=0.txt","ROC_Algo=Poly2strict_Enc=False",True)
+    #New_ROC_P_Matrix("data/degree=2strict_approximate_best_P_value_transpose_lambda=0.01_margin=0.1_gamma=64_reg=0.txt",1,1,"title", 2) #this method is wrong because it normalizes
+    #print()
+    
+    #print("Plaintext poly - degree=2, strict anew:")
+    #New_ROC_Encrypted("data/degree=2strict_approximate_labels_X_prime_test_lambda=0.1_margin=0.1_gamma=64_reg=0.txt","ROC_Algo=Poly2strict_Enc=False",True)
+    #New_ROC_P_Matrix("data/degree=2strict_approximate_best_P_value_transpose_lambda=0.1_margin=0.1_gamma=64_reg=0.txt",1,1,"title", 2)
+    #print()
+    print("Plaintext poly - degree=2, strict anew 2:")
     New_ROC_Encrypted("data/degree=2strict_approximate_labels_X_prime_test_lambda=0.01_margin=0.1_gamma=64_reg=0.txt","ROC_Algo=Poly2strict_Enc=False",True)
-    New_ROC_P_Matrix("data/degree=2strict_approximate_best_P_value_transpose_lambda=0.01_margin=0.1_gamma=64_reg=0.txt",1,1,"title", 2) #this method is wrong because it normalizes
+    New_ROC_P_Matrix("data/degree=2strict_approximate_best_P_value_transpose_lambda=0.01_margin=0.1_gamma=64_reg=0.txt",1,1,"title", 2)
+    print()
+    
+    print("Plaintext poly - degree=2, strict and low learn rate:")
+    New_ROC_Encrypted("data/degree=2strict_approximate_labels_X_prime_test_lambda=0.1_margin=0.1_gamma=64_reg=0.txt","ROC_Algo=Poly2strict_Enc=False",True)
+    print()
+    
+    print("Plaintext poly - degree=2, snap and low learn rate:")
+    New_ROC_Encrypted("data/snap/degree=2/approximate_labels_X_prime_test_lambda=0.01_margin=0.1_gamma=64_reg=0.txt","ROC_Algo=Poly2strict_Enc=False",True)
     print()
     
     
@@ -1013,6 +1032,15 @@ if __name__ == "__main__":
     print("Encrypted poly - poly training - degree=2 replicated, anneal=1:")
     New_ROC_Encrypted("results/normalized_encrypted_results_test_lambda=0.1_margin=0.75_gamma=64_POLY2replicated.txt","ROC_Algo=Poly_Enc=Poly2_repl",False)
     print()
+    
+    print("Encrypted poly - poly training - degree=2 strict anew 2:")
+    New_ROC_Encrypted("results/normalized_encrypted_results_test_lambda=0.01_margin=0.1_gamma=64_POLY2strict.txt","ROC_Algo=Poly_Enc=Poly2_strict",False)
+    print()
+    
+    print("Encrypted poly - poly training - degree=2 snap:")
+    New_ROC_Encrypted("results/normalized_encrypted_results_test_lambda=0.01_margin=0.1_gamma=64_POLY2snap.txt","ROC_Algo=Poly_Enc=Poly2_strict",False)
+    print()
+    #
     
     
     

@@ -29,6 +29,45 @@ def rescale_p(p_file_name, scale=None):
     
     
     p_final = torch.div(p_final,torch.linalg.norm(p_final))
+    
+    if not scale:
+        a_file = open("data2/dataset/A_values_val.txt",'r')
+        b_file = open("data2/dataset/B_values_val.txt",'r')
+        A = []
+        L = []
+        for line in a_file:
+            #line, l = line.strip().split(";")
+            #L.append(float(l))
+            line = line[1:-2]
+            line = [float(i) for i in line.split()]
+            a = torch.tensor(line).unsqueeze(dim=0)
+            #a = torch.tensor(ast.literal_eval(line.strip())).unsqueeze(dim=0)
+            A.append(a)
+        A_final = torch.Tensor(len(A),A[0].shape[0])
+        torch.cat(A, out=A_final,dim=0)
+        print(A_final.shape)
+        
+        B = []
+        for line in b_file:
+            line = line[1:-2]
+            line = [float(i) for i in line.split()]
+            b = torch.tensor(line).unsqueeze(dim=0)
+            #line, l = line.strip().split(";")
+            #b = torch.tensor(ast.literal_eval(line.strip())).unsqueeze(dim=0)
+            B.append(b)
+        B_final = torch.Tensor(len(B),B[0].shape[0])
+        torch.cat(B, out=B_final,dim=0)
+        X = torch.cat((A_final,B_final),dim=1)
+        #X_prime = torch.mm(p_final,X.T)
+        total = 0
+        for i in range(X.shape[0]):
+            norm = torch.linalg.norm(torch.matmul(p_final,X[i,:].T))
+            total += norm
+        avg = total/X.shape[0]
+        scale = 0.63245553 / avg
+        print("New scale:",scale)
+        
+    
     p_final = torch.mul(p_final,scale)
     
     print(p_final.shape)
@@ -117,13 +156,14 @@ def view_norms(p_file_name, a_file_name, b_file_name):
         #print(X_prime[i,0])
         #print(X_prime[:,i].shape)
         print(torch.linalg.norm(X_prime[:,i]),torch.linalg.norm(X_prime[:,i])**2)
-        if torch.linalg.norm(X_prime[:,i])**2 > 0.7:
+        if torch.linalg.norm(X_prime[:,i])**2 > 1.0:
             above += 1
-        if torch.linalg.norm(X_prime[:,i])**2 < 0.1:
+        if torch.linalg.norm(X_prime[:,i])**2 < 0.05:
             below += 1
         
     print("above:",above)
     print("below:",below)
+    print("total:",X_prime.shape[1])
     print()
     
     #for i in range(X_prime.shape[0]):
@@ -163,6 +203,12 @@ if __name__ == "__main__":
     #view_norms("data/degree=1strict_approximate_best_P_value_transpose_lambda=0.5_margin=0.5_gamma=64_reg=0.txt","data/features_A_values_val.txt","data/features_B_values_val.txt")
 
     #rescale_p("data/degree=2strict_approximate_best_P_value_transpose_lambda=0.01_margin=0.1_gamma=64_reg=0.txt",4.5)
-    rescale_p("data/degree=2strict_approximate_best_P_value_transpose_lambda=0.01_margin=0.1_gamma=64_reg=0.txt",3.323253455743364)
+    #rescale_p("data/degree=2strict_approximate_best_P_value_transpose_lambda=0.01_margin=0.1_gamma=64_reg=0.txt",3.323253455743364)
     #3.323253455743364
-    view_norms("data/degree=2strict_approximate_best_P_value_transpose_lambda=0.01_margin=0.1_gamma=64_reg=0.txt","data/features_A_values_test.txt","data/features_B_values_val.txt")
+    #view_norms("data/degree=2strict_approximate_best_P_value_transpose_lambda=0.01_margin=0.1_gamma=64_reg=0.txt","data/features_A_values_test.txt","data/features_B_values_val.txt")
+    rescale_p("data2/exact_results/exact_best_P_value_transpose_lambda=0.25_margin=0.25_gamma=64_reg=0.txt")
+    view_norms("data2/exact_results/exact_best_P_value_transpose_lambda=0.25_margin=0.25_gamma=64_reg=0.txt","data2/dataset/A_values_val.txt","data2/dataset/B_values_val.txt")
+    
+    #rescale_p("data2/degree=3strict/approximate_best_P_value_transpose_lambda=0.25_margin=0.1_gamma=64_reg=0.txt")
+    #rescale_p("data2/degree=3strict/approximate_best_P_value_transpose_lambda=0.25_margin=0.75_gamma=64_reg=0.txt",3.8748605978545454)
+    view_norms("data2/degree=3strict/approximate_best_P_value_transpose_lambda=0.25_margin=0.75_gamma=64_reg=0.txt","data2/dataset/A_values_val.txt","data2/dataset/B_values_val.txt")

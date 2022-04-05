@@ -901,24 +901,130 @@ def New_ROC_P_Matrix(filename, gamma, lamb, title, poly_degree=None):
     auc = roc_auc_score(y_true,y_score)
     print("AUC:",auc)
     
+def New_ROC_P_Matrix_voice_face(filename, gamma, lamb, title, poly_degree=None):
+    p_file = open(filename,'r')
+    p = []
+    #L = []
+    p_final = None
+    for line in p_file:
+        #result, l = line.strip().split(";")
+        #line = line[2:-2]
+        #line = line.replace("[","")
+        #line = line.replace("]","")
+        #line = line.replace(",","")
+        #line = line.strip()
+        #print(line[0],line[-1])
+        #line = [float(i) for i in line.split(" ")]
+        #result = torch.tensor(line)
+        #print(result.shape)
+        result = torch.tensor(ast.literal_eval(line.strip()))
+        #print(result.shape)
+        #l = int(l)
+        p.append(result)
+        p_final = result
+        #L.append(l)
+    #p_final = torch.Tensor(len(p),p[0].shape[0])
+    #torch.cat(p, out=p_final,dim=0)
+    
+    #num_class = len(set(L))
+    #samples_per_class = L.count(L[0])
+    
+    test = True
+    
+    if test:
+        a_file = open("data2/dataset/A_values_test.txt",'r')
+        b_file = open("data2/dataset/B_values_test.txt",'r')
+    else:
+        a_file = open("data2/dataset/A_values_val.txt",'r')
+        b_file = open("data2/dataset/B_values_val.txt",'r')
+    
+    A = []
+    L = [1,1,2,2,3,3,4,4,5,5,6,6,7,7,8,8,9,9]
+    for line in a_file:
+        line = line.replace("[","")
+        line = line.replace("]","")
+        line = line.replace(",","")
+        line = line.strip()
+        line = [float(i) for i in line.split(" ")]
+        result = torch.tensor(line).unsqueeze(dim=0)
+        #print(result.shape)
+        A.append(result)
+    A_final = torch.Tensor(len(A),A[0].shape[0])
+    torch.cat(A, out=A_final,dim=0)
+    
+    
+    B = []
+    for line in b_file:
+        line = line.replace("[","")
+        line = line.replace("]","")
+        line = line.replace(",","")
+        line = line.strip()
+        line = [float(i) for i in line.split(" ")]
+        result = torch.tensor(line).unsqueeze(dim=0)
+        B.append(result)
+    B_final = torch.Tensor(len(B),B[0].shape[0])
+    torch.cat(B, out=B_final,dim=0)
+        
+    #print("here")
+    #l_file = open("data/features_labels_X_prime_test_lambda=0.99_margin=0.5_gamma=128.txt",'r')
+    #L = []
+    #for line in l_file:
+        #L.append(float(line.strip().split(";")[1]))
+    
+    
+    #Create feature fusion dataset
+    X = torch.cat((A_final,B_final),dim=1)
+    #p_final = torch.mul(p_final,10)
+    #p_final = torch.div(p_final,torch.linalg.norm(p_final))
+    X_prime = torch.mm(X, p_final.T)
+    #X_prime = torch.mm(p_final, X.T)
+    
+    """
+    print()
+    print("l2(p):",torch.linalg.norm(p_final))
+    
+    print()
+    for i in range(X_prime.shape[0]):
+        print(torch.linalg.norm(X_prime[i,:]))
+    print()
+    
+    print(L)
+    print(X_prime.shape)
+    """
+    for i in range(X_prime.shape[0]):
+        if poly_degree:
+            X_prime[i,:]=torch.mul(X_prime[i,:], approx_inv_norm(X_prime[i,:],poly_degree))
+        else:
+            X_prime[i,:]=torch.div(X_prime[i,:], torch.linalg.norm(X_prime[i,:]))
+    #X_prime = X_prime.T
+
+    count = len(L)
+    
+    
+    
+    y_score = []
+    y_true = []
+    count = len(L)
+    for i in range(count):
+        for j in range(i,count):
+            score = Cosine_Similarity_no_div(X_prime[i],X_prime[j])
+            if L[i]==L[j]:
+                label = 1
+            else:
+                label = 0
+            y_score.append(score.detach().numpy())
+            y_true.append(label)
+    auc = roc_auc_score(y_true,y_score)
+    print("AUC:",auc)
+    
     
     
 
 
 #Cosine_Similarity_no_div
+"""
 if __name__ == "__main__":
     
-    """
-    #ROC("data/features_A_values_test.txt", "A", "ROC - MMU Iris Resnet 1024-dimensional Features")
-    print()
-    New_ROC("data/features_A_values_val.txt")
-    New_ROC("data/features_B_values_val.txt")
-    New_ROC("data/features_X_values_val.txt")
-    New_ROC("data/approx_labels_X_prime_val_lambda=0.1_margin=0.5_gamma=256_reg=0.txt")
-    New_ROC_Encrypted("data/approximate_labels_X_prime_val_lambda=0.1_margin=0.5_gamma=256_reg=0.txt")
-    #New_ROC_Encrypted("results/normalized_encrypted_results_val_lambda=0.1_margin=0.5_gamma=256.txt",labels=False)
-    print()
-    """
     
     print()
     print("A")
@@ -1069,24 +1175,69 @@ if __name__ == "__main__":
     
     #New_ROC_P_Matrix("data/1approximate_best_P_value_transpose_lambda=0.25_margin=1.0_gamma=64_reg=0.txt",1,1,"test")
     
-    """
-    #for i in range(len(r1)):
-        #print(r1[i]-r2[i])
-    large = 0
-    for i in range(len(r1)):
-        #print(float(y1[i]),float(y2[i]))
-        #print(abs(abs(float(y1[i]))-abs(float(y2[i]))))
-        if abs(abs(float(r1[i][0]))-abs(float(r2[i][0]))) >= 0.01:
-            large += 1
-            print(torch.linalg.norm(r1[i][1]))
-            print(torch.linalg.norm(r2[i][1]))
-            print(torch.linalg.norm(r1[i][2]))
-            print(torch.linalg.norm(r2[i][2]))
-            print(float(r1[i][0]), float(r2[i][0]))
-            print()
-    print("large errors:",large)
-    """
-    
+
     #New_ROC_P_Matrix("data/approx_best_P_value_transpose_lambda=0.99_margin=0.25_gamma=256_reg=0.txt", 256, 0.99, "title")
     print()
+"""
 
+if __name__ == "__main__":
+    
+    print()
+    print("A")
+    New_ROC("data2/dataset/A_values_test.txt","ROC_X",False)
+    print()
+    print("B")
+    New_ROC("data2/dataset/B_values_test.txt","ROC_X",False)
+    print()
+    print("X")
+    New_ROC("data2/dataset/X_values_test.txt","ROC_X",False)
+    print()
+    
+    print("Plaintext exact:")
+    New_ROC_P_Matrix_voice_face("data2/exact_results/exact_best_P_value_transpose_lambda=0.25_margin=0.25_gamma=64_reg=0.txt",1,1,"test")
+    print()
+    
+    print("Plaintext also exact:")
+    New_ROC_P_Matrix_voice_face("data2/exact_results/exact_best_P_value_transpose_lambda=0.1_margin=0.5_gamma=64_reg=0.txt",1,1,"test")
+    print()
+    
+    print("Plaintext poly3 large strict training:")
+    #New_ROC_P_Matrix_voice_face("data2/degree=3strict/approximate_best_P_value_transpose_lambda=0.25_margin=1.0_gamma=64_reg=0.txt",1,1,"test")
+    #New_ROC_Encrypted("data2/degree=3strict/approximate_labels_X_prime_test_lambda=0.25_margin=1.0_gamma=64_reg=0.txt","ROC_Algo=Poly3strict=False",True)
+    New_ROC_Encrypted("data2/degree=3strict/approximate_labels_X_prime_test_lambda=0.25_margin=0.75_gamma=64_reg=0.txt","ROC_Algo=Poly3strict=False",True)
+    print()
+    
+    #print("Encrypted poly6, exact training")
+    #New_ROC_Encrypted("results/allnewdata_normalized_encrypted_results_test_lambda=0.25_margin=0.25_gamma=64_exact_poly6.txt","ROC_Algo=Exact_Enc=Poly6",False)
+    #print()
+    print("Encrypted poly6large, exact training - lam=0.25, margin=0.25")
+    New_ROC_Encrypted("results/allnewdata_normalized_encrypted_results_test_lambda=0.25_margin=0.25_gamma=64_exact_poly6large.txt","ROC_Algo=Exact_Enc=Poly6",False)
+    print()
+    
+    #print("Encrypted poly3, exact training")
+    #New_ROC_Encrypted("results/allnewdata_normalized_encrypted_results_test_lambda=0.25_margin=0.25_gamma=64_exact.txt","ROC_Algo=Exact_Enc=Poly3",False)
+    #print()
+    print("Encrypted poly3large, exact training - lam=0.25, margin=0.25")
+    New_ROC_Encrypted("results/allnewdata_normalized_encrypted_results_test_lambda=0.25_margin=0.25_gamma=64_exact_poly3large.txt","ROC_Algo=Exact_Enc=Poly3large",False)
+    print("also Encrypted poly3large, exact training - lam=0.1, margin=0.5")
+    New_ROC_Encrypted("results/allnewdata_normalized_encrypted_results_test_lambda=0.1_margin=0.5_gamma=64_exact.txt","ROC_Algo=Exact_Enc=Poly3large",False)
+    print()
+    
+    #last needed thing?
+    #print("Encrypted poly3large, poly3largestrict training precision of 60")
+    #New_ROC_Encrypted("results/allnewdata_normalized_encrypted_results_test_lambda=0.1_margin=0.5_gamma=64_poly3strictlarge.txt","ROC_Algo=Poly3LargeStrict_Enc=Poly3Large",False) #trained for 25 epochs
+    #print()
+    
+    
+    print("Encrypted poly3large, poly3largestrict training, precision of 40 (like everything else)")
+    New_ROC_Encrypted("results/allnewdata_normalized_encrypted_results_test_lambda=0.1_margin=0.5_gamma=64_poly3strictlarge_lowprec.txt","ROC_Algo=Poly3LargeStrict_Enc=Poly3Large",False) #trained for 25 epochs
+    print()
+    
+    #print("Encrypted poly3, poly3strict training")
+    #New_ROC_Encrypted("results/allnewdata_normalized_encrypted_results_test_lambda=0.25_margin=0.25_gamma=64_poly3strict.txt","ROC_Algo=Poly3Strict_Enc=Poly3",False)
+    #print()
+    
+    
+    print("Encrypted goldschmimdt, exact training")
+    New_ROC_Encrypted("results/allnewdata_normalized_encrypted_results_goldschmidt_test_lambda=0.25_margin=0.25_gamma=64.txt","ROC_Algo=Exact_Enc=Goldschmidt",False)
+    print()

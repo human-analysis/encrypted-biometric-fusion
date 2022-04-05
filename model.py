@@ -240,6 +240,7 @@ class Linear_Feature_Fusion_Approximate():
         
 class Linear_Feature_Fusion_Approximate2():
     #main difference is that now we don't even include samples in loss that are outside our range
+    #strict
     def __init__(self,X,M,V,gamma,margin,lamb,indim=None,regularization=0,seed=0):
         random.seed(0)
         torch.manual_seed(seed)
@@ -292,7 +293,10 @@ class Linear_Feature_Fusion_Approximate2():
         
         self.coeffs = [[-14.87368246,23.74576715,-13.66592657,4.17688396]]
         
-        self.coeffs = [[5.91965872,-7.3475699,3.54940138]]
+        
+        self.coeffs = [[-9.81663423,19.8459398,-13.57853979,4.38423127]]
+        
+        #self.coeffs = [[5.91965872,-7.3475699,3.54940138]]
         
         #self.coeffs = [[-2.61776258,2.78221164]]
         
@@ -312,11 +316,11 @@ class Linear_Feature_Fusion_Approximate2():
         
         #x = torch.linalg.norm(x_in)**2
         #if x < 0.01:
-        if x < 0.1:
+        if x < 0.05:
             self.escape += 1
             print('error')
             return 1/(x**0.5)
-        if x > 0.7:
+        if x > 1.0:
             self.escape += 1
             print('error')
             return 1/(x**0.5)

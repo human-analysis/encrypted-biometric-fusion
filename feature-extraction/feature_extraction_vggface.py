@@ -50,7 +50,7 @@ def feature_extraction():
         
     #model = VGG16(weights='imagenet', include_top=False)   
     input_shape = (224, 224, 3)
-    model = VGGFace(model="resnet50",include_top=False, input_shape=input_shape, pooling='avg') # pooling: None, avg or max
+    model = VGGFace(include_top=False, input_shape=input_shape, pooling='avg') # pooling: None, avg or max
 
     #model = VGG16(weights = 'imagenet', input_shape = (input_shape[0], input_shape[1], input_shape[2]), pooling = 'max', include_top = False)
 

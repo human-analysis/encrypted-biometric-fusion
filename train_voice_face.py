@@ -10,7 +10,7 @@ import math
 
 import torch
 from torch.distributions.multivariate_normal import MultivariateNormal
-from model import Linear_Feature_Fusion_Approximate, Linear_Feature_Fusion, Linear_Feature_Fusion_No_Normal, Linear_Feature_Fusion_Approximate2, Linear_Feature_Fusion_Approximate3
+from model import Linear_Feature_Fusion_Approximate, Linear_Feature_Fusion, Linear_Feature_Fusion_No_Normal, Linear_Feature_Fusion_Approximate2, Linear_Feature_Fusion_Approximate3, Linear_Feature_Fusion_Batch
 from data_generation import data_gen
 
 from ROC import New_ROC_AUC
@@ -279,7 +279,8 @@ def train_exact(gamma,iters,spec_margin=None,spec_lamb=None):
                 randie = 30
                 randie = 0
                 print("seed of:",randie)
-                model = Linear_Feature_Fusion(X_train,M,V,gamma,margin,lamb,regularization=reg,seed=randie)
+                #model = Linear_Feature_Fusion(X_train,M,V,gamma,margin,lamb,regularization=reg,seed=randie)
+                model = Linear_Feature_Fusion_Batch(X_train,M,V,L_train,gamma,margin,lamb,regularization=reg,seed=randie)
                 #model = Linear_Feature_Fusion(X_train,M,V,gamma,margin,lamb,regularization=reg)
                 
                 best_loss = model.loss()
@@ -329,7 +330,7 @@ def train_exact(gamma,iters,spec_margin=None,spec_lamb=None):
                 aucs.append((margin,lamb,auc))
                 print("AUC of lambda="+str(lamb)+", margin="+str(margin)+ "_reg=" + str(reg) + ":", auc)
 
-                p_best_file_name = "data2/exact_results/exact_best_P_value_transpose_lambda=" + str(lamb) + "_margin=" + str(margin) + "_gamma=" + str(gamma)  + "_reg=" + str(reg) + ".txt"
+                p_best_file_name = "data2/exact_results/1exact_best_P_value_transpose_lambda=" + str(lamb) + "_margin=" + str(margin) + "_gamma=" + str(gamma)  + "_reg=" + str(reg) + ".txt"
                 #p_best_file_name = "data/exact_best_P_value_transpose_lambda=" + str(lamb) + "_margin=" + str(margin) + "_gamma=" + str(gamma)  + "_reg=" + str(reg) + ".txt"
                 outfile_p_t = open(p_best_file_name,'w')
                 P_final_t = best_P.T
@@ -337,7 +338,7 @@ def train_exact(gamma,iters,spec_margin=None,spec_lamb=None):
                 outfile_p_t.write(P_final_t)
                 outfile_p_t.close()
                 
-                loss_file_name = "data2/exact_results/exact_loss_values_lambda=" + str(lamb) + "_margin=" + str(margin) + "_gamma=" + str(gamma)  + "_reg=" + str(reg) + ".txt"
+                loss_file_name = "data2/exact_results/1exact_loss_values_lambda=" + str(lamb) + "_margin=" + str(margin) + "_gamma=" + str(gamma)  + "_reg=" + str(reg) + ".txt"
                 #loss_file_name = "data/exact_loss_values_lambda=" + str(lamb) + "_margin=" + str(margin) + "_gamma=" + str(gamma)  + "_reg=" + str(reg) + ".txt"
                 outfile_loss = open(loss_file_name,'w')
                 for loss_value in losses:
@@ -345,7 +346,7 @@ def train_exact(gamma,iters,spec_margin=None,spec_lamb=None):
                     outfile_loss.write("\n")
                 outfile_loss.close()
 
-                X_prime_filename = "data2/exact_results/exact_labels_X_prime_val_lambda=" + str(lamb) + "_margin=" + str(margin) + "_gamma=" + str(gamma) + "_reg=" + str(reg) + ".txt"
+                X_prime_filename = "data2/exact_results/1exact_labels_X_prime_val_lambda=" + str(lamb) + "_margin=" + str(margin) + "_gamma=" + str(gamma) + "_reg=" + str(reg) + ".txt"
                 #X_prime_filename = "data/exact_labels_X_prime_val_lambda=" + str(lamb) + "_margin=" + str(margin) + "_gamma=" + str(gamma) + "_reg=" + str(reg) + ".txt"
                 outfile_x = open(X_prime_filename,'w')
                 x_list = X_prime.tolist()
@@ -361,7 +362,7 @@ def train_exact(gamma,iters,spec_margin=None,spec_lamb=None):
                 X_prime = torch.mm(X_test,best_P)
                 
                 
-                X_filename = "data2/exact_results/exact_labels_X_NOT_NORMAL_test_lambda=" + str(lamb) + "_margin=" + str(margin) + "_gamma=" + str(gamma) + "_reg=" + str(reg) + ".txt"
+                X_filename = "data2/exact_results/1exact_labels_X_NOT_NORMAL_test_lambda=" + str(lamb) + "_margin=" + str(margin) + "_gamma=" + str(gamma) + "_reg=" + str(reg) + ".txt"
                 #X_prime_filename = "data/exact_labels_X_prime_test_lambda=" + str(lamb) + "_margin=" + str(margin) + "_gamma=" + str(gamma) + "_reg=" + str(reg) + ".txt"
                 outfile_x = open(X_filename,'w')
                 x_list = X_prime.tolist()
@@ -378,7 +379,7 @@ def train_exact(gamma,iters,spec_margin=None,spec_lamb=None):
                     #X_prime[i,:]=torch.mul(X_prime[i,:], approximate_inv_norm(X_prime[i,:]))
                 #print("new normalized test x_prime:", X_prime)
                 
-                X_prime_filename = "data2/exact_results/exact_labels_X_prime_test_lambda=" + str(lamb) + "_margin=" + str(margin) + "_gamma=" + str(gamma) + "_reg=" + str(reg) + ".txt"
+                X_prime_filename = "data2/exact_results/1exact_labels_X_prime_test_lambda=" + str(lamb) + "_margin=" + str(margin) + "_gamma=" + str(gamma) + "_reg=" + str(reg) + ".txt"
                 #X_prime_filename = "data/exact_labels_X_prime_test_lambda=" + str(lamb) + "_margin=" + str(margin) + "_gamma=" + str(gamma) + "_reg=" + str(reg) + ".txt"
                 outfile_x = open(X_prime_filename,'w')
                 x_list = X_prime.tolist()
@@ -1963,6 +1964,6 @@ def train_no_normal(gamma,iters,spec_margin=None,spec_lamb=None):
     print(aucs)
 if __name__ == "__main__":
     #train(64,100,0.75,0.25)
-    train_exact(32,30)
-    train(64,25)
+    train_exact(64,25)#30 epochs?
+    #train(64,25)
 

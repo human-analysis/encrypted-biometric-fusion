@@ -543,6 +543,9 @@ def plot_matmul_performance_theoretical():
     
     deltas = [2**i for i in range(10,13)]
     gammas = [2**i for i in range(9,12)]
+    
+    deltas = [1024]
+    gammas = [64]
     print("Deltas:", deltas)
     print("Gammas:",gammas)
     ms = [4096,4096,8192]
@@ -574,8 +577,9 @@ def plot_matmul_performance_theoretical():
         if i==0:
             #Naive Experimental
             time = []
-            experimental_ns = [1,100]
-            times = [7807.18,328179]
+            experimental_ns = [1,100,1000]
+            #times = [7807.18,328179]
+            times = [966.828,39964.2,490122]
             time = [t/1000 for t in times]
     
             data_dictTime = {"n":experimental_ns,"Time (s)":time}
@@ -601,7 +605,8 @@ def plot_matmul_performance_theoretical():
             #HYBRID Experimental
             time = []
             experimental_ns = [1,100,1000]
-            times = [764.534, 37505, 376595]
+            #times = [764.534, 37505, 376595]
+            times = [111.796,4972.85,50917.2]
             time = [t/1000 for t in times]
     
             data_dictTime = {"n":experimental_ns,"Time (s)":time}
@@ -625,7 +630,8 @@ def plot_matmul_performance_theoretical():
             #SIMD Experimental
             time = []
             experimental_ns = [1,100,1000]
-            times = [247473]*3
+            #times = [247473]*3
+            times = [32379.3]*3
             time = [t/1000 for t in times]
     
             data_dictTime = {"n":experimental_ns,"Time (s)":time}
@@ -645,7 +651,7 @@ def plot_matmul_performance_theoretical():
 
         figTime.add_trace(go.Scatter(x=data_dictTime["n"],y=data_dictTime["Time (s)"], mode="lines",name="Mat-Mat (theoretical)",line=dict(color='black', dash='dot')))
         """
-        
+        """
         if i==0:
             #SIMD Experimental
             time = []
@@ -657,7 +663,7 @@ def plot_matmul_performance_theoretical():
             dfTime = pandas.DataFrame(data_dictTime)
     
             figTime.add_trace(go.Scatter(x=data_dictTime["n"],y=data_dictTime["Time (s)"], mode="lines",name="SIMD (experimental)",line=dict(color='green')))
-        
+        """
         figMem = go.Figure()
         
         p=1
@@ -696,7 +702,7 @@ def plot_matmul_performance_theoretical():
         
         
         figTime.update_layout(
-            title="Matrix-Vector Runtimes δ="+str(delta)+" γ="+str(gamma)+" m="+str(m),
+            #title="Matrix-Vector Runtimes δ="+str(delta)+" γ="+str(gamma)+" m="+str(m),
             xaxis_title="n",
             yaxis_title="Time (s)",
             legend_title="Method",
@@ -712,7 +718,7 @@ def plot_matmul_performance_theoretical():
         figTime.write_image("figures/TheoreticalPlots/TheoreticalTime_delta="+str(delta)+"_gamma="+str(gamma)+"_slots="+str(m)+".png")
         
         figMem.update_layout(
-            title="Matrix-Vector Memory Complexity δ="+str(delta)+" γ="+str(gamma)+" m="+str(m),
+            #title="Matrix-Vector Memory Complexity δ="+str(delta)+" γ="+str(gamma)+" m="+str(m),
             xaxis_title="n",
             yaxis_title="O(p)",
             legend_title="Method",

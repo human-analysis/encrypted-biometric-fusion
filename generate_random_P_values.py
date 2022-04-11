@@ -30,6 +30,8 @@ def main():
     margin = 0.5
     indims_list = [[128,128,128,128,128,128,128],[2,4,8,16,32,64,128]]
     outdims_list = [[1,2,4,8,16,32,64],[1,1,1,1,1,1,1]]
+    indims_list = [[1024]]
+    outdims_list = [[64]]
     for j in range(len(indims_list)):
         indims = indims_list[j]
         outdims = outdims_list[j]

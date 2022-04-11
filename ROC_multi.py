@@ -1,0 +1,158 @@
+import torch
+import plotly.express as px
+import plotly.graph_objects as go
+import pandas
+import ast
+from operator import itemgetter
+import numpy as np
+import math
+
+from sklearn import metrics
+
+from sklearn.metrics import roc_curve, roc_auc_score
+
+
+
+def Cosine_Similarity(vec1, vec2):
+    return torch.dot(torch.div(vec1, torch.linalg.norm(vec1)), torch.div(vec2, torch.linalg.norm(vec2)))
+def Cosine_Similarity_no_div(vec1, vec2):
+    return torch.dot(vec1, vec2)
+
+def Cosine_Distance(vec1, vec2):
+    return 1 - torch.dot(torch.div(vec1, torch.linalg.norm(vec1)), torch.div(vec2, torch.linalg.norm(vec2)))
+
+def Cosine_Distance_no_div(vec1, vec2):
+    #assumes vec1 and vec2 are unit vectors
+    return 1 - torch.dot(vec1,vec2)
+    
+    
+
+def approx_inv_norm(x_in, degree):
+    if degree == 6:
+        coeffs = [[3.6604110068015703, -7.308745554603273, 5.359140241417692, -0.03216663533709177], [-1.761181767348659, 5.619133141454438, -7.496635998204148, 5.491355198579896]] #is this right?
+    elif degree == 3:
+        coeffs = [[-14.87368246,23.74576715,-13.66592657,4.17688396]]
+    elif degree == 2:
+        coeffs = [[5.91965872,-7.3475699,3.54940138]]
+    elif degree == 1:
+        coeffs = [[-2.61776258,2.78221164]]
+    
+    
+    
+    #coeffs = [[11.836520387699572, -18.076619596914263, 9.213047940260486, -0.1390999565263271], [-5.035385227584069, 14.361565311498836, -14.664452287760135, 7.742745833744212]]
+    
+    x = torch.linalg.norm(x_in)**2
+
+    result = 0
+    for coeff_list in coeffs:
+        result = coeff_list[0]
+        for i in range(1,len(coeff_list)):
+            result = result * x + coeff_list[i]
+        x = result
+        result = 0
+    return x
+    
+
+def ROC_Encrypted_Results(filenames, title, labels=True, debug=False):
+    fig = go.Figure()
+    names = ["Poly3 Learning, Poly3 Inference", "Exact Learning, Poly3 Inference", "Exact Learning, Poly6 Inference", "Exact Learning, Goldschmidt's Inference"]
+    names = ["HEFTI Learning, Polynomial (Degree=3) Inference", "Exact Learning, Polynomial (Degree=3) Inference", "Exact Learning, Polynomial (Degree=6) Inference", "Exact Learning, Goldschmidt's Inference"]
+    for iter, filename in enumerate(filenames):
+        enc_results_file = open(filename,'r')
+        enc_results = []
+        if labels:
+            L = []
+            for line in enc_results_file:
+                result, l = line.strip().split(";")
+                result = torch.tensor(ast.literal_eval(result)).unsqueeze(dim=0)
+                l = int(l)
+                enc_results.append(result)
+                
+                L.append(l)
+            enc_results_final = torch.Tensor(len(enc_results),enc_results[0].shape[0])
+            torch.cat(enc_results, out=enc_results_final,dim=0)
+            print(enc_results_final.shape)
+            #for i in range(enc_results_final.shape[0]):
+                #print(enc_results_final[i,0])
+            #print(L)
+        else:
+            for line in enc_results_file:
+                result = [float(item) for item in line.strip().split()]
+                result = torch.tensor(result).unsqueeze(dim=0)
+                #print(result.shape)
+                enc_results.append(result)
+            enc_results_final = torch.Tensor(len(enc_results),enc_results[0].shape[1])
+            
+            torch.cat(enc_results, out=enc_results_final,dim=0)
+            
+            print(enc_results_final.shape)
+            #for i in range(enc_results_final.shape[0]):
+                #print(enc_results_final[i,0])
+            a_file = open("data/features_L_values_val.txt",'r')
+            L = a_file.readline().strip()
+            L = [int(i) for i in L[1:len(L)-2].split(", ")]
+    
+        y_score = []
+        y_true = []
+        
+        results = []
+        
+        count = len(L)
+        for i in range(count):
+            
+            for j in range(i,count):
+                score = Cosine_Similarity_no_div(enc_results_final[i],enc_results_final[j])
+                #score = Cosine_Similarity(enc_results_final[i],enc_results_final[j])
+                if L[i]==L[j]:
+                    label = 1
+                else:
+                    label = 0
+                y_score.append(score)
+                y_true.append(label)
+                results.append((score, enc_results_final[i], enc_results_final[j]))
+
+        auc = roc_auc_score(y_true,y_score)
+        print("AUC:",auc)
+        
+        if debug:
+            print(y_score)
+        
+        fpr, tpr, thresholds = roc_curve(y_true,y_score)
+        
+        fig.add_trace(
+            go.Scatter(
+                mode='lines',
+                x=fpr,
+                y=tpr,
+                name=names[iter]
+            )
+        )
+        
+        #data_dict = {"False Positive Rate":fpr,"True Positive Rate":tpr}
+        #df = pandas.DataFrame(data_dict)
+    #fig = px.line(df,x="False Positive Rate",y="True Positive Rate",
+                  #title=title)
+    fig.update_yaxes(range=[0,1.0])
+    fig.update_xaxes(range=[0,1.0])
+    
+    fig.update_layout(legend=dict(
+    yanchor="bottom",
+    y=-0.4,
+    xanchor="left",
+    x=0
+))
+    
+    
+    fig_file_name = "figures/" + title + ".png"
+    fig.write_image(fig_file_name)
+    
+    return y_score, results
+
+
+
+filenames = []
+filenames.append("results/allnewdata_normalized_encrypted_results_test_lambda=0.1_margin=0.5_gamma=64_poly3strictlarge_lowprec.txt")
+filenames.append("results/allnewdata_normalized_encrypted_results_test_lambda=0.25_margin=0.25_gamma=64_exact_poly3large.txt")
+filenames.append("results/allnewdata_normalized_encrypted_results_test_lambda=0.25_margin=0.25_gamma=64_exact_poly6large.txt")
+filenames.append("results/allnewdata_normalized_encrypted_results_goldschmidt_test_lambda=0.25_margin=0.25_gamma=64.txt")
+ROC_Encrypted_Results(filenames, "ROC_multi", labels=False, debug=False)

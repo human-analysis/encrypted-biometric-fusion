@@ -940,6 +940,294 @@ def New_ROC_P_Matrix_voice_face(filename, gamma, lamb, title, poly_degree=None):
     
     A = []
     L = [1,1,2,2,3,3,4,4,5,5,6,6,7,7,8,8,9,9]
+    L = []
+    
+    for line in a_file:
+        line = line.replace("[","")
+        line = line.replace("]","")
+        line = line.replace(",","")
+        line = line.strip()
+        line = [float(i) for i in line.split(" ")]
+        result = torch.tensor(line).unsqueeze(dim=0)
+        #print(result.shape)
+        A.append(result)
+    A_final = torch.Tensor(len(A),A[0].shape[0])
+    torch.cat(A, out=A_final,dim=0)
+    
+    
+    B = []
+    for line in b_file:
+        line = line.replace("[","")
+        line = line.replace("]","")
+        line = line.replace(",","")
+        line = line.strip()
+        line = [float(i) for i in line.split(" ")]
+        result = torch.tensor(line).unsqueeze(dim=0)
+        B.append(result)
+    B_final = torch.Tensor(len(B),B[0].shape[0])
+    torch.cat(B, out=B_final,dim=0)
+        
+    for i in range(len(B)//2):
+        L.append(i)
+        L.append(i)
+    #print("here")
+    #l_file = open("data/features_labels_X_prime_test_lambda=0.99_margin=0.5_gamma=128.txt",'r')
+    #L = []
+    #for line in l_file:
+        #L.append(float(line.strip().split(";")[1]))
+    
+    
+    #Create feature fusion dataset
+    X = torch.cat((A_final,B_final),dim=1)
+    #p_final = torch.mul(p_final,10)
+    #p_final = torch.div(p_final,torch.linalg.norm(p_final))
+    X_prime = torch.mm(X, p_final.T)
+    #X_prime = torch.mm(p_final, X.T)
+    
+    """
+    print()
+    print("l2(p):",torch.linalg.norm(p_final))
+    
+    print()
+    for i in range(X_prime.shape[0]):
+        print(torch.linalg.norm(X_prime[i,:]))
+    print()
+    
+    print(L)
+    print(X_prime.shape)
+    """
+    for i in range(X_prime.shape[0]):
+        if poly_degree:
+            X_prime[i,:]=torch.mul(X_prime[i,:], approx_inv_norm(X_prime[i,:],poly_degree))
+        else:
+            X_prime[i,:]=torch.div(X_prime[i,:], torch.linalg.norm(X_prime[i,:]))
+    #X_prime = X_prime.T
+
+    count = len(L)
+    
+    
+    
+    y_score = []
+    y_true = []
+    count = len(L)
+    #print(count)
+    for i in range(count):
+        for j in range(i,count):
+            score = Cosine_Similarity_no_div(X_prime[i],X_prime[j])
+            if L[i]==L[j]:
+                label = 1
+            else:
+                label = 0
+            y_score.append(score.detach().numpy())
+            y_true.append(label)
+    auc = roc_auc_score(y_true,y_score)
+    print("AUC:",auc)
+    
+    
+    
+def New_ROC_Encrypted_large(filename, title, labels=True, debug=False):
+    enc_results_file = open(filename,'r')
+    enc_results = []
+    if labels:
+        L = []
+        for line in enc_results_file:
+            result, l = line.strip().split(";")
+            result = torch.tensor(ast.literal_eval(result)).unsqueeze(dim=0)
+            l = int(l)
+            enc_results.append(result)
+            
+            L.append(l)
+        enc_results_final = torch.Tensor(len(enc_results),enc_results[0].shape[0])
+        torch.cat(enc_results, out=enc_results_final,dim=0)
+        print(enc_results_final.shape)
+        #for i in range(enc_results_final.shape[0]):
+            #print(enc_results_final[i,0])
+        #print(L)
+    else:
+        for line in enc_results_file:
+            result = [float(item) for item in line.strip().split()]
+            result = torch.tensor(result).unsqueeze(dim=0)
+            #print(result.shape)
+            enc_results.append(result)
+        enc_results_final = torch.Tensor(len(enc_results),enc_results[0].shape[1])
+        
+        torch.cat(enc_results, out=enc_results_final,dim=0)
+        
+        print(enc_results_final.shape)
+        #for i in range(enc_results_final.shape[0]):
+            #print(enc_results_final[i,0])
+        a_file = open("data3/dataset/L_values_test.txt",'r')
+        L = a_file.readline()
+        L = [int(i) for i in L[1:len(L)-2].split(", ")]
+    
+    y_score = []
+    y_true = []
+    
+    results = []
+    
+    count = len(L)
+    for i in range(count):
+        
+        for j in range(i,count):
+            score = Cosine_Similarity_no_div(enc_results_final[i],enc_results_final[j])
+            #score = Cosine_Similarity(enc_results_final[i],enc_results_final[j])
+            if L[i]==L[j]:
+                label = 1
+            else:
+                label = 0
+            y_score.append(score)
+            y_true.append(label)
+            results.append((score, enc_results_final[i], enc_results_final[j]))
+
+    auc = roc_auc_score(y_true,y_score)
+    print("AUC:",auc)
+    
+    if debug:
+        print(y_score)
+    
+    fpr, tpr, thresholds = roc_curve(y_true,y_score)
+    
+    data_dict = {"False Positive Rate":fpr,"True Positive Rate":tpr}
+    df = pandas.DataFrame(data_dict)
+    fig = px.line(df,x="False Positive Rate",y="True Positive Rate",
+                  title=title)
+    fig.update_yaxes(range=[0,1])
+    
+    fig_file_name = "figures/" + title + ".png"
+    fig.write_image(fig_file_name)
+    
+    return y_score, results
+    
+def New_ROC_large(filename, title, labels=True):
+    enc_results_file = open(filename,'r')
+    enc_results = []
+    if labels:
+        L = []
+        for line in enc_results_file:
+            result, l = line.strip().split(";")
+            result = torch.tensor(ast.literal_eval(result)).unsqueeze(dim=0)
+            l = int(l)
+            enc_results.append(result)
+            
+            L.append(l)
+        enc_results_final = torch.Tensor(len(enc_results),enc_results[0].shape[0])
+        torch.cat(enc_results, out=enc_results_final,dim=0)
+        print(enc_results_final.shape)
+        #for i in range(enc_results_final.shape[0]):
+            #print(enc_results_final[i,0])
+        #print(L)
+    else:
+        for line in enc_results_file:
+            line = line.replace("[", "")
+            line = line.replace("]", "")
+            result = [float(item) for item in line.strip().split()]
+            result = torch.tensor(result).unsqueeze(dim=0)
+            #print(result.shape)
+            enc_results.append(result)
+        enc_results_final = torch.Tensor(len(enc_results),enc_results[0].shape[1])
+        
+        torch.cat(enc_results, out=enc_results_final,dim=0)
+        
+        print(enc_results_final.shape)
+        #for i in range(enc_results_final.shape[0]):
+            #print(enc_results_final[i,0])
+        a_file = open("data3/dataset/L_values_test.txt",'r')
+        L = a_file.readline()
+        L = [int(i) for i in L[1:len(L)-2].split(", ")]
+    
+    #for i in range(18):
+        #print(torch.linalg.norm(enc_results_final[i]))
+    
+    y_score = []
+    y_true = []
+    count = len(L)
+    #print(count)
+    for i in range(count):
+        for j in range(i,count):
+            score = Cosine_Similarity(enc_results_final[i],enc_results_final[j])
+            if L[i]==L[j]:
+                label = 1
+            else:
+                label = 0
+            y_score.append(score)
+            y_true.append(label)
+
+    
+    
+    #fpr, tpr, thresholds = roc_curve(y_true,y_score)
+    #print(fpr)
+    #print(tpr)
+    """
+    auc = 0
+    
+    auc_dict = {}
+    for i in range(len(tpr)):
+        auc_dict[fpr[i]] = tpr[i]
+    auc_list = list(auc_dict.items())
+    auc_list.sort(key=itemgetter(0))
+    
+    for i in range(1,len(auc_list)):
+        interval = abs(auc_list[i][0]-auc_list[i-1][0])
+        auc += interval*auc_list[i-1][1]
+        auc += 0.5 * interval * (auc_list[i][1]-auc_list[i-1][1])
+    """
+    auc = roc_auc_score(y_true,y_score)
+    #print()
+    #print(auc_list)
+    print("AUC:",auc)
+    
+    fpr, tpr, thresholds = roc_curve(y_true,y_score)
+    
+    data_dict = {"False Positive Rate":fpr,"True Positive Rate":tpr}
+    df = pandas.DataFrame(data_dict)
+    fig = px.line(df,x="False Positive Rate",y="True Positive Rate",
+                  title=title)
+    fig.update_yaxes(range=[0,1])
+    
+    fig_file_name = "figures/" + title + ".png"
+    fig.write_image(fig_file_name)
+
+
+
+def New_ROC_P_Matrix_voice_face_large(filename, gamma, lamb, title, poly_degree=None):
+    p_file = open(filename,'r')
+    p = []
+    #L = []
+    p_final = None
+    for line in p_file:
+        #result, l = line.strip().split(";")
+        #line = line[2:-2]
+        #line = line.replace("[","")
+        #line = line.replace("]","")
+        #line = line.replace(",","")
+        #line = line.strip()
+        #print(line[0],line[-1])
+        #line = [float(i) for i in line.split(" ")]
+        #result = torch.tensor(line)
+        #print(result.shape)
+        result = torch.tensor(ast.literal_eval(line.strip()))
+        #print(result.shape)
+        #l = int(l)
+        p.append(result)
+        p_final = result
+        #L.append(l)
+    #p_final = torch.Tensor(len(p),p[0].shape[0])
+    #torch.cat(p, out=p_final,dim=0)
+    
+    #num_class = len(set(L))
+    #samples_per_class = L.count(L[0])
+    
+    test = True
+    
+    if test:
+        a_file = open("data3/dataset/A_values_test.txt",'r')
+        b_file = open("data3/dataset/B_values_test.txt",'r')
+    else:
+        a_file = open("data3/dataset/A_values_val.txt",'r')
+        b_file = open("data3/dataset/B_values_val.txt",'r')
+    
+    A = []
+    L = [1,1,2,2,3,3,4,4,5,5,6,6,7,7,8,8,9,9]
     for line in a_file:
         line = line.replace("[","")
         line = line.replace("]","")
@@ -1016,10 +1304,6 @@ def New_ROC_P_Matrix_voice_face(filename, gamma, lamb, title, poly_degree=None):
             y_true.append(label)
     auc = roc_auc_score(y_true,y_score)
     print("AUC:",auc)
-    
-    
-    
-
 
 #Cosine_Similarity_no_div
 """
@@ -1180,6 +1464,8 @@ if __name__ == "__main__":
     print()
 """
 
+
+
 if __name__ == "__main__":
     
     print()
@@ -1239,5 +1525,32 @@ if __name__ == "__main__":
     
     
     print("Encrypted goldschmimdt, exact training")
+    #New_ROC_Encrypted("results/allnewdata_normalized_encrypted_results_goldschmidt_test_lambda=0.25_margin=0.25_gamma=64.txt","ROC_Algo=Exact_Enc=Goldschmidt",False)
     New_ROC_Encrypted("results/allnewdata_normalized_encrypted_results_goldschmidt_test_lambda=0.25_margin=0.25_gamma=64.txt","ROC_Algo=Exact_Enc=Goldschmidt",False)
     print()
+
+
+"""
+if __name__ == "__main__":
+    #print(torch.torch.cuda.is_available())
+    #print()
+    print("A")
+    New_ROC("data2/dataset/A_values_test.txt","ROC_X",False)
+    print()
+    print("B")
+    New_ROC_large("data3/dataset/B_values_test.txt","ROC_X",False)
+    print()
+    print("X")
+    New_ROC_large("data3/dataset/X_values_test.txt","ROC_X",False)
+    print()
+    
+    print("Plaintext exact:")
+    #New_ROC_large("data3/exact_results/exact_labels_X_prime_test_lambda=0.25_margin=0.25_gamma=64_reg=0.txt","ROC_X",False)
+    #New_ROC_P_Matrix_voice_face("data3/exact_results/exact_best_P_value_transpose_lambda=0.25_margin=0.25_gamma=64_reg=0.txt",1,1,"test")
+    #New_ROC_P_Matrix_voice_face("data3/exact_results/exact_best_P_value_transpose_lambda=0.25_margin=0.25_gamma=256_reg=0.txt",1,1,"test")
+    print()
+    
+    #print("Encrypted poly3, poly3strict small training:") #this got like 0.9246 so not very good
+    #New_ROC_Encrypted_large("results/allnewdata_normalized_encrypted_results_test_lambda=0.1_margin=0.5_gamma=64_poly3strictlarge_BIGDATA.txt","ROC_Algo=Poly3Strict_Enc=Poly3",False)
+    #print()
+"""

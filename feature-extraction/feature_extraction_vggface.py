@@ -42,7 +42,7 @@ def feature_extraction():
     names = []
     for line in file:
         line = line.strip().split()
-        if int(line[1]) == 2:
+        if int(line[1]) == 3:
             names.append(line[0])
         if len(names) == 251:
             print("Collected")
@@ -59,7 +59,8 @@ def feature_extraction():
     for name in names:
         filename1 = "data/lfw-deepfunneled/lfw-deepfunneled/lfw-deepfunneled/" + name + "/" + name + "_0001.jpg"
         filename2 = "data/lfw-deepfunneled/lfw-deepfunneled/lfw-deepfunneled/" + name + "/" + name + "_0002.jpg"
-        filenames = [filename1,filename2]
+        filename3 = "data/lfw-deepfunneled/lfw-deepfunneled/lfw-deepfunneled/" + name + "/" + name + "_0003.jpg"
+        filenames = [filename1,filename2,filename3]
         for image_path in filenames:
             #img = image.load_img(image_path, target_size=(224, 224))
             #img = image.load_img(image_path, target_size=(250, 250))
@@ -92,7 +93,7 @@ def feature_extraction():
     print("Number of feature vectors:",len(features_list))
     print("Each feature vector is of length:",features_list[0].shape)
     #outfile = open("extractions/VGGFace_vgg_lfw-deepfunneled.txt",'w')
-    outfile = open("extractions/VGGFace_resnet50_lfw-deepfunneled.txt",'w')
+    outfile = open("extractions/VGGFace_resnet50_lfw-deepfunneled_3samples.txt",'w')
     for features in features_list:
         #print(np.linalg.norm(features))
         features = features/np.linalg.norm(features) #are we allowed to normalize?

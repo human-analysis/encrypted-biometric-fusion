@@ -38,29 +38,37 @@ def extract_face(filename, required_size=(224, 224)):
 
 
 def feature_extraction():
-    file = open("data/cplfw/cplfw/pairs_CPLFW.txt",'r')
-    forbidden_names = ["Tommy_Shane_Steiner","Vaclav_Havel","Ruth_Bader_Ginsburg",
-                       "Dereck_Whittenburg","Rachel_Kempson","Robert_Fico","Alfonso_Cuaron",
-                       "Andy_Griffith","Ronald_Kadish","John_Manley"]
+    file = open("data/names_with_numbers.txt",'r')
     names = []
     for line in file:
         line = line.strip().split()
-        should_skip = False
-        for forb in forbidden_names:
-            if forb in line[0]:
-                should_skip = True
-                break
-        if should_skip:
-            print("skipped")
-            continue
-        if int(line[1]) == 0:
+        if int(line[1]) == 3:
+            names.append(line[0])
+        if len(names) == 251:
             print("Collected")
             break
         
-        names.append(line[0])
-        if len(names) == 550:
-            print("Collected")
-            break
+    root = "CASIA/CASIA"
+    num_in_folder=0
+    
+    for i in range(1,109):
+        if i < 10:
+            identity = "00"+str(i)
+        elif i < 100 and i > 9:
+            identity = "0" + str(i)
+        else:
+            identity = str(i)
+        eyes = ["1","2"]
+        filenames = []
+        for eye in eyes:
+            for j in range(1,4):
+                filenames.append(root + "/" + identity + "/" + eye + "/" + identity + "_" + eye + "_" + str(j) + ".bmp")
+            if eye == "2":
+                filenames.append(root + "/" + identity + "/" + eye + "/" + identity + "_" + eye + "_4.bmp")
+    
+        for filename in filenames:
+            pass
+        num_in_folder += 1
         
     #model = VGG16(weights='imagenet', include_top=False)   
     input_shape = (224, 224, 3)
@@ -70,16 +78,12 @@ def feature_extraction():
 
     features_list = []
     counting = 0
-    print(len(names))
-    
-    #skip = 550
     for name in names:
-       # if skip > 0:
-            #skip -= 1
-            #continue
-        print(name)
-        image_path = "data/cplfw/cplfw/aligned images/" + name
-        #for image_path in filenames:
+        filename1 = "data/lfw-deepfunneled/lfw-deepfunneled/lfw-deepfunneled/" + name + "/" + name + "_0001.jpg"
+        filename2 = "data/lfw-deepfunneled/lfw-deepfunneled/lfw-deepfunneled/" + name + "/" + name + "_0002.jpg"
+        filename3 = "data/lfw-deepfunneled/lfw-deepfunneled/lfw-deepfunneled/" + name + "/" + name + "_0003.jpg"
+        filenames = [filename1,filename2,filename3]
+        for image_path in filenames:
             #img = image.load_img(image_path, target_size=(224, 224))
             #img = image.load_img(image_path, target_size=(250, 250))
             #x = image.img_to_array(img)
@@ -87,22 +91,22 @@ def feature_extraction():
             #x = preprocess_input(x)
             
         
-        # load the photo and extract the face
-        pixels = extract_face(image_path)
-        # convert one face into samples
-        pixels = pixels.astype('float32')
-        samples = expand_dims(pixels, axis=0)
-        # prepare the face for the model, e.g. center pixels
-        samples = preprocess_input(samples, version=1)
-        # create a vggface model
-        #model = VGGFace(model='resnet50')
-        # perform prediction
-        yhat = model.predict(samples)
-        
-        features_list.append(yhat)
-        counting+=1
-        if counting % 20 == 0:
-            print(counting)
+            # load the photo and extract the face
+            pixels = extract_face(image_path)
+            # convert one face into samples
+            pixels = pixels.astype('float32')
+            samples = expand_dims(pixels, axis=0)
+            # prepare the face for the model, e.g. center pixels
+            samples = preprocess_input(samples, version=1)
+            # create a vggface model
+            #model = VGGFace(model='resnet50')
+            # perform prediction
+            yhat = model.predict(samples)
+            
+            features_list.append(yhat)
+            counting+=1
+            if counting % 20 == 0:
+                print(counting)
             # convert prediction into names
             #results = decode_predictions(yhat)
             
@@ -111,7 +115,7 @@ def feature_extraction():
     print("Number of feature vectors:",len(features_list))
     print("Each feature vector is of length:",features_list[0].shape)
     #outfile = open("extractions/VGGFace_vgg_lfw-deepfunneled.txt",'w')
-    outfile = open("extractions/VGGFace_vgg_cplfw_new.txt",'w')
+    outfile = open("extractions/VGGFace_resnet50_lfw-deepfunneled_3samples.txt",'w')
     for features in features_list:
         #print(np.linalg.norm(features))
         features = features/np.linalg.norm(features) #are we allowed to normalize?

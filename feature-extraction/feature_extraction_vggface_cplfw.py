@@ -38,10 +38,17 @@ def extract_face(filename, required_size=(224, 224)):
 
 
 def feature_extraction():
+    used_names = []
     file = open("data/cplfw/cplfw/pairs_CPLFW.txt",'r')
     forbidden_names = ["Tommy_Shane_Steiner","Vaclav_Havel","Ruth_Bader_Ginsburg",
                        "Dereck_Whittenburg","Rachel_Kempson","Robert_Fico","Alfonso_Cuaron",
-                       "Andy_Griffith","Ronald_Kadish","John_Manley"]
+                       "Andy_Griffith","Ronald_Kadish","John_Manley","Fred_Durst","Nelson_Mandela", 
+                       "Connie_Freydell","Gunilla_Backman","Chance_Mock","Sheila_Wellstone", "Lyle_Vanclief",
+                       "Chan_Ho_Park", "Barry_Bonds","Bob_Holden","Damon_van_Dam","Lily_Safra","Hugh_Carey",
+                       "Terence_Newman","Colin_Powell","Gerald_Riley","Sean_Patrick_OMalley","Peter_Mugyeni",
+                       "Troy_Aikman","Cecile_de_France","Derrick_Battie","Patricia_Hearst","Jamir_Miller",
+                       "Cyndi_Thompson","Idi_Amin","Ismael_Miranda","Morris_Watts","Paul_Schrader"]
+    forbidden_names = []
     names = []
     for line in file:
         line = line.strip().split()
@@ -51,14 +58,18 @@ def feature_extraction():
                 should_skip = True
                 break
         if should_skip:
-            print("skipped")
+            #print("skipped")
             continue
         if int(line[1]) == 0:
             print("Collected")
             break
-        
+        #print(line[0][:len(line[0])-6])
+        if used_names.count(line[0][:len(line[0])-6]) >= 2:
+            continue
+        used_names.append(line[0][:len(line[0])-6])
         names.append(line[0])
-        if len(names) == 550:
+        #if len(names) == 550:
+        if len(names) == 4000:
             print("Collected")
             break
         
@@ -72,11 +83,13 @@ def feature_extraction():
     counting = 0
     print(len(names))
     
-    #skip = 550
+    skip = 2320
+    skip = 0
+    continue_next = False
     for name in names:
-       # if skip > 0:
-            #skip -= 1
-            #continue
+        if skip > 0:
+            skip -= 1
+            continue
         print(name)
         image_path = "data/cplfw/cplfw/aligned images/" + name
         #for image_path in filenames:
@@ -85,21 +98,31 @@ def feature_extraction():
             #x = image.img_to_array(img)
             #x = np.expand_dims(x, axis=0)
             #x = preprocess_input(x)
+        if continue_next:
+            continue_next = False
+            print("also skip", name)
+            continue
+        try:
+            # load the photo and extract the face
+            pixels = extract_face(image_path)
+            # convert one face into samples
+            pixels = pixels.astype('float32')
+            samples = expand_dims(pixels, axis=0)
+            # prepare the face for the model, e.g. center pixels
+            samples = preprocess_input(samples, version=1)
+            # create a vggface model
+            #model = VGGFace(model='resnet50')
+            # perform prediction
+            yhat = model.predict(samples)
             
-        
-        # load the photo and extract the face
-        pixels = extract_face(image_path)
-        # convert one face into samples
-        pixels = pixels.astype('float32')
-        samples = expand_dims(pixels, axis=0)
-        # prepare the face for the model, e.g. center pixels
-        samples = preprocess_input(samples, version=1)
-        # create a vggface model
-        #model = VGGFace(model='resnet50')
-        # perform prediction
-        yhat = model.predict(samples)
-        
-        features_list.append(yhat)
+            features_list.append(yhat)
+        except:
+            print("skip",name)
+            if counting % 2 == 1:
+                features_list.pop()
+                print("skip prev")
+            else:
+                continue_next = True
         counting+=1
         if counting % 20 == 0:
             print(counting)
@@ -111,7 +134,7 @@ def feature_extraction():
     print("Number of feature vectors:",len(features_list))
     print("Each feature vector is of length:",features_list[0].shape)
     #outfile = open("extractions/VGGFace_vgg_lfw-deepfunneled.txt",'w')
-    outfile = open("extractions/VGGFace_vgg_cplfw_new.txt",'w')
+    outfile = open("extractions/VGGFace_vgg_cplfw_2000.txt",'w')
     for features in features_list:
         #print(np.linalg.norm(features))
         features = features/np.linalg.norm(features) #are we allowed to normalize?

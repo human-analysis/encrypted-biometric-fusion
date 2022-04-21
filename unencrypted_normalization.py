@@ -103,11 +103,11 @@ def normalize(vector, context, dimensionality):
 
 
 def gold_test(s, context, iters):
-    linear_weight = -0.00032523
-    linear_bias = 0.16795745
+    linear_weight = -0.53582579
+    linear_bias = 1.84020171
     
-    linear_weight = -2.19074796
-    linear_bias = 2.78539063
+    #linear_weight = -2.19074796
+    #linear_bias = 2.78539063
     
     #print("mult")
     linear_approximation = linear_weight * s
@@ -216,7 +216,7 @@ def poly_approximation():
         os.mkdir("figures/polynomial_approximations")
     #x = [1.0 * i for i in range(500,4000)]
     x = [1.0 * i for i in range(1,500)]
-    x = [0.001 * i for i in range(50,1000)] #0.05 to 1.0
+    x = [0.001 * i for i in range(50,3000)] #0.05 to 3.0
     #x = [1 * i for i in range(1000,5000)]
     y = [1/(i**0.5) for i in x]
     x = np.array(x)#.reshape(-1,1)
@@ -227,15 +227,21 @@ def poly_approximation():
     
     #funs = [poly1, poly2, poly3, poly4]
     #degrees = [4,5,6,8]
-    funs = [poly0, polyhalf, polyhalf2, poly1, poly3, poly4]
-    degrees = [1,2,3,4,6,8]
+    funs = [poly0, polyhalf, polyhalf2, poly1, poly3]
+    degrees = [1,2,3,4,6]
     coeffs = []
+    """
     coeffs.append([2.78539063, -2.19074796])
     coeffs.append([ 3.66480865, -6.80578761,  4.39946584])
     coeffs.append([  4.38423127, -13.57853979,  19.8459398,   -9.81663423])
     coeffs.append([ 2.62153188, -7.32688028, 10.7087233,  -5.29698372, -0.4741206,   1.85324979])
     coeffs.append([ 1.81885289, -2.860004,    5.00751026, -3.55071694, -0.43373061,  6.01382611, -8.063566,    3.62820803])
-    coeffs.append([ -0.43817467,   6.86609826, -12.61875592,  11.45078871,  -3.91391879, 3.71778572,  -4.86345281,   5.96906038,  -4.84207887,   1.47228425])
+    coeffs.append([ -0.43817467,   6.86609826, -12.61875592,  11.45078871,  -3.91391879, 3.71778572,  -4.86345281,   5.96906038,  -4.84207887,   1.47228425])"""
+    coeffs.append([ 1.84020171, -0.53582579])
+    coeffs.append([ 2.51308415, -1.81897596,  0.42084296])
+    coeffs.append([ 3.08345595, -3.90021011,  2.10050565, -0.3672598 ] )
+    coeffs.append([-22.61135029,  -3.45087289,   1.85850962,  -0.32494836,  28.63894167, 1.13020587])
+    coeffs.append([ 0.33009964,  3.75046592, -2.53130775,  0.60632975,  5.23381489, -3.742239, 1.00104718, -0.08817609])
     worsts = []
     stds = []
     for i, myfun in enumerate(funs):
@@ -244,7 +250,7 @@ def poly_approximation():
         errors = []
         worst = 0
         #for j in range(1,499):
-        for j in range(0,1000-50):
+        for j in range(0,3000-50):
             #j_prime = 0.001 * j
             error = abs(myfun(x[j], *coeffs[i])-y[j])/y[j]
             #error = abs(myfun(x[j], *popt)-y[j])/y[j]
@@ -290,7 +296,7 @@ def poly_approximation():
         errors = []
         y = []
         #for i in range(1,500):
-        for i in range(50,1000):
+        for i in range(50,3000):
             i_prime = 0.001 * i
             y.append(gold_test(i_prime,None,j))
             error = ((1/(i_prime**0.5))-gold_test(i_prime,None,j))/(1/(i_prime**0.5))
@@ -322,7 +328,7 @@ def poly_approximation():
     
     #fig = px.scatter(df,x="Multiplicative Depth",y=r'$\frac{|G(x)-y|}{|y|}$',title="Mult. Depth vs Relative Error",error_y=stds)
     
-    fig.update_yaxes(range=[0,0.25])
+    fig.update_yaxes(range=[0,0.4])
     #fig.update_yaxes(type="log")
     
     #fig.update_yaxes(range=[0,0.35])

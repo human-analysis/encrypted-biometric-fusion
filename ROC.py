@@ -31,12 +31,20 @@ def approx_inv_norm(x_in, degree):
     if degree == 6:
         coeffs = [[3.6604110068015703, -7.308745554603273, 5.359140241417692, -0.03216663533709177], [-1.761181767348659, 5.619133141454438, -7.496635998204148, 5.491355198579896]] #is this right?
     elif degree == 3:
-        coeffs = [[-14.87368246,23.74576715,-13.66592657,4.17688396]]
+        coeffs = [[-9.81663423,19.8459398,-13.57853979,4.38423127]]
     elif degree == 2:
         coeffs = [[5.91965872,-7.3475699,3.54940138]]
     elif degree == 1:
         coeffs = [[-2.61776258,2.78221164]]
     
+    if degree == 6:
+        coeffs = [[0.6063297491297636, -2.531307751235565, 3.750465920583647, 0.3300996447108867], [-0.08817608635502297, 1.0010471760514683, -3.7422390001841093, 5.2338148909066575]]
+    elif degree == 3:
+        coeffs = [[-0.3672598,2.10050565,-3.90021011,3.08345595]]
+    elif degree == 2:
+        coeffs = [[0.42084296,-1.81897596,2.51308415]]
+    elif degree == 1:
+        coeffs = [[-0.53582579,1.84020171]]
     
     
     #coeffs = [[11.836520387699572, -18.076619596914263, 9.213047940260486, -0.1390999565263271], [-5.035385227584069, 14.361565311498836, -14.664452287760135, 7.742745833744212]]
@@ -724,7 +732,8 @@ def New_ROC_Encrypted(filename, title, labels=True, debug=False):
         print(enc_results_final.shape)
         #for i in range(enc_results_final.shape[0]):
             #print(enc_results_final[i,0])
-        a_file = open("data/features_L_values_val.txt",'r')
+        #a_file = open("data/features_L_values_val.txt",'r')
+        a_file = open("data2/dataset/L_values_val.txt",'r')
         L = a_file.readline().strip()
         L = [int(i) for i in L[1:len(L)-2].split(", ")]
     
@@ -1035,7 +1044,7 @@ def New_ROC_Encrypted_large(filename, title, labels=True, debug=False):
             result = torch.tensor(ast.literal_eval(result)).unsqueeze(dim=0)
             l = int(l)
             enc_results.append(result)
-            
+            #print(torch.linalg.norm(result))
             L.append(l)
         enc_results_final = torch.Tensor(len(enc_results),enc_results[0].shape[0])
         torch.cat(enc_results, out=enc_results_final,dim=0)
@@ -1056,7 +1065,7 @@ def New_ROC_Encrypted_large(filename, title, labels=True, debug=False):
         print(enc_results_final.shape)
         #for i in range(enc_results_final.shape[0]):
             #print(enc_results_final[i,0])
-        a_file = open("data3/dataset/L_values_test.txt",'r')
+        a_file = open("data4/dataset/L_values_test.txt",'r')
         L = a_file.readline()
         L = [int(i) for i in L[1:len(L)-2].split(", ")]
     
@@ -1131,9 +1140,17 @@ def New_ROC_large(filename, title, labels=True):
         print(enc_results_final.shape)
         #for i in range(enc_results_final.shape[0]):
             #print(enc_results_final[i,0])
-        a_file = open("data3/dataset/L_values_test.txt",'r')
+        a_file = open("data4/dataset/L_values_test.txt",'r')
         L = a_file.readline()
         L = [int(i) for i in L[1:len(L)-2].split(", ")]
+        """
+        L = L[:55]
+        final_L = []
+        for l in L:
+            for _ in range(20):
+                final_L.append(l)
+        L = final_L"""
+        print(len(L))
     
     #for i in range(18):
         #print(torch.linalg.norm(enc_results_final[i]))
@@ -1220,14 +1237,20 @@ def New_ROC_P_Matrix_voice_face_large(filename, gamma, lamb, title, poly_degree=
     test = True
     
     if test:
-        a_file = open("data3/dataset/A_values_test.txt",'r')
-        b_file = open("data3/dataset/B_values_test.txt",'r')
+        a_file = open("data4/dataset/A_values_test.txt",'r')
+        b_file = open("data4/dataset/B_values_test.txt",'r')
+        L_file = open("data4/dataset/L_values_test.txt",'r')
     else:
-        a_file = open("data3/dataset/A_values_val.txt",'r')
-        b_file = open("data3/dataset/B_values_val.txt",'r')
+        a_file = open("data4/dataset/A_values_val.txt",'r')
+        b_file = open("data4/dataset/B_values_val.txt",'r')
+        L_file = open("data4/dataset/L_values_val.txt",'r')
     
     A = []
-    L = [1,1,2,2,3,3,4,4,5,5,6,6,7,7,8,8,9,9]
+    
+    
+    L = L_file.readline()
+    L = [int(i) for i in L[1:len(L)-2].split(", ")]
+    #L = [1,1,2,2,3,3,4,4,5,5,6,6,7,7,8,8,9,9]
     for line in a_file:
         line = line.replace("[","")
         line = line.replace("]","")
@@ -1266,7 +1289,7 @@ def New_ROC_P_Matrix_voice_face_large(filename, gamma, lamb, title, poly_degree=
     #p_final = torch.div(p_final,torch.linalg.norm(p_final))
     X_prime = torch.mm(X, p_final.T)
     #X_prime = torch.mm(p_final, X.T)
-    
+    print(X_prime.shape)
     """
     print()
     print("l2(p):",torch.linalg.norm(p_final))
@@ -1465,7 +1488,8 @@ if __name__ == "__main__":
 """
 
 
-
+"""
+#this is the stuff currently in the paper
 if __name__ == "__main__":
     
     print()
@@ -1529,28 +1553,132 @@ if __name__ == "__main__":
     New_ROC_Encrypted("results/allnewdata_normalized_encrypted_results_goldschmidt_test_lambda=0.25_margin=0.25_gamma=64.txt","ROC_Algo=Exact_Enc=Goldschmidt",False)
     print()
 
-
 """
+
 if __name__ == "__main__":
     #print(torch.torch.cuda.is_available())
     #print()
     print("A")
-    New_ROC("data2/dataset/A_values_test.txt","ROC_X",False)
+    New_ROC_large("data4/dataset/A_values_test.txt","ROC_X",False)
     print()
     print("B")
-    New_ROC_large("data3/dataset/B_values_test.txt","ROC_X",False)
+    New_ROC_large("data4/dataset/B_values_test.txt","ROC_X",False)
     print()
     print("X")
-    New_ROC_large("data3/dataset/X_values_test.txt","ROC_X",False)
+    New_ROC_large("data4/dataset/X_values_test.txt","ROC_X",False)
     print()
-    
+    """
     print("Plaintext exact:")
-    #New_ROC_large("data3/exact_results/exact_labels_X_prime_test_lambda=0.25_margin=0.25_gamma=64_reg=0.txt","ROC_X",False)
-    #New_ROC_P_Matrix_voice_face("data3/exact_results/exact_best_P_value_transpose_lambda=0.25_margin=0.25_gamma=64_reg=0.txt",1,1,"test")
-    #New_ROC_P_Matrix_voice_face("data3/exact_results/exact_best_P_value_transpose_lambda=0.25_margin=0.25_gamma=256_reg=0.txt",1,1,"test")
+    #New_ROC_P_Matrix_voice_face_large("data4/exact_results/exact_best_P_value_transpose_lambda=0.25_margin=0.25_gamma=64_reg=0.txt",1,1,"test")
     print()
     
-    #print("Encrypted poly3, poly3strict small training:") #this got like 0.9246 so not very good
-    #New_ROC_Encrypted_large("results/allnewdata_normalized_encrypted_results_test_lambda=0.1_margin=0.5_gamma=64_poly3strictlarge_BIGDATA.txt","ROC_Algo=Poly3Strict_Enc=Poly3",False)
-    #print()
-"""
+    print("Plaintext exact training, poly2 inference")
+    #New_ROC_P_Matrix_voice_face_large("data4/exact_results/exact_best_P_value_transpose_lambda=0.25_margin=0.25_gamma=64_reg=0.txt",1,1,"test",2)
+    print()
+    
+    print("Plaintext poly2 train:")
+    #New_ROC_P_Matrix_voice_face_large("data4/degree=2strict/approximate_best_P_value_transpose_lambda=0.01_margin=0.25_gamma=64_reg=0.txt",1,1,"test",3)
+    print()
+    
+    print("Plaintext poly3 train:")
+    #New_ROC_P_Matrix_voice_face_large("data4/degree=3strict/approximate_best_P_value_transpose_lambda=0.1_margin=0.25_gamma=64_reg=0.txt",1,1,"test",3)
+    print()
+    
+    print("Encrypted poly3, poly3 train")
+    #New_ROC_Encrypted_large("results/000_allnewdata_normalized_encrypted_results_test_lambda=0.1_margin=0.25_gamma=64_poly3strictlarge.txt","ROC_Algo=Poly3Strict_Enc=Poly3",False)
+    print()
+    
+    print("Encrypted poly3, exact train")
+    #New_ROC_Encrypted_large("results/000_allnewdata_normalized_encrypted_results_test_lambda=0.25_margin=0.25_gamma=64_exact.txt","ROC_Algo=Poly3Strict_Enc=Poly3",False)
+    print()
+    """
+    
+    #this doesn't suffer as much but we don't select this due to the hyperparameters
+    """
+    print("plaintext exact train, exact inference")
+    New_ROC_P_Matrix_voice_face_large("data4/exact_results/exact_best_P_value_transpose_lambda=0.01_margin=0.25_gamma=32_reg=0.txt",1,1,"test")
+    print("plaintext exact train, poly6 inference")
+    New_ROC_P_Matrix_voice_face_large("data4/exact_results/exact_best_P_value_transpose_lambda=0.01_margin=0.25_gamma=32_reg=0.txt",1,1,"test",6)
+    print("plaintext exact train, poly 2 inference")
+    New_ROC_P_Matrix_voice_face_large("data4/exact_results/exact_best_P_value_transpose_lambda=0.01_margin=0.25_gamma=32_reg=0.txt",1,1,"test",2)
+    """
+    
+    
+    print("Gamma = 32 now")
+    print("plaintext exact train, exact inference")
+    New_ROC_P_Matrix_voice_face_large("data4/exact_results/exact_best_P_value_transpose_lambda=0.01_margin=0.1_gamma=32_reg=0.txt",1,1,"test")
+    print("plaintext exact train, poly6 inference")
+    New_ROC_P_Matrix_voice_face_large("data4/exact_results/exact_best_P_value_transpose_lambda=0.01_margin=0.1_gamma=32_reg=0.txt",1,1,"test",6)
+    print("plaintext exact train, poly 2 inference")
+    New_ROC_P_Matrix_voice_face_large("data4/exact_results/exact_best_P_value_transpose_lambda=0.01_margin=0.1_gamma=32_reg=0.txt",1,1,"test",2)
+    #print("plaintext exact train, poly 1 inference")
+    #New_ROC_P_Matrix_voice_face_large("data4/exact_results/exact_best_P_value_transpose_lambda=0.01_margin=0.1_gamma=32_reg=0.txt",1,1,"test",1)
+    print()
+    
+    
+    print("encrypted exact train, gold inference")
+    New_ROC_Encrypted_large("results/normalized_encrypted_results_goldschmidt_lambda=0.01_margin=0.1_gamma=32.txt","ROC_Algo=Poly3Strict_Enc=Poly3",False)
+    print()
+    
+    print("encrypted exact train, poly 6 inference")
+    New_ROC_Encrypted_large("results/normalized_encrypted_results_test_lambda=0.01_margin=0.1_gamma=32_exact6.txt","ROC_Algo=Poly3Strict_Enc=Poly3",False)
+    print()
+    
+    print("encrypted exact train, poly 2 inference")
+    New_ROC_Encrypted_large("results/normalized_encrypted_results_test_lambda=0.01_margin=0.1_gamma=32_exact2.txt","ROC_Algo=Poly3Strict_Enc=Poly3",False)
+    print()
+    
+    print("plaintext poly2, poly 2 inference")
+    New_ROC_P_Matrix_voice_face_large("data4/degree=2strict/large_approximate_best_P_value_transpose_lambda=0.01_margin=0.25_gamma=32_reg=0.txt",1,1,"test",2)
+    print()
+    print("encrypted poly2, poly2 inference")
+    New_ROC_Encrypted_large("results/normalized_encrypted_results_test_lambda=0.01_margin=0.25_gamma=32_poly2.txt","ROC_Algo=Poly3Strict_Enc=Poly3",False)
+    print()
+    
+    """
+    print("plaintext exact train, exact inference")
+    New_ROC_P_Matrix_voice_face_large("data4/exact_results/exact_best_P_value_transpose_lambda=0.25_margin=0.25_gamma=64_reg=0.txt",1,1,"test")
+    New_ROC_P_Matrix_voice_face_large("data4/exact_results/exact_best_P_value_transpose_lambda=0.25_margin=0.25_gamma=64_reg=0.txt",1,1,"test",3)
+    New_ROC_P_Matrix_voice_face_large("data4/exact_results/exact_best_P_value_transpose_lambda=0.25_margin=0.25_gamma=64_reg=0.txt",1,1,"test",2)
+    New_ROC_P_Matrix_voice_face_large("data4/exact_results/exact_best_P_value_transpose_lambda=0.25_margin=0.25_gamma=64_reg=0.txt",1,1,"test",1)
+    """
+    
+    
+    """print("Gamma = 64 now")
+    print("plaintext exact train, exact inference")
+    New_ROC_P_Matrix_voice_face_large("data4/exact_results/exact_best_P_value_transpose_lambda=0.01_margin=0.1_gamma=64_reg=0.txt",1,1,"test")
+    print("plaintext exact train, poly 3 inference")
+    New_ROC_P_Matrix_voice_face_large("data4/exact_results/exact_best_P_value_transpose_lambda=0.01_margin=0.1_gamma=64_reg=0.txt",1,1,"test",3)
+    print("plaintext exact train, poly 2 inference")
+    New_ROC_P_Matrix_voice_face_large("data4/exact_results/exact_best_P_value_transpose_lambda=0.01_margin=0.1_gamma=64_reg=0.txt",1,1,"test",2)
+    print("plaintext exact train, poly 1 inference")
+    New_ROC_P_Matrix_voice_face_large("data4/exact_results/exact_best_P_value_transpose_lambda=0.01_margin=0.1_gamma=64_reg=0.txt",1,1,"test",1)
+    #print("plaintext exact train, poly 2 inference")
+    #New_ROC_P_Matrix_voice_face_large("data4/exact_results/exact_best_P_value_transpose_lambda=0.25_margin=0.25_gamma=32_reg=0.txt",1,1,"test",2)
+    print()"""
+    
+    
+    """
+    print("encrypted exact train, poly 2 inference")
+    #New_ROC_Encrypted_large("results/000_allnewdata_normalized_encrypted_results_test_lambda=0.01_margin=0.1_gamma=64_exact2.txt","ROC_Algo=Poly3Strict_Enc=Poly3",False)
+    New_ROC_Encrypted_large("results/000_allnewdata_normalized_encrypted_results_test_lambda=0.25_margin=0.25_gamma=64_exact2.txt","ROC_Algo=Poly3Strict_Enc=Poly3",False)
+    print()
+    
+    print("plaintext poly2, poly 2 inference")
+    New_ROC_P_Matrix_voice_face_large("data4/degree=2strict/approximate_best_P_value_transpose_lambda=0.1_margin=0.1_gamma=64_reg=0.txt",1,1,"test",2)
+    #New_ROC_P_Matrix_voice_face_large("data4/degree=2strict/approximate_best_P_value_transpose_lambda=0.25_margin=0.25_gamma=64_reg=0.txt",1,1,"test",2)
+    print()
+    
+    print("encrypted poly2 train, poly 2 inference")
+    New_ROC_Encrypted_large("results/000_allnewdata_normalized_encrypted_results_test_lambda=0.1_margin=0.1_gamma=64_poly2strictlarge.txt","ROC_Algo=Poly3Strict_Enc=Poly3",False)
+    print()
+    
+    
+    print("encrypted exact train, gold inference")
+    New_ROC_Encrypted_large("results/0000_allnewdata_normalized_encrypted_results_goldschmidt_test_lambda=0.1_margin=0.1_gamma=32.txt","ROC_Algo=Poly3Strict_Enc=Poly3",False)
+    print()
+    
+    print("encrypted exact train, poly6 inference")
+    New_ROC_Encrypted_large("results/000_allnewdata_normalized_encrypted_results_test_lambda=0.25_margin=0.25_gamma=64_exact6.txt","ROC_Algo=Poly3Strict_Enc=Poly3",False)
+    print()"""
+

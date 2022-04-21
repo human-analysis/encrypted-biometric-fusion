@@ -37,7 +37,14 @@ def approx_inv_norm(x_in, degree):
     elif degree == 1:
         coeffs = [[-2.61776258,2.78221164]]
     
-    
+    if degree == 6:
+        coeffs = [[0.6063297491297636, -2.531307751235565, 3.750465920583647, 0.3300996447108867], [-0.08817608635502297, 1.0010471760514683, -3.7422390001841093, 5.2338148909066575]]
+    elif degree == 3:
+        coeffs = [[-0.3672598,2.10050565,-3.90021011,3.08345595]]
+    elif degree == 2:
+        coeffs = [[0.42084296,-1.81897596,2.51308415]]
+    elif degree == 1:
+        coeffs = [[-0.53582579,1.84020171]]
     
     #coeffs = [[11.836520387699572, -18.076619596914263, 9.213047940260486, -0.1390999565263271], [-5.035385227584069, 14.361565311498836, -14.664452287760135, 7.742745833744212]]
     
@@ -56,7 +63,7 @@ def approx_inv_norm(x_in, degree):
 def ROC_Encrypted_Results(filenames, title, labels=True, debug=False):
     fig = go.Figure()
     names = ["Poly3 Learning, Poly3 Inference", "Exact Learning, Poly3 Inference", "Exact Learning, Poly6 Inference", "Exact Learning, Goldschmidt's Inference"]
-    names = ["HEFTI Learning, Polynomial (Degree=3) Inference", "Exact Learning, Polynomial (Degree=3) Inference", "Exact Learning, Polynomial (Degree=6) Inference", "Exact Learning, Goldschmidt's Inference"]
+    names = ["HEFT Learning, Polynomial (Degree=2) Inference", "Exact Learning, Polynomial (Degree=2) Inference", "Exact Learning, Polynomial (Degree=6) Inference", "Exact Learning, Goldschmidt's Inference"]
     for iter, filename in enumerate(filenames):
         enc_results_file = open(filename,'r')
         enc_results = []
@@ -88,7 +95,8 @@ def ROC_Encrypted_Results(filenames, title, labels=True, debug=False):
             print(enc_results_final.shape)
             #for i in range(enc_results_final.shape[0]):
                 #print(enc_results_final[i,0])
-            a_file = open("data/features_L_values_val.txt",'r')
+            #a_file = open("data/features_L_values_val.txt",'r')
+            a_file = open("data4/dataset/L_values_test.txt",'r')
             L = a_file.readline().strip()
             L = [int(i) for i in L[1:len(L)-2].split(", ")]
     
@@ -151,8 +159,8 @@ def ROC_Encrypted_Results(filenames, title, labels=True, debug=False):
 
 
 filenames = []
-filenames.append("results/allnewdata_normalized_encrypted_results_test_lambda=0.1_margin=0.5_gamma=64_poly3strictlarge_lowprec.txt")
-filenames.append("results/allnewdata_normalized_encrypted_results_test_lambda=0.25_margin=0.25_gamma=64_exact_poly3large.txt")
-filenames.append("results/allnewdata_normalized_encrypted_results_test_lambda=0.25_margin=0.25_gamma=64_exact_poly6large.txt")
-filenames.append("results/allnewdata_normalized_encrypted_results_goldschmidt_test_lambda=0.25_margin=0.25_gamma=64.txt")
+filenames.append("results/normalized_encrypted_results_test_lambda=0.01_margin=0.25_gamma=32_poly2.txt")
+filenames.append("results/normalized_encrypted_results_test_lambda=0.01_margin=0.1_gamma=32_exact2.txt")
+filenames.append("results/normalized_encrypted_results_test_lambda=0.01_margin=0.1_gamma=32_exact6.txt")
+filenames.append("results/normalized_encrypted_results_goldschmidt_lambda=0.01_margin=0.1_gamma=32.txt")
 ROC_Encrypted_Results(filenames, "ROC_multi", labels=False, debug=False)

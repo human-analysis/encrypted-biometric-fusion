@@ -6,6 +6,8 @@ import numpy as np
 #from sklearn.pipeline import make_pipeline, Pipeline
 
 import matplotlib.pyplot as plt
+#plt.style.use('science')
+plt.style.use(['science','no-latex'])
 
 from scipy.optimize import curve_fit
 
@@ -17,6 +19,8 @@ import ast
 import os
 from plotly.subplots import make_subplots
 import imageio
+
+
 
 
 #def poly(x, a1, b1, c1, d1, e1, a2, b2, c2, d2, e2):
@@ -106,6 +110,7 @@ def poly_approximation():
     x = [0.1 * i for i in range(810,13500)] #81 to 1350
     x = [1.0 * i for i in range(20**2,50**2)] #20^2 to 50^2
     x = [0.001 * i for i in range(50,1000)] #0.05 to 1.0
+    x = [0.001 * i for i in range(50,3000)] #0.05 to 3.0
     #x = [0.001 * i for i in range(100,700)] #0.1 to 0.7
     #x = [0.001 * i for i in range(10,700)] #0.01 to 7.0
     #x = [1.0 * i for i in range(int(12e3),int(19e3),100)]
@@ -152,7 +157,8 @@ def poly_approximation():
         #y_temp = np.array(y_temp)
         #x_temp = [0.001 * i for i in range(100,700)] #0.01 to 1.0
         
-        fig = go.Figure(layout = go.Layout(title = go.layout.Title(text="Polynomial Approximation, Degree="+str(degrees[i]))))
+        #fig = go.Figure(layout = go.Layout(title = go.layout.Title(text="Polynomial Approximation, Degree="+str(degrees[i]))))
+        fig = go.Figure(layout = go.Layout())
         fig.add_trace(
             go.Scatter(
                 mode='lines',
@@ -180,7 +186,14 @@ def poly_approximation():
         fig_file_name = "figures/polynomial_approximations/approx_degree=" + str(degrees[i]) + "_large.png"
         fig.write_image(fig_file_name)
         
-        
+        """
+        plt.plot(x, y)
+        plt.plot(x, myfun(x, *popt))
+        plt.ylabel('y')
+        plt.xlabel('x')
+        plt.show()
+        0/0
+        """
         
         data_dict = {r'$\frac{|f(x)-y|}{|y|}$':abs(myfun(x, *popt)-y)/y, "X":x}
         #data_dict = {r'$\frac{|f(x)-y|}{|y|}$':abs(myfun(x, *popt)-y)/y, "X":x}

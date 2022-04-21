@@ -545,7 +545,7 @@ def plot_matmul_performance_theoretical():
     gammas = [2**i for i in range(9,12)]
     
     deltas = [1024]
-    gammas = [64]
+    gammas = [32]
     print("Deltas:", deltas)
     print("Gammas:",gammas)
     ms = [4096,4096,8192]
@@ -580,6 +580,8 @@ def plot_matmul_performance_theoretical():
             experimental_ns = [1,100,1000]
             #times = [7807.18,328179]
             times = [966.828,39964.2,490122]
+            times = [1121, 47278.4,553834]
+            times = [(554.983+525.789+567.465)/3,(22893.1+22246.4+23848.4)/3,(276037+268523+279649)/3]
             time = [t/1000 for t in times]
     
             data_dictTime = {"n":experimental_ns,"Time (s)":time}
@@ -606,7 +608,8 @@ def plot_matmul_performance_theoretical():
             time = []
             experimental_ns = [1,100,1000]
             #times = [764.534, 37505, 376595]
-            times = [111.796,4972.85,50917.2]
+            #times = [62.474,3154.57,]
+            times = [(62.429+62.632+62.999)/3, (3154.57+3026.41+3150.35)/3, (31332.2+30937.9+31014.7)/3]
             time = [t/1000 for t in times]
     
             data_dictTime = {"n":experimental_ns,"Time (s)":time}
@@ -632,6 +635,7 @@ def plot_matmul_performance_theoretical():
             experimental_ns = [1,100,1000]
             #times = [247473]*3
             times = [32379.3]*3
+            times = [(16947.5+16657+17512)/3]*3
             time = [t/1000 for t in times]
     
             data_dictTime = {"n":experimental_ns,"Time (s)":time}

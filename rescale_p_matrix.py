@@ -31,8 +31,8 @@ def rescale_p(p_file_name, scale=None):
     p_final = torch.div(p_final,torch.linalg.norm(p_final))
     
     if not scale:
-        a_file = open("data2/dataset/A_values_val.txt",'r')
-        b_file = open("data2/dataset/B_values_val.txt",'r')
+        a_file = open("data4/dataset/A_values_train.txt",'r')
+        b_file = open("data4/dataset/B_values_train.txt",'r')
         A = []
         L = []
         for line in a_file:
@@ -58,19 +58,30 @@ def rescale_p(p_file_name, scale=None):
         B_final = torch.Tensor(len(B),B[0].shape[0])
         torch.cat(B, out=B_final,dim=0)
         X = torch.cat((A_final,B_final),dim=1)
-        #X_prime = torch.mm(p_final,X.T)
+        X_prime = torch.mm(p_final,X.T)
+        print(X_prime.shape)
         total = 0
         for i in range(X.shape[0]):
             norm = torch.linalg.norm(torch.matmul(p_final,X[i,:].T))
+            #norm = torch.linalg.norm(X_prime[:,i])
             total += norm
         avg = total/X.shape[0]
         scale = 0.63245553 / avg
+        scale = 0.5 / avg
+        scale = 1.525**0.5 / avg
+        #scale = 0.7245688373 / avg
+        
         print("New scale:",scale)
         
-    
+
     p_final = torch.mul(p_final,scale)
-    
+    X_prime = torch.mm(p_final,X.T)
     print(p_final.shape)
+    
+    for i in range(X.shape[0]):
+        norm = torch.linalg.norm(torch.matmul(p_final,X[i,:].T))
+        #norm = torch.linalg.norm(X_prime[:,i])
+        print(norm**2)
     
     outfile_p_t = open(p_file_name,'w')
     P_final_t = p_final
@@ -206,9 +217,17 @@ if __name__ == "__main__":
     #rescale_p("data/degree=2strict_approximate_best_P_value_transpose_lambda=0.01_margin=0.1_gamma=64_reg=0.txt",3.323253455743364)
     #3.323253455743364
     #view_norms("data/degree=2strict_approximate_best_P_value_transpose_lambda=0.01_margin=0.1_gamma=64_reg=0.txt","data/features_A_values_test.txt","data/features_B_values_val.txt")
-    rescale_p("data2/exact_results/exact_best_P_value_transpose_lambda=0.25_margin=0.25_gamma=64_reg=0.txt")
-    view_norms("data2/exact_results/exact_best_P_value_transpose_lambda=0.25_margin=0.25_gamma=64_reg=0.txt","data2/dataset/A_values_val.txt","data2/dataset/B_values_val.txt")
+    ##rescale_p("data2/exact_results/exact_best_P_value_transpose_lambda=0.25_margin=0.25_gamma=64_reg=0.txt")
+    ##view_norms("data2/exact_results/exact_best_P_value_transpose_lambda=0.25_margin=0.25_gamma=64_reg=0.txt","data2/dataset/A_values_val.txt","data2/dataset/B_values_val.txt")
     
     #rescale_p("data2/degree=3strict/approximate_best_P_value_transpose_lambda=0.25_margin=0.1_gamma=64_reg=0.txt")
     #rescale_p("data2/degree=3strict/approximate_best_P_value_transpose_lambda=0.25_margin=0.75_gamma=64_reg=0.txt",3.8748605978545454)
-    view_norms("data2/degree=3strict/approximate_best_P_value_transpose_lambda=0.25_margin=0.75_gamma=64_reg=0.txt","data2/dataset/A_values_val.txt","data2/dataset/B_values_val.txt")
+    ##view_norms("data2/degree=3strict/approximate_best_P_value_transpose_lambda=0.25_margin=0.75_gamma=64_reg=0.txt","data2/dataset/A_values_val.txt","data2/dataset/B_values_val.txt")
+    #rescale_p("data4/exact_results/exact_best_P_value_transpose_lambda=0.25_margin=0.25_gamma=64_reg=0.txt")
+    #rescale_p("data4/exact_results/exact_best_P_value_transpose_lambda=0.1_margin=0.1_gamma=32_reg=0.txt")
+    rescale_p("data4/exact_results/exact_best_P_value_transpose_lambda=0.01_margin=0.1_gamma=32_reg=0.txt")
+    
+    rescale_p("data4/exact_results/exact_best_P_value_transpose_lambda=0.01_margin=0.25_gamma=32_reg=0.txt")
+    #rescale_p("data4/exact_results/exact_best_P_value_transpose_lambda=0.1_margin=0.1_gamma=64_reg=0.txt")
+    #rescale_p("data4/exact_results/exact_best_P_value_transpose_lambda=0.01_margin=0.1_gamma=64_reg=0.txt")
+    #rescale_p("data4/exact_results/exact_best_P_value_transpose_lambda=0.25_margin=0.25_gamma=64_reg=0.txt")

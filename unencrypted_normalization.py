@@ -10,6 +10,9 @@ import os
 
 import numpy as np
 
+import matplotlib.pyplot as plt
+plt.style.use(['science','no-latex'])
+
 from scipy.optimize import curve_fit
 
 def reencrypt(enc_vector, context):
@@ -284,6 +287,7 @@ def poly_approximation():
             #showlegend=False
         )
     )
+    plt.errorbar(mult_depth_poly, worsts, stds, fmt="b.")
     
         
 
@@ -325,6 +329,12 @@ def poly_approximation():
             #showlegend=False
         )
     )
+    plt.errorbar(mult_depths_gold, worsts, stds, fmt="r.")
+    plt.ylim(0,0.4)
+    plt.xlabel('Multiplicative Depth')
+    plt.ylabel(r'$\frac{|f(x)-y|}{|y|}$')
+    plt.legend(["Polynomial","Goldschmidt's Algorithm"], loc=0, frameon=True)
+    plt.show()
     
     #fig = px.scatter(df,x="Multiplicative Depth",y=r'$\frac{|G(x)-y|}{|y|}$',title="Mult. Depth vs Relative Error",error_y=stds)
     
@@ -342,89 +352,3 @@ def poly_approximation():
         
 
 poly_approximation()       
-"""
-worsts = []
-stds = []
-errors_list = []
-y_lists = []
-for j in range(1,5):
-    worst = 0
-    errors = []
-    y = []
-    for i in range(1,500):
-        y.append(gold_test(i,None,j))
-        error = ((1/(i**0.5))-gold_test(i,None,j))/(1/(i**0.5))
-        if error > worst:
-            worst = error
-        errors.append(error)
-    mean = sum(errors)/len(errors)
-    total = 0
-    errors_list.append(errors)
-    for error in errors:
-        total += (error-mean)**2
-    std = (total/len(errors))**0.5
-    stds.append(std)
-    y_lists.append(y)
-    print(worst)
-    worsts.append(mean)
-    
-    
-mult_depths = [9,12,15,18]
-data_dict = {"Multiplicative Depth":mult_depths, r'$\frac{|G(x)-y|}{|y|}$':worsts}
-df = pandas.DataFrame(data_dict)
-
-fig = px.scatter(df,x="Multiplicative Depth",y=r'$\frac{|G(x)-y|}{|y|}$',title="Goldschmidt's Mult. Depth vs Relative Error",error_y=stds)
-
-fig.update_yaxes(range=[0,0.25])
-
-
-fig_file_name = "figures/GoldschmidtsErrors.png"
-fig.write_image(fig_file_name)
-
-fig2 = px.scatter(df,x="Multiplicative Depth",y=r'$\frac{|G(x)-y|}{|y|}$',title="Goldschmidt's Mult. Depth vs Relative Error",error_y=stds)
-fig2.update_yaxes(type="log")
-
-fig_file_name = "figures/GoldschmidtsErrorsLog.png"
-fig2.write_image(fig_file_name)
-
-
-true_y = [1/i**0.5 for i in range(1,500)]
-x = [i for i in range(1,500)]
-for i, errors in enumerate(errors_list):
-    data_dict = {r'$\frac{|G(x)-y|}{|y|}$':errors, "X":x}
-    df = pandas.DataFrame(data_dict)
-    fig = px.line(df,x="X",y=r'$\frac{|G(x)-y|}{|y|}$',title="Goldschmidt's Relative Error Mult Depth="+str(9+3*i))
-    
-    #fig.update_xaxes(title_font=dict(size=18))
-    fig.update_yaxes(title_font=dict(size=40))
-    
-    fig_file_name = "figures/goldschmidts_errors_multdepth=" + str(9+3*i) + ".png"
-    fig.write_image(fig_file_name)
-    
-    fig = go.Figure(layout = go.Layout(title = go.layout.Title(text="Goldschmidt's, Mult Depth="+str(9+3*i))))
-    fig.add_trace(
-        go.Scatter(
-            mode='lines',
-            x=x,
-            y=y_lists[i],
-            marker={'color':'red'},
-            showlegend=False
-        )
-    )
-    fig.add_trace(
-        go.Scatter(
-            mode='lines',
-            x=x,
-            y=true_y,
-            marker={'color':'black'},
-            showlegend=False
-        )
-    )
-    
-    fig.update_layout(
-        xaxis_title="X",
-        yaxis_title="Y"
-    )
-    
-    fig_file_name = "figures/goldschmidts_multdepth=" + str(9+3*i) + ".png"
-    fig.write_image(fig_file_name)"""

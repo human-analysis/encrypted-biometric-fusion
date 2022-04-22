@@ -292,6 +292,26 @@ def train_exact(gamma,iters,spec_margin=None,spec_lamb=None):
         outfile_b_test.write("\n")
     outfile_b_test.close()
     
+    
+    outfile_a_test = open("data4/dataset/A_values_test_transpose.txt",'w')
+    for row in A[split1:split2,:].T.tolist():
+        #outfile_a_test.write("[")
+        for item in row:
+            outfile_a_test.write(str(f'{item:.9f}'))
+            outfile_a_test.write(" ")
+        #outfile_a_test.write("]")
+        outfile_a_test.write("\n")
+    outfile_a_test.close()
+
+    
+    outfile_b_test = open("data4/dataset/B_values_test_transpose.txt",'w')
+    for row in B[split1:split2,:].T.tolist():
+        for item in row:
+            outfile_b_test.write(str(f'{item:.9f}'))
+            outfile_b_test.write(" ")
+        outfile_b_test.write("\n")
+    outfile_b_test.close()
+    
 
     
     outfile_a_val = open("data4/dataset/A_values_val.txt",'w')

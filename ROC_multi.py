@@ -11,6 +11,8 @@ from sklearn import metrics
 
 from sklearn.metrics import roc_curve, roc_auc_score
 
+import matplotlib.pyplot as plt
+plt.style.use(['science','no-latex'])
 
 
 def Cosine_Similarity(vec1, vec2):
@@ -136,6 +138,8 @@ def ROC_Encrypted_Results(filenames, title, labels=True, debug=False):
             )
         )
         
+        plt.plot(fpr,tpr)
+        
         #data_dict = {"False Positive Rate":fpr,"True Positive Rate":tpr}
         #df = pandas.DataFrame(data_dict)
     #fig = px.line(df,x="False Positive Rate",y="True Positive Rate",
@@ -148,11 +152,17 @@ def ROC_Encrypted_Results(filenames, title, labels=True, debug=False):
     y=-0.4,
     xanchor="left",
     x=0
-))
+    ))
     
     
     fig_file_name = "figures/" + title + ".png"
     fig.write_image(fig_file_name)
+    
+    
+    plt.ylabel('True Positive Rate')
+    plt.xlabel('False Positive Rate')
+    plt.legend(names, loc=0, frameon=True)
+    plt.show()
     
     return y_score, results
 

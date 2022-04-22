@@ -15,6 +15,9 @@ import imageio
 import numpy as np
 import math
 
+import matplotlib.pyplot as plt
+plt.style.use(['science','no-latex'])
+
 import model
 
 def plot_loss(gamma):
@@ -574,6 +577,8 @@ def plot_matmul_performance_theoretical():
 
         figTime.add_trace(go.Scatter(x=data_dictTime["n"],y=data_dictTime["Time (s)"], mode="lines",name="Naïve (theoretical)",line=dict(color='blue', dash='dot')))
         
+        plt.plot(ns, time, "--", color='blue')
+        
         if i==0:
             #Naive Experimental
             time = []
@@ -588,7 +593,7 @@ def plot_matmul_performance_theoretical():
             dfTime = pandas.DataFrame(data_dictTime)
     
             figTime.add_trace(go.Scatter(x=data_dictTime["n"],y=data_dictTime["Time (s)"], mode="lines",name="Naïve (experimental)",line=dict(color='blue')))
-            
+            plt.plot(experimental_ns, time, color='blue')
         
         
         
@@ -602,6 +607,7 @@ def plot_matmul_performance_theoretical():
         dfTime = pandas.DataFrame(data_dictTime)
 
         figTime.add_trace(go.Scatter(x=data_dictTime["n"],y=data_dictTime["Time (s)"], mode="lines",name="Hybrid (theoretical)",line=dict(color='red', dash='dot')))
+        plt.plot(ns, time, "--", color='red')
         
         if i==0:
             #HYBRID Experimental
@@ -616,6 +622,7 @@ def plot_matmul_performance_theoretical():
             dfTime = pandas.DataFrame(data_dictTime)
     
             figTime.add_trace(go.Scatter(x=data_dictTime["n"],y=data_dictTime["Time (s)"], mode="lines",name="Hybrid (experimental)",line=dict(color='red')))
+            plt.plot(experimental_ns, time, color='red')
         
         
         #SIMD
@@ -628,6 +635,7 @@ def plot_matmul_performance_theoretical():
         dfTime = pandas.DataFrame(data_dictTime)
 
         figTime.add_trace(go.Scatter(x=data_dictTime["n"],y=data_dictTime["Time (s)"], mode="lines",name="SIMD (theoretical)",line=dict(color='green', dash='dot')))
+        plt.plot(ns, time, "--", color='green')
         
         if i==0:
             #SIMD Experimental
@@ -642,7 +650,17 @@ def plot_matmul_performance_theoretical():
             dfTime = pandas.DataFrame(data_dictTime)
     
             figTime.add_trace(go.Scatter(x=data_dictTime["n"],y=data_dictTime["Time (s)"], mode="lines",name="SIMD (experimental)",line=dict(color='green')))
+            plt.plot(experimental_ns, time, color='green')
             
+            
+        plt.ylabel('Time (s)')
+        plt.xlabel('n')
+        plt.legend(["Naïve (Theoretical)", "Naïve (Experimental)","Hybrid (Theoretical)", "Hybrid (Experimental)","SIMD (Theoretical)", "SIMD (Experimental)"], loc=0, frameon=True)
+        plt.xscale("log")
+        plt.yscale("log")
+        plt.show()
+        
+        plt.clf()
         """
         #MatMat
         time = []
@@ -682,6 +700,8 @@ def plot_matmul_performance_theoretical():
 
         figMem.add_trace(go.Scatter(x=data_dictMem["n"],y=data_dictMem["Mem"], mode="lines",name="Naïve, Hybrid"))
         
+        plt.plot(ns,mem)
+        
         """
         #HYBRID
         mem = []
@@ -703,6 +723,15 @@ def plot_matmul_performance_theoretical():
         data_dictMem = {"n":ns,"Mem":mem}
 
         figMem.add_trace(go.Scatter(x=data_dictMem["n"],y=data_dictMem["Mem"], mode="lines",name="SIMD",line=dict(color='green')))
+        
+        plt.plot(ns,mem)
+        
+        plt.ylabel('O(p)')
+        plt.xlabel('n')
+        plt.legend(["Naïve, Hybrid","SIMD"], loc=0, frameon=True)
+        plt.xscale("log")
+        plt.yscale("log")
+        plt.show()
         
         
         figTime.update_layout(

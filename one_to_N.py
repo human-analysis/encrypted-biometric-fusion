@@ -11,6 +11,8 @@ from sklearn import metrics
 
 from sklearn.metrics import roc_curve, roc_auc_score
 
+from sklearn.metrics import top_k_accuracy_score
+
 
 
 def Cosine_Similarity(vec1, vec2):
@@ -91,7 +93,7 @@ def one_to_N(filename, title, labels=True, debug=False, original=False):
         print(enc_results_final.shape)
         #for i in range(enc_results_final.shape[0]):
             #print(enc_results_final[i,0])
-        a_file = open("data4/dataset/L_values_test.txt",'r')
+        a_file = open("data5/dataset/L_values_test.txt",'r')
         L = a_file.readline()
         L = [int(i) for i in L[1:len(L)-2].split(", ")]
         print("samples =",len(L))
@@ -123,26 +125,14 @@ def one_to_N(filename, title, labels=True, debug=False, original=False):
     
  
  
-def one_to_N_medium(filename, title, labels=True, debug=False):
+def one_to_N_Concat(filename, title, labels=True, debug=False, original=False):
     enc_results_file = open(filename,'r')
     enc_results = []
     if labels:
-        L = []
-        for line in enc_results_file:
-            result, l = line.strip().split(";")
-            result = torch.tensor(ast.literal_eval(result)).unsqueeze(dim=0)
-            l = int(l)
-            enc_results.append(result)
-            #print(torch.linalg.norm(result))
-            L.append(l)
-        enc_results_final = torch.Tensor(len(enc_results),enc_results[0].shape[0])
-        torch.cat(enc_results, out=enc_results_final,dim=0)
-        print(enc_results_final.shape)
-        #for i in range(enc_results_final.shape[0]):
-            #print(enc_results_final[i,0])
-        #print(L)
+        pass
     else:
         for line in enc_results_file:
+            line = line.replace("[","").replace("]","")
             result = [float(item) for item in line.strip().split()]
             result = torch.tensor(result).unsqueeze(dim=0)
             #print(result.shape)
@@ -154,11 +144,10 @@ def one_to_N_medium(filename, title, labels=True, debug=False):
         print(enc_results_final.shape)
         #for i in range(enc_results_final.shape[0]):
             #print(enc_results_final[i,0])
-        a_file = open("data2/dataset/L_values_val.txt",'r')
-        #a_file = open("data/features_L_values_val.txt",'r')
+        a_file = open("data5/dataset/L_values_train.txt",'r')
         L = a_file.readline()
         L = [int(i) for i in L[1:len(L)-2].split(", ")]
-        print("num samples =",len(L))
+        print("samples =",len(L))
     
     y_score = []
     y_true = []
@@ -185,16 +174,103 @@ def one_to_N_medium(filename, title, labels=True, debug=False):
         correct += label
     print(correct/count)
     
+    
+def one_to_N_SK(filename, title, labels=True):
+    enc_results_file = open(filename,'r')
+    enc_results = []
+    if labels:
+        L = []
+        for line in enc_results_file:
+            result, l = line.strip().split(";")
+            result = torch.tensor(ast.literal_eval(result)).unsqueeze(dim=0)
+            l = int(l)
+            enc_results.append(result)
+            
+            L.append(l)
+        enc_results_final = torch.Tensor(len(enc_results),enc_results[0].shape[0])
+        torch.cat(enc_results, out=enc_results_final,dim=0)
+        print(enc_results_final.shape)
+        #for i in range(enc_results_final.shape[0]):
+            #print(enc_results_final[i,0])
+        #print(L)
+    else:
+        for line in enc_results_file:
+            line = line.replace("[", "")
+            line = line.replace("]", "")
+            result = [float(item) for item in line.strip().split()]
+            result = torch.tensor(result).unsqueeze(dim=0)
+            #print(result.shape)
+            enc_results.append(result)
+        enc_results_final = torch.Tensor(len(enc_results),enc_results[0].shape[1])
+        
+        torch.cat(enc_results, out=enc_results_final,dim=0)
+        
+        print(enc_results_final.shape)
+        #for i in range(enc_results_final.shape[0]):
+            #print(enc_results_final[i,0])
+        a_file = open("data5/dataset/L_values_test.txt",'r')
+        L = a_file.readline()
+        L = [int(i) for i in L[1:len(L)-1].split(", ")]
+        """
+        L = L[:55]
+        final_L = []
+        for l in L:
+            for _ in range(20):
+                final_L.append(l)
+        L = final_L"""
+        print(len(L))
+        #print(L)
+    
+    #for i in range(18):
+        #print(torch.linalg.norm(enc_results_final[i]))
+    
+    y_score = []
+    y_true = []
+    count = len(L)
+    #print(count)
+    for i in range(count):
+        for j in range(count):
+            if i == j:
+                continue
+            score = Cosine_Similarity_no_div(enc_results_final[i],enc_results_final[j])
+            #print(L[i],L[j])
+            if L[i]==L[j]:
+                label = 1
+            else:
+                label = 0
+            y_score.append(score)
+            y_true.append(label)
+            #if label == 1:
+                #print(label, score)
+
+    acc = top_k_accuracy_score(y_true,y_score,k=1)
+    print("acc:",acc)
+    
 if __name__ == "__main__":
+
+
     print("A")
-    one_to_N("data4/dataset/A_values_test.txt","ROC_X",False)
+    one_to_N_SK("data5/dataset/A_values_test.txt","ROC_X",False)
     print()
     print("B")
-    one_to_N("data4/dataset/B_values_test.txt","ROC_X",False)
+    one_to_N_SK("data5/dataset/B_values_test.txt","ROC_X",False)
     print()
-    #print("X")
-    #one_to_N("data4/dataset/X_values_test.txt","ROC_X",False)
-    #print()
+    print("X")
+    #one_to_N_Concat("data5/dataset/X_values_test.txt","ROC_X",False)
+    print()
+
+
+
+    """
+    print("A")
+    #one_to_N("data4/dataset/A_values_test.txt","ROC_X",False)
+    print()
+    print("B")
+    #one_to_N("data4/dataset/B_values_test.txt","ROC_X",False)
+    print()
+    print("X")
+    one_to_N_Concat("data4/dataset/X_values_test.txt","ROC_X",False)
+    print()
 
     
     print("Gamma = 64 now")
@@ -212,25 +288,5 @@ if __name__ == "__main__":
     
     print("encrypted poly2 train, poly 2 inference")
     one_to_N("results/normalized_encrypted_results_test_lambda=0.01_margin=0.25_gamma=32_poly2.txt","ROC_Algo=Poly3Strict_Enc=Poly3",False)
-    print()
-    
-    """
-    print("A CPLFW")
-    one_to_N("data4/dataset/A_values_test.txt","ROC_Algo=Poly3Strict_Enc=Poly3",False)
-    print()
-    
-    print("B GSC")
-    one_to_N("data4/dataset/B_values_test.txt","ROC_Algo=Poly3Strict_Enc=Poly3",False)
-    print()
-    """
-    
-    """
-    print("Medium dataset - LFW, librispeech")
-    print("encrypted exact train, poly 3 inference")
-    one_to_N_medium("results/allnewdata_normalized_encrypted_results_test_lambda=0.25_margin=0.25_gamma=64_exact_poly3large.txt","ROC_Algo=Exact_Enc=Poly3",False)
-    print()
-    
-    print("encrypted poly3 train, poly 3 inference")
-    one_to_N_medium("results/allnewdata_normalized_encrypted_results_test_lambda=0.1_margin=0.5_gamma=64_poly3strictlarge_lowprec.txt","",False)
     print()
     """

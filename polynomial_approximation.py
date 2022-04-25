@@ -187,12 +187,12 @@ def poly_approximation():
         fig.write_image(fig_file_name)
         
         plt.figure(figsize=(8, 6))
-        plt.plot(x, y)
-        plt.plot(x, myfun(x, *popt))
-        plt.ylabel('y')
-        plt.xlabel('x')
+        plt.plot(x, y, 'blue',linewidth=2.5)
+        plt.plot(x, myfun(x, *popt), 'red',linewidth=2.5)
+        plt.ylabel('y', fontsize=24)
+        plt.xlabel('x', fontsize=24)
         
-        plt.legend([r'$\frac{1}{\sqrt{x}}$',"Polynomial Approximation"], loc=0, frameon=True)
+        plt.legend([r'$\frac{1}{\sqrt{x}}$',"Polynomial Approximation"], loc=0, frameon=True,  fontsize=18)
         
         plt_file_name = "figures/polynomial_approximations/SP_approx_degree=" + str(degrees[i]) + "_large.png"
         
@@ -209,9 +209,9 @@ def poly_approximation():
         fig.update_yaxes(title_font=dict(size=40))
         
         plt.figure(figsize=(8, 6))
-        plt.plot(x, abs(myfun(x, *popt)-y)/y)
-        plt.ylabel(r'$\frac{|f(x)-y|}{|y|}$')
-        plt.xlabel('x')
+        plt.plot(x, abs(myfun(x, *popt)-y)/y, 'black',linewidth=2.5)
+        plt.ylabel(r'$\frac{|f(x)-y|}{|y|}$', fontsize=24)
+        plt.xlabel('x', fontsize=24)
         
         plt_file_name = "figures/polynomial_approximations/SP_approx_error_degree=" + str(degrees[i]) + "_large.png"
         

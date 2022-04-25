@@ -24,6 +24,7 @@ def approximate_inv_norm(x_in):
     #coeffs = [[-3.5507169411544033, 5.007510260923221, -2.8600040042166497, 1.8188528918604154], [3.6282080345829653, -8.063566001389777, 6.0138261097265975, -0.4337306099760562]]
     
     coeffs = [[4.39946584, -6.80578761, 3.66480865]]
+    coeffs = [[0.42084296,-1.81897596,2.51308415]] #large range
     x = torch.linalg.norm(x_in)**2
     #truth = 1/x**0.5
     result = 0
@@ -865,6 +866,7 @@ def train(gamma,iters,spec_margin=None,spec_lamb=None):
                 model.scale = 0.7245688373 / avg #0.525 is the median of our valid range, therefore we want squared norm to be 0.525, therefore we use the sqrt of 0.525 as the numerator to make the new norm that
                 model.scale = 0.4 / avg
                 model.scale = 0.5 / avg
+                model.scale = 1.525**0.5 / avg
                 #model.scale = 0.304764**0.5 / avg
                 
                 #model.scale = 0.7245688373 / avg
@@ -900,6 +902,7 @@ def train(gamma,iters,spec_margin=None,spec_lamb=None):
                     model.scale = 0.7245688373 / avg #0.525 is the median of our valid range, therefore we want squared norm to be 0.525, therefore we use the sqrt of 0.525 as the numerator to make the new norm that
                     model.scale = 0.4 / avg
                     model.scale = 0.5 / avg
+                    model.scale = 1.525**0.5 / avg
                     #model.scale = 0.304764**0.5 / avg
                     
                     
@@ -959,6 +962,7 @@ def train(gamma,iters,spec_margin=None,spec_lamb=None):
                 avg = total / X_train.shape[0]
                 best_scale = 0.7245688373 / avg
                 best_scale = 0.5 / avg
+                best_scale = 1.525**0.5 / avg
                 #best_scale = 0.304764**0.5 / avg
                 
                 #best_scale = 0.59581876 / avg
@@ -1099,6 +1103,6 @@ if __name__ == "__main__":
     
     #Overnight Tests :)
     #
-    train_exact(16,1000)
-    train(16,1000)
+    #train_exact(32,1000)
+    train(32,1000)
     

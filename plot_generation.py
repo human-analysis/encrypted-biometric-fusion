@@ -556,7 +556,7 @@ def plot_matmul_performance_theoretical():
     
     ns = [i for i in range(1,100000,10)]
     
-
+    plt.figure(figsize=(8, 6))
 
     for i in range(len(deltas)):
         print("Iteration:",i)
@@ -653,14 +653,17 @@ def plot_matmul_performance_theoretical():
             plt.plot(experimental_ns, time, color='green')
             
             
-        plt.ylabel('Time (s)')
-        plt.xlabel('n')
-        plt.legend(["Naïve (Theoretical)", "Naïve (Experimental)","Hybrid (Theoretical)", "Hybrid (Experimental)","SIMD (Theoretical)", "SIMD (Experimental)"], loc=0, frameon=True)
+        plt.ylabel('Time (s)', fontsize=16)
+        plt.xlabel('n', fontsize=16)
+        plt.legend(["Naïve (Theoretical)", "Naïve (Experimental)","Hybrid (Theoretical)", "Hybrid (Experimental)","SIMD (Theoretical)", "SIMD (Experimental)"], loc=0, frameon=True, fontsize=14)
         plt.xscale("log")
         plt.yscale("log")
         plt.show()
         
         plt.clf()
+        
+        plt.figure(figsize=(8, 6))
+        
         """
         #MatMat
         time = []
@@ -700,7 +703,7 @@ def plot_matmul_performance_theoretical():
 
         figMem.add_trace(go.Scatter(x=data_dictMem["n"],y=data_dictMem["Mem"], mode="lines",name="Naïve, Hybrid"))
         
-        plt.plot(ns,mem)
+        plt.plot(ns,mem,'b')
         
         """
         #HYBRID
@@ -724,11 +727,11 @@ def plot_matmul_performance_theoretical():
 
         figMem.add_trace(go.Scatter(x=data_dictMem["n"],y=data_dictMem["Mem"], mode="lines",name="SIMD",line=dict(color='green')))
         
-        plt.plot(ns,mem)
+        plt.plot(ns,mem,'r')
         
-        plt.ylabel('O(p)')
-        plt.xlabel('n')
-        plt.legend(["Naïve, Hybrid","SIMD"], loc=0, frameon=True)
+        plt.ylabel('O(p)', fontsize=16)
+        plt.xlabel('n', fontsize=16)
+        plt.legend(["Naïve, Hybrid","SIMD"], loc=0, frameon=True, fontsize=14)
         plt.xscale("log")
         plt.yscale("log")
         plt.show()

@@ -287,6 +287,8 @@ def poly_approximation():
             #showlegend=False
         )
     )
+    
+    plt.figure(figsize=(8, 6))
     plt.errorbar(mult_depth_poly, worsts, stds, fmt="b.")
     
         
@@ -331,9 +333,10 @@ def poly_approximation():
     )
     plt.errorbar(mult_depths_gold, worsts, stds, fmt="r.")
     plt.ylim(0,0.4)
-    plt.xlabel('Multiplicative Depth')
-    plt.ylabel(r'$\frac{|f(x)-y|}{|y|}$')
-    plt.legend(["Polynomial","Goldschmidt's Algorithm"], loc=0, frameon=True)
+    plt.xlabel('Multiplicative Depth', fontsize=16)
+    plt.ylabel(r'$\frac{|f(x)-y|}{|y|}$', fontsize=16)
+    plt.legend(["Polynomial","Goldschmidt's Algorithm"], loc=0, frameon=True, fontsize=18)
+    plt.xticks([2,4,6,8,10,12,14,16,18])
     plt.show()
     
     #fig = px.scatter(df,x="Multiplicative Depth",y=r'$\frac{|G(x)-y|}{|y|}$',title="Mult. Depth vs Relative Error",error_y=stds)

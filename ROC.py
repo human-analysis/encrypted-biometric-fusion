@@ -1078,6 +1078,8 @@ def New_ROC_Encrypted_large(filename, title, labels=True, debug=False):
     for i in range(count):
         
         for j in range(i,count):
+            #if i == j:
+                #continue
             score = Cosine_Similarity_no_div(enc_results_final[i],enc_results_final[j])
             #score = Cosine_Similarity(enc_results_final[i],enc_results_final[j])
             if L[i]==L[j]:
@@ -1618,6 +1620,10 @@ if __name__ == "__main__":
     
     print("encrypted exact train, gold inference")
     #New_ROC_Encrypted_large("results/normalized_encrypted_results_goldschmidt_lambda=0.01_margin=0.1_gamma=32.txt","ROC_Algo=Poly3Strict_Enc=Poly3",False)
+    print()
+    
+    print("encrypted simple average")
+    New_ROC_Encrypted_large("results/averaged_results.txt","ROC_Algo=Poly3Strict_Enc=Poly3",False)
     print()
     
     print("encrypted exact train, poly 6 inference")

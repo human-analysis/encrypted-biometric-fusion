@@ -1259,7 +1259,7 @@ class Linear_Feature_Fusion_Approximate2_Batch_NoShuffle():
         
         self.coeffs = [[4.39946584, -6.80578761, 3.66480865]]
         
-        
+        self.coeffs = [[0.42084296,-1.81897596,2.51308415]] #large range
         #self.coeffs = [[-2.61776258,2.78221164]]
         
         self.tote = 0
@@ -1282,7 +1282,7 @@ class Linear_Feature_Fusion_Approximate2_Batch_NoShuffle():
             self.escape += 1
             print('error')
             return 1/(x**0.5)
-        if x > 1.0:
+        if x > 3.0:
             self.escape += 1
             print('error')
             return 1/(x**0.5)
@@ -1396,7 +1396,7 @@ class Linear_Feature_Fusion_Approximate2_Batch_NoShuffle():
             x2_tilde = torch.matmul(P_temp.T, X_temp[j].T)
             xa = torch.linalg.norm(x1_tilde)**2
             xb = torch.linalg.norm(x2_tilde)**2
-            if xa < 0.05 or xa > 1.0 or xb < 0.05 or xb > 1.0:
+            if xa < 0.05 or xa > 3.0 or xb < 0.05 or xb > 3.0:
             #if xa < 0.1 or xa > 0.7 or xb < 0.1 or xb > 0.7:
                 skipped += 1
                 continue
@@ -1415,7 +1415,7 @@ class Linear_Feature_Fusion_Approximate2_Batch_NoShuffle():
             xa = torch.linalg.norm(x1_tilde)**2
             xb = torch.linalg.norm(x2_tilde)**2
             xc = torch.linalg.norm(x3_tilde)**2
-            if xa < 0.05 or xa > 1.0 or xb < 0.05 or xb > 1.0 or xc < 0.05 or xc > 1.0:
+            if xa < 0.05 or xa > 3.0 or xb < 0.05 or xb > 3.0 or xc < 0.05 or xc > 3.0:
             #if xa < 0.1 or xa > 0.7 or xb < 0.1 or xb > 0.7 or xc < 0.1 or xc > 0.7:
                 skipped += 1
                 continue

@@ -62,10 +62,8 @@ def approx_inv_norm(x_in, degree):
     return x
     
 
-def ROC_Encrypted_Results(filenames, title, labels=True, debug=False):
+def ROC_Encrypted_Results(filenames, title, names, labels=True, debug=False):
     fig = go.Figure()
-    names = ["Poly3 Learning, Poly3 Inference", "Exact Learning, Poly3 Inference", "Exact Learning, Poly6 Inference", "Exact Learning, Goldschmidt's Inference"]
-    names = ["HEFT Learning, Polynomial (Degree=2) Inference - 0.9519", "Exact Learning, Polynomial (Degree=2) Inference - 0.9188", "Exact Learning, Polynomial (Degree=6) Inference - 0.9588", "Exact Learning, Goldschmidt's Inference - 0.9666", "Averaged - 0.9182"]
     for iter, filename in enumerate(filenames):
         enc_results_file = open(filename,'r')
         enc_results = []
@@ -174,4 +172,16 @@ filenames.append("results/normalized_encrypted_results_test_lambda=0.01_margin=0
 filenames.append("results/normalized_encrypted_results_test_lambda=0.01_margin=0.1_gamma=32_exact6.txt")
 filenames.append("results/normalized_encrypted_results_goldschmidt_lambda=0.01_margin=0.1_gamma=32.txt")
 filenames.append("results/averaged_results.txt")
-ROC_Encrypted_Results(filenames, "ROC_multi", labels=False, debug=False)
+names = ["HEFT Learning, Polynomial (Degree=2) Inference - 0.9519", "Exact Learning, Polynomial (Degree=2) Inference - 0.9188", "Exact Learning, Polynomial (Degree=6) Inference - 0.9588", "Exact Learning, Goldschmidt's Inference - 0.9666", "Averaged - 0.9182"]
+ROC_Encrypted_Results(filenames, "ROC_multi", names, labels=False, debug=False)
+
+filenames = []
+filenames.append()
+filenames.append()
+filenames.append()
+filenames.append()
+names = ["HEFT Learning, Polynomial (Degree=2) Inference - 0.9925", 
+         "Exact Learning, Polynomial (Degree=2) Inference - 0.9294", 
+         "Exact Learning, Polynomial (Degree=6) Inference - 0.9883", 
+         "Exact Learning, Goldschmidt's Inference - 0.9980"]
+ROC_Encrypted_Results(filenames, "ROC_multi", names, labels=False, debug=False)

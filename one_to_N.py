@@ -250,16 +250,17 @@ if __name__ == "__main__":
 
 
     print("A")
-    one_to_N_SK("data5/dataset/A_values_test.txt","ROC_X",False)
+    #one_to_N("data5/dataset/A_values_test_unique.txt","ROC_X",False)
     print()
     print("B")
-    one_to_N_SK("data5/dataset/B_values_test.txt","ROC_X",False)
+    #one_to_N("data5/dataset/B_values_test_unique.txt","ROC_X",False)
     print()
     print("X")
     #one_to_N_Concat("data5/dataset/X_values_test.txt","ROC_X",False)
     print()
 
 
+    one_to_N("results/fingerprint_normalized_encrypted_results_test_lambda=0.01_margin=0.1_gamma=32_poly2_.txt","ROC_Algo=Poly3Strict_Enc=Poly3",False)
 
     """
     print("A")

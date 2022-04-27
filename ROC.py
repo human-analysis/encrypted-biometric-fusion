@@ -1078,8 +1078,8 @@ def New_ROC_Encrypted_large(filename, title, labels=True, debug=False):
     for i in range(count):
         
         for j in range(i,count):
-            #if i == j:
-                #continue
+            if i == j:
+                continue
             score = Cosine_Similarity_no_div(enc_results_final[i],enc_results_final[j])
             #score = Cosine_Similarity(enc_results_final[i],enc_results_final[j])
             if L[i]==L[j]:
@@ -1109,7 +1109,7 @@ def New_ROC_Encrypted_large(filename, title, labels=True, debug=False):
     
     return y_score, results
     
-def New_ROC_large(filename, title, labels=True):
+def New_ROC_large(filename, title, labels=True, B_flag=True, concat=False):
     enc_results_file = open(filename,'r')
     enc_results = []
     if labels:
@@ -1142,9 +1142,13 @@ def New_ROC_large(filename, title, labels=True):
         print(enc_results_final.shape)
         #for i in range(enc_results_final.shape[0]):
             #print(enc_results_final[i,0])
-        a_file = open("data4/dataset/L_values_test.txt",'r')
+        a_file = open("data4/dataset/L_values_test_unique.txt",'r')
         L = a_file.readline()
         L = [int(i) for i in L[1:len(L)-2].split(", ")]
+        if concat:
+            a_file = open("data4/dataset/L_values_test.txt",'r')
+            L = a_file.readline()
+            L = [int(i) for i in L[1:len(L)-2].split(", ")]
         """
         L = L[:55]
         final_L = []
@@ -1152,6 +1156,13 @@ def New_ROC_large(filename, title, labels=True):
             for _ in range(20):
                 final_L.append(l)
         L = final_L"""
+        
+        if not B_flag:
+            L = []
+            for i in range(math.floor(0.2*188)):
+                L.append(i)
+                L.append(i)
+        
         print(len(L))
     
     #for i in range(18):
@@ -1163,6 +1174,8 @@ def New_ROC_large(filename, title, labels=True):
     #print(count)
     for i in range(count):
         for j in range(i,count):
+            if i == j:
+                continue
             score = Cosine_Similarity(enc_results_final[i],enc_results_final[j])
             if L[i]==L[j]:
                 label = 1
@@ -1320,6 +1333,8 @@ def New_ROC_P_Matrix_voice_face_large(filename, gamma, lamb, title, poly_degree=
     count = len(L)
     for i in range(count):
         for j in range(i,count):
+            if i == j:
+                continue
             score = Cosine_Similarity_no_div(X_prime[i],X_prime[j])
             if L[i]==L[j]:
                 label = 1
@@ -1561,13 +1576,13 @@ if __name__ == "__main__":
     #print(torch.torch.cuda.is_available())
     #print()
     print("A")
-    #New_ROC_large("data4/dataset/A_values_test.txt","ROC_X",False)
+    New_ROC_large("data4/dataset/A_values_test_unique.txt","ROC_X",False,False)
     print()
     print("B")
-    #New_ROC_large("data4/dataset/B_values_test.txt","ROC_X",False)
+    New_ROC_large("data4/dataset/B_values_test_unique.txt","ROC_X",False,True)
     print()
     print("X")
-    #New_ROC_large("data4/dataset/X_values_test.txt","ROC_X",False)
+    New_ROC_large("data4/dataset/X_values_test.txt","ROC_X",False,True,True)
     print()
     """
     print("Plaintext exact:")
@@ -1608,7 +1623,7 @@ if __name__ == "__main__":
     
     print("Gamma = 32 now")
     print("plaintext exact train, exact inference")
-    #New_ROC_P_Matrix_voice_face_large("data4/exact_results/exact_best_P_value_transpose_lambda=0.01_margin=0.1_gamma=32_reg=0.txt",1,1,"test")
+    New_ROC_P_Matrix_voice_face_large("data4/exact_results/exact_best_P_value_transpose_lambda=0.01_margin=0.1_gamma=32_reg=0.txt",1,1,"test")
     print("plaintext exact train, poly6 inference")
     #New_ROC_P_Matrix_voice_face_large("data4/exact_results/exact_best_P_value_transpose_lambda=0.01_margin=0.1_gamma=32_reg=0.txt",1,1,"test",6)
     print("plaintext exact train, poly 2 inference")
@@ -1619,7 +1634,7 @@ if __name__ == "__main__":
     
     
     print("encrypted exact train, gold inference")
-    #New_ROC_Encrypted_large("results/normalized_encrypted_results_goldschmidt_lambda=0.01_margin=0.1_gamma=32.txt","ROC_Algo=Poly3Strict_Enc=Poly3",False)
+    New_ROC_Encrypted_large("results/normalized_encrypted_results_goldschmidt_lambda=0.01_margin=0.1_gamma=32.txt","ROC_Algo=Poly3Strict_Enc=Poly3",False)
     print()
     
     print("encrypted simple average")
@@ -1635,7 +1650,7 @@ if __name__ == "__main__":
     print()
     
     print("plaintext poly2, poly 2 inference")
-    #New_ROC_P_Matrix_voice_face_large("data4/degree=2strict/large_approximate_best_P_value_transpose_lambda=0.01_margin=0.25_gamma=32_reg=0.txt",1,1,"test",2)
+    New_ROC_P_Matrix_voice_face_large("data4/degree=2strict/large_approximate_best_P_value_transpose_lambda=0.01_margin=0.25_gamma=32_reg=0.txt",1,1,"test",2)
     print()
     print("encrypted poly2, poly2 inference")
     #New_ROC_Encrypted_large("results/normalized_encrypted_results_test_lambda=0.01_margin=0.25_gamma=32_poly2.txt","ROC_Algo=Poly3Strict_Enc=Poly3",False)

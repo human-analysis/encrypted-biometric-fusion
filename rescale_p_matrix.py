@@ -31,8 +31,8 @@ def rescale_p(p_file_name, scale=None):
     p_final = torch.div(p_final,torch.linalg.norm(p_final))
     
     if not scale:
-        a_file = open("data4/dataset/A_values_train.txt",'r')
-        b_file = open("data4/dataset/B_values_train.txt",'r')
+        a_file = open("data5/dataset/A_values_train.txt",'r')
+        b_file = open("data5/dataset/B_values_train.txt",'r')
         A = []
         L = []
         for line in a_file:
@@ -222,12 +222,10 @@ if __name__ == "__main__":
     
     #rescale_p("data2/degree=3strict/approximate_best_P_value_transpose_lambda=0.25_margin=0.1_gamma=64_reg=0.txt")
     #rescale_p("data2/degree=3strict/approximate_best_P_value_transpose_lambda=0.25_margin=0.75_gamma=64_reg=0.txt",3.8748605978545454)
-    ##view_norms("data2/degree=3strict/approximate_best_P_value_transpose_lambda=0.25_margin=0.75_gamma=64_reg=0.txt","data2/dataset/A_values_val.txt","data2/dataset/B_values_val.txt")
-    #rescale_p("data4/exact_results/exact_best_P_value_transpose_lambda=0.25_margin=0.25_gamma=64_reg=0.txt")
-    #rescale_p("data4/exact_results/exact_best_P_value_transpose_lambda=0.1_margin=0.1_gamma=32_reg=0.txt")
-    rescale_p("data4/exact_results/exact_best_P_value_transpose_lambda=0.01_margin=0.1_gamma=32_reg=0.txt")
+
+
+
+    #rescale_p("data4/exact_results/exact_best_P_value_transpose_lambda=0.01_margin=0.1_gamma=32_reg=0.txt")
     
-    rescale_p("data4/exact_results/exact_best_P_value_transpose_lambda=0.01_margin=0.25_gamma=32_reg=0.txt")
-    #rescale_p("data4/exact_results/exact_best_P_value_transpose_lambda=0.1_margin=0.1_gamma=64_reg=0.txt")
-    #rescale_p("data4/exact_results/exact_best_P_value_transpose_lambda=0.01_margin=0.1_gamma=64_reg=0.txt")
-    #rescale_p("data4/exact_results/exact_best_P_value_transpose_lambda=0.25_margin=0.25_gamma=64_reg=0.txt")
+    #rescale_p("data4/exact_results/exact_best_P_value_transpose_lambda=0.01_margin=0.25_gamma=32_reg=0.txt")
+    rescale_p("data5/exact_results/exact_best_P_value_transpose_lambda=0.5_margin=0.1_gamma=32_reg=0.txt")

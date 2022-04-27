@@ -182,7 +182,7 @@ def train_exact(gamma,iters,spec_margin=None,spec_lamb=None):
     print("B:",B.shape)
     
     
-    
+    L2 = L
     L = torch.tensor(true_L)
     print("L:",L.shape)
     print(L)
@@ -354,6 +354,33 @@ def train_exact(gamma,iters,spec_margin=None,spec_lamb=None):
     
     outfile_L = open("data4/dataset/L_values_test.txt",'w')
     outfile_L.write(str(L_test.tolist()))
+    outfile_L.close()
+    
+    A2 = torch.stack(a)
+    B2 = torch.stack(b)
+    L2 = torch.tensor(L2)
+    
+    outfile_b_test = open("data4/dataset/A_values_test_unique.txt",'w')
+    #for row in B.tolist()[split2:]:
+    for row in A2.tolist()[math.floor(0.2*num_classes)*2:math.floor(0.4*num_classes)*2]:
+        for item in row:
+            outfile_b_test.write(str(f'{item:.9f}'))
+            outfile_b_test.write(" ")
+        outfile_b_test.write("\n")
+    outfile_b_test.close()
+    
+    
+    outfile_b_test = open("data4/dataset/B_values_test_unique.txt",'w')
+    #for row in B.tolist()[split2:]:
+    for row in B2.tolist()[split1//2:split2//2]:
+        for item in row:
+            outfile_b_test.write(str(f'{item:.9f}'))
+            outfile_b_test.write(" ")
+        outfile_b_test.write("\n")
+    outfile_b_test.close()
+    
+    outfile_L = open("data4/dataset/L_values_test_unique.txt",'w')
+    outfile_L.write(str(L2[split1//2:split2//2].tolist()))
     outfile_L.close()
     
     #Hyperparameters

@@ -96,7 +96,7 @@ def ROC_Encrypted_Results(filenames, title, names, labels=True, debug=False):
             #for i in range(enc_results_final.shape[0]):
                 #print(enc_results_final[i,0])
             #a_file = open("data/features_L_values_val.txt",'r')
-            a_file = open("data4/dataset/L_values_test.txt",'r')
+            a_file = open("data5/dataset/L_values_test.txt",'r')
             L = a_file.readline().strip()
             L = [int(i) for i in L[1:len(L)-2].split(", ")]
     
@@ -165,7 +165,7 @@ def ROC_Encrypted_Results(filenames, title, names, labels=True, debug=False):
     return y_score, results
 
 
-
+"""
 filenames = []
 filenames.append("results/normalized_encrypted_results_test_lambda=0.01_margin=0.25_gamma=32_poly2.txt")
 filenames.append("results/normalized_encrypted_results_test_lambda=0.01_margin=0.1_gamma=32_exact2.txt")
@@ -174,14 +174,14 @@ filenames.append("results/normalized_encrypted_results_goldschmidt_lambda=0.01_m
 filenames.append("results/averaged_results.txt")
 names = ["HEFT Learning, Polynomial (Degree=2) Inference - 0.9519", "Exact Learning, Polynomial (Degree=2) Inference - 0.9188", "Exact Learning, Polynomial (Degree=6) Inference - 0.9588", "Exact Learning, Goldschmidt's Inference - 0.9666", "Averaged - 0.9182"]
 ROC_Encrypted_Results(filenames, "ROC_multi", names, labels=False, debug=False)
-
+"""
 filenames = []
-filenames.append()
-filenames.append()
-filenames.append()
-filenames.append()
+filenames.append("results/fingerprint_normalized_encrypted_results_test_lambda=0.01_margin=0.1_gamma=32_poly2_.txt")
+filenames.append("results/finger_normalized_encrypted_results_test_lambda=0.5_margin=0.1_gamma=32_exact2_.txt")
+filenames.append("results/finger_normalized_encrypted_results_test_lambda=0.5_margin=0.1_gamma=32_exact6_.txt")
+filenames.append("results/finger_normalized_encrypted_results_goldschmidt_gamma=32.txt")
 names = ["HEFT Learning, Polynomial (Degree=2) Inference - 0.9925", 
          "Exact Learning, Polynomial (Degree=2) Inference - 0.9294", 
          "Exact Learning, Polynomial (Degree=6) Inference - 0.9883", 
          "Exact Learning, Goldschmidt's Inference - 0.9980"]
-ROC_Encrypted_Results(filenames, "ROC_multi", names, labels=False, debug=False)
+ROC_Encrypted_Results(filenames, "ROC_multi_fingerprint", names, labels=False, debug=False)

@@ -247,13 +247,14 @@ def poly_approximation():
     coeffs.append([ 0.33009964,  3.75046592, -2.53130775,  0.60632975,  5.23381489, -3.742239, 1.00104718, -0.08817609])
     worsts = []
     stds = []
+    list_of_errors = []
     for i, myfun in enumerate(funs):
         print(degrees[i])
         #popt, pcov = curve_fit(myfun, x, y)
         errors = []
         worst = 0
         #for j in range(1,499):
-        for j in range(0,3000-50):
+        for j in range(0,3000-50, 50):
             #j_prime = 0.001 * j
             error = abs(myfun(x[j], *coeffs[i])-y[j])/y[j]
             #error = abs(myfun(x[j], *popt)-y[j])/y[j]
@@ -268,7 +269,7 @@ def poly_approximation():
         std = (total/len(errors))**0.5
         stds.append(std)
         worsts.append(mean)
-        
+        list_of_errors.append(errors)
     print(worsts)
     mult_depths_gold = [9,12,15,18]
     mult_depth_poly = degrees
@@ -302,7 +303,7 @@ def poly_approximation():
         errors = []
         y = []
         #for i in range(1,500):
-        for i in range(50,3000):
+        for i in range(50,3000, 50):
             i_prime = 0.001 * i
             y.append(gold_test(i_prime,None,j))
             error = ((1/(i_prime**0.5))-gold_test(i_prime,None,j))/(1/(i_prime**0.5))
@@ -318,6 +319,7 @@ def poly_approximation():
         stds.append(std)
         print(worst)
         worsts.append(mean)
+        list_of_errors.append(errors)
     
     
     fig.add_trace(
@@ -352,6 +354,14 @@ def poly_approximation():
     fig_file_name = "figures/ErrorComparison.png"
     fig.write_image(fig_file_name)
     print("done")
-        
+    
+    plt.clf()
+    
+    plt.figure(figsize=(8, 6))
+    plt.boxplot(list_of_errors,labels=[2,4,6,8,10,12,14,16,18])
+    plt.xlabel('Multiplicative Depth', fontsize=16)
+    plt.ylabel(r'$\frac{|f(x)-y|}{|y|}$', fontsize=16)
+    #plt.xticks([2,4,6,8,10,12,14,16,18])
+    plt.show()
 
 poly_approximation()       

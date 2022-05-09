@@ -554,6 +554,10 @@ def plot_matmul_performance_theoretical():
     ms = [4096,4096,8192]
     ps = [1]*4#placeholder
     
+    
+    plaintext_bytes = 235000
+    ciphertext_bytes = 235000
+    
     ns = [i for i in range(1,100000,10)]
     
     plt.figure(figsize=(8, 6))
@@ -697,13 +701,13 @@ def plot_matmul_performance_theoretical():
         mem = []
         for n in ns:
             n_prime = math.ceil(n/math.floor(m/(2*delta)))
-            mem.append((gamma*p+n_prime*p))
+            mem.append((plaintext_bytes*gamma*p+ciphertext_bytes*n_prime*p))
 
         data_dictMem = {"n":ns,"Mem":mem}
 
         figMem.add_trace(go.Scatter(x=data_dictMem["n"],y=data_dictMem["Mem"], mode="lines",name="Naïve, Hybrid"))
         
-        plt.plot(ns,mem,'b')
+        plt.plot(ns,[m/1000000 for m in mem],'b')
         
         """
         #HYBRID
@@ -721,15 +725,15 @@ def plot_matmul_performance_theoretical():
         mem = []
         for n in ns:
             n_prime = math.ceil(n/m)
-            mem.append((delta*gamma*p+gamma*n_prime*p))
+            mem.append((plaintext_bytes*delta*gamma*p+gamma*ciphertext_bytes*n_prime*p))
 
         data_dictMem = {"n":ns,"Mem":mem}
 
         figMem.add_trace(go.Scatter(x=data_dictMem["n"],y=data_dictMem["Mem"], mode="lines",name="SIMD",line=dict(color='green')))
         
-        plt.plot(ns,mem,'r')
+        plt.plot(ns,[m/1000000 for m in mem],'r')
         
-        plt.ylabel('O(p)', fontsize=16)
+        plt.ylabel('MB', fontsize=16)
         plt.xlabel('n', fontsize=16)
         plt.legend(["Naïve, Hybrid","SIMD"], loc=0, frameon=True, fontsize=14)
         plt.xscale("log")

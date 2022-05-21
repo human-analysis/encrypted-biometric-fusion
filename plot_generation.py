@@ -905,6 +905,228 @@ def plot_x_prime(gamma):
             fig.write_image(fig_file_name)
         
         
+def plot_pipeline_theoretical():
+
+
+    if not os.path.exists("figures"):
+        os.mkdir("figures")
+    if not os.path.exists("figures/TheoreticalPlots"):
+        os.mkdir("figures/TheoreticalPlots")
+    
+    #these values are the averages of 10,000 runs with coef modulus of 160 to allow mult depth of 1
+    
+    #SIMD
+    mult_time_plain = 4.7751
+    mult_time = 23.6362
+    rot_time = 17.069
+    add_time = 0.180311
+    
+    #Hybrid
+    mult_time_plain_h = 5.36991
+    mult_time_h = 28.1226
+    rot_time_h = 20.0835
+    add_time_h = 0.202157
+    
+    
+    deltas = [1024]
+    gammas = [32]
+    print("Deltas:", deltas)
+    print("Gammas:",gammas)
+    ms = [4096,4096,8192]
+    ms = [8192]
+    ps = [1]*4#placeholder
+    
+    
+    plaintext_bytes = 235000
+    ciphertext_bytes = 235000
+    
+    plaintext_bytes = 1620449
+    ciphertext_bytes = 1620449
+    
+    plaintext_bytes_h = 1818367
+    ciphertext_bytes_h = 1818367
+    
+    ns = [i for i in range(1,100000,10)]
+    
+    plt.figure(figsize=(8, 6))
+
+    for i in range(len(deltas)):
+        print("Iteration:",i)
+        delta = deltas[i]
+        m = ms[i]
+        gamma = gammas[i]
+        
+        figTime = go.Figure()
+        
+        d = 2 #poly degree
+        
+        #HYBRID
+        time = []
+        for n in ns:
+            n_prime = math.ceil(n/math.floor(m/(2*delta)))
+            n_prime_gallery = math.ceil(n * gamma / m)
+            
+            curr = (gamma + math.log2(delta)) * n_prime * add_time_h
+            curr += (math.log2(gamma)-1)* n_prime_gallery * add_time_h
+            
+            curr += (gamma + d + 1)* n_prime * mult_time_plain_h
+            curr += 2 * n_prime * mult_time_h
+            curr += n_prime_gallery * mult_time_h
+            
+            curr += (gamma + math.log2(delta) + 1) * n_prime * rot_time_h
+            curr += (math.log2(gamma)-1)* n_prime_gallery * rot_time_h
+            curr /= 1000
+            time.append(curr)
+
+        data_dictTime = {"n":ns,"Time (s)":time}
+        dfTime = pandas.DataFrame(data_dictTime)
+
+        figTime.add_trace(go.Scatter(x=data_dictTime["n"],y=data_dictTime["Time (s)"], mode="lines",name="Hybrid (theoretical)",line=dict(color='red', dash='dot')))
+        plt.plot(ns, time, color='red',linewidth=3)
+        
+        
+        
+        #SIMD
+        time = []
+        for n in ns:
+            n_prime = math.ceil(n/m)
+            curr = 0
+            curr += (delta * gamma + math.log2(gamma) - 2) * n_prime * add_time
+            
+            curr += (3*gamma) * n_prime * mult_time
+            curr += (delta * gamma + d) * n_prime * mult_time_plain
+            
+            
+            curr /= 1000
+            time.append(curr)
+
+        plt.plot(ns, time, color='green',linewidth=3)
+        
+        #plt.rcParams['text.usetex'] = True
+        
+        plt.ylabel(r'Time (s)', fontsize=24)
+        plt.xlabel(r'$n$', fontsize=24)
+        plt.legend(["Hybrid", "SIMD"], loc=4, frameon=True, fontsize=24)
+        plt.xscale("log")
+        plt.yscale("log")
+        
+        plt.grid()
+        plt.yticks(fontsize=18)
+        plt.xticks(fontsize=18)
+        
+        plt.show()
+        
+        plt.clf()
+        
+        plt.figure(figsize=(8, 6))
+        
+        """
+        #MatMat
+        time = []
+        for n in ns:
+            n_prime = math.ceil(n/m)
+            time.append((*mult_time_plain_3)/1000)
+
+        data_dictTime = {"n":ns,"Time (s)":time}
+        dfTime = pandas.DataFrame(data_dictTime)
+
+        figTime.add_trace(go.Scatter(x=data_dictTime["n"],y=data_dictTime["Time (s)"], mode="lines",name="Mat-Mat (theoretical)",line=dict(color='black', dash='dot')))
+        """
+        """
+        if i==0:
+            #SIMD Experimental
+            time = []
+            experimental_ns = [1,100,1000]
+            times = [247473]*3
+            time = [t/1000 for t in times]
+    
+            data_dictTime = {"n":experimental_ns,"Time (s)":time}
+            dfTime = pandas.DataFrame(data_dictTime)
+    
+            figTime.add_trace(go.Scatter(x=data_dictTime["n"],y=data_dictTime["Time (s)"], mode="lines",name="SIMD (experimental)",line=dict(color='green')))
+        """
+        figMem = go.Figure()
+        
+        p=1
+        
+        #Hybrid
+        mem = []
+        for n in ns:
+            n_prime = math.ceil(n/math.floor(m/(2*delta)))
+            mem.append(ciphertext_bytes_h*n_prime*p)
+
+        data_dictMem = {"n":ns,"Mem":mem}
+
+        figMem.add_trace(go.Scatter(x=data_dictMem["n"],y=data_dictMem["Mem"], mode="lines",name="Naïve, Hybrid"))
+        
+        plt.plot(ns,[m/1000000 for m in mem],color="red",linewidth=3)
+        
+        mem = []
+        for n in ns:
+            n_prime = math.ceil(n/math.floor(m/(2*delta)))
+            mem.append(plaintext_bytes_h*gamma*p)
+        
+        plt.plot(ns,[m/1000000 for m in mem],'--',color="red",linewidth=3)
+        
+        
+        """
+        #HYBRID
+        mem = []
+        for n in ns:
+            n_prime = math.ceil(n/math.floor(m/(2*delta)))
+            mem.append((gamma*p+n_prime*p)/1000)
+
+        data_dictMem = {"n":ns,"Mem":mem}
+
+        figMem.add_trace(go.Scatter(x=data_dictMem["n"],y=data_dictMem["Mem"], mode="lines",name="Hybrid"))
+        """
+        
+        #SIMD
+        mem = []
+        for n in ns:
+            n_prime = math.ceil(n/m)
+            #mem.append((plaintext_bytes*delta*gamma*p+gamma*ciphertext_bytes*n_prime*p))
+            mem.append((gamma*ciphertext_bytes*n_prime*p))
+
+        data_dictMem = {"n":ns,"Mem":mem}
+
+        figMem.add_trace(go.Scatter(x=data_dictMem["n"],y=data_dictMem["Mem"], mode="lines",name="SIMD",line=dict(color='green')))
+        
+        plt.plot(ns,[m/1000000 for m in mem],color='green',linewidth=3)
+        
+        mem = []
+        for n in ns:
+            n_prime = math.ceil(n/m)
+            mem.append((plaintext_bytes*delta*gamma*p))
+            
+        figMem.add_trace(go.Scatter(x=data_dictMem["n"],y=data_dictMem["Mem"], mode="lines",name="SIMD",line=dict(color='green')))
+        
+        plt.plot(ns,[m/1000000 for m in mem],'--',color='green',linewidth=3)
+        
+        plt.ylabel('MB', fontsize=24)
+        plt.xlabel(r'$n$', fontsize=24)
+        plt.legend(["Templates (Hybrid)", "Projection Matrix (Hybrid)", "Templates (SIMD)", "Projection Matrix (SIMD)"], loc=0, frameon=True, fontsize=14)
+        plt.xscale("log")
+        plt.yscale("log")
+        plt.grid()
+        plt.yticks(fontsize=18)
+        plt.xticks(fontsize=18)
+        plt.show()
+        
+        
+def plot_ablation():
+    names = ['16', '32', '64']
+    values = [0.8081, 0.9598, 0.9027]
+    plt.figure(figsize=(8, 6))
+    p1 = plt.bar(names,values, width=0.4, color=['darkgreen','darkblue','darkred'])
+    #plt.ylabel('ROC AUC', fontsize=24)
+    plt.xlabel(r'$\gamma$', fontsize=24)
+    #plt.grid()
+    plt.yticks(fontsize=18)
+    plt.xticks(fontsize=18)
+    plt.bar_label(p1,fontsize=14)
+    plt.show()
+
 
 if __name__ == "__main__":
     #plot_dataset()
@@ -917,5 +1139,7 @@ if __name__ == "__main__":
     #plot_poly_results()
     #plot_errors()
     #plot_matmul_performance()
-    plot_matmul_performance_theoretical()
+    ##plot_matmul_performance_theoretical()
+    ##plot_pipeline_theoretical()
+    plot_ablation()
     #plot_x_prime(2)

@@ -248,6 +248,7 @@ def poly_approximation():
     worsts = []
     stds = []
     list_of_errors = []
+    method_errors = []
     for i, myfun in enumerate(funs):
         print(degrees[i])
         #popt, pcov = curve_fit(myfun, x, y)
@@ -289,10 +290,11 @@ def poly_approximation():
         )
     )
     
+    """
     plt.figure(figsize=(8, 6))
-    plt.errorbar(mult_depth_poly, worsts, stds, fmt="b.")
-    
-        
+    plt.errorbar(mult_depth_poly, worsts, stds, fmt="b.", elinewidth=3)
+    """
+    #method_errors.append()
 
     worsts = []
     stds = []
@@ -333,14 +335,18 @@ def poly_approximation():
             #showlegend=False
         )
     )
-    plt.errorbar(mult_depths_gold, worsts, stds, fmt="r.")
+    """
+    plt.errorbar(mult_depths_gold, worsts, stds, fmt="r.",elinewidth=3)
     plt.ylim(0,0.4)
     plt.xlabel('Multiplicative Depth', fontsize=16)
     plt.ylabel(r'$\frac{|f(x)-y|}{|y|}$', fontsize=16)
     plt.legend(["Polynomial","Goldschmidt's Algorithm"], loc=0, frameon=True, fontsize=18)
     plt.xticks([2,4,6,8,10,12,14,16,18])
+    plt.grid()
     plt.show()
-    
+    """
+    method_errors.append((worsts,stds))
+
     #fig = px.scatter(df,x="Multiplicative Depth",y=r'$\frac{|G(x)-y|}{|y|}$',title="Mult. Depth vs Relative Error",error_y=stds)
     
     fig.update_yaxes(range=[0,0.4])
@@ -357,11 +363,33 @@ def poly_approximation():
     
     plt.clf()
     
+    """
     plt.figure(figsize=(8, 6))
     plt.boxplot(list_of_errors,labels=[2,4,6,8,10,12,14,16,18])
     plt.xlabel('Multiplicative Depth', fontsize=16)
     plt.ylabel(r'$\frac{|f(x)-y|}{|y|}$', fontsize=16)
     #plt.xticks([2,4,6,8,10,12,14,16,18])
+    plt.show()
+    plt.clf()
+    
+    print(len(list_of_errors))
+    """
+    
+    #plt.figure(figsize=(8, 6))
+    fig, ax = plt.subplots(figsize=(8, 6))
+    
+    poly_errors = list_of_errors[:5]
+    gold_errors = list_of_errors[5:]
+    
+    bp1 = ax.boxplot(poly_errors, positions=[1,2,3,4,6],patch_artist=True, boxprops=dict(facecolor="C0"))
+    bp2 = ax.boxplot(gold_errors, positions=[9,12,15,18],patch_artist=True, boxprops=dict(facecolor="C2"))
+    
+    ax.legend([bp1["boxes"][0], bp2["boxes"][0]], ['Polynomial Approximation', 'Goldschmidt\'s Algorithm'], loc='upper right',fontsize=18)
+
+    ax.set_xlabel('Multiplicative Depth', fontsize=16)
+    ax.set_ylabel('Relative Error', fontsize=16)
+    plt.grid()
+    plt.ylim(0,0.65)
     plt.show()
 
 poly_approximation()       

@@ -189,10 +189,13 @@ def poly_approximation():
         plt.figure(figsize=(8, 6))
         plt.plot(x, y, 'blue',linewidth=2.5)
         plt.plot(x, myfun(x, *popt), 'red',linewidth=2.5)
-        plt.ylabel('y', fontsize=24)
-        plt.xlabel('x', fontsize=24)
+        plt.ylabel('', fontsize=24)
+        plt.xlabel(r'$x$', fontsize=24)
         
-        plt.legend([r'$\frac{1}{\sqrt{x}}$',"Polynomial Approximation"], loc=0, frameon=True,  fontsize=18)
+        plt.legend([r'$\frac{1}{\sqrt{x}}$ (exact)',"$f(x)$ (degree="+str(degrees[i])+" polynomial)"], loc=0, frameon=True,  fontsize=18)
+        plt.grid()
+        plt.yticks(fontsize=18)
+        plt.xticks(fontsize=18)
         
         plt_file_name = "figures/polynomial_approximations/SP_approx_degree=" + str(degrees[i]) + "_large.png"
         
@@ -210,8 +213,13 @@ def poly_approximation():
         
         plt.figure(figsize=(8, 6))
         plt.plot(x, abs(myfun(x, *popt)-y)/y, 'black',linewidth=2.5)
-        plt.ylabel(r'$\frac{|f(x)-y|}{|y|}$', fontsize=24)
-        plt.xlabel('x', fontsize=24)
+        #plt.ylabel(r'Rel. Error: $\frac{|f(x)-\frac{1}{\sqrt{x}}|}{|\frac{1}{\sqrt{x}}|}$', fontsize=24)
+        #plt.ylabel(r'Rel. Error: $|f(x)-\frac{1}{\sqrt{x}}|/|\frac{1}{\sqrt{x}}|$', fontsize=24)
+        plt.ylabel(r'Relative Error', fontsize=24)
+        plt.xlabel(r'$x$', fontsize=24)
+        plt.grid()
+        plt.yticks(fontsize=18)
+        plt.xticks(fontsize=18)
         
         plt_file_name = "figures/polynomial_approximations/SP_approx_error_degree=" + str(degrees[i]) + "_large.png"
         

@@ -7,6 +7,9 @@ from operator import itemgetter
 import numpy as np
 import math
 
+from mpl_toolkits.axes_grid1.inset_locator import zoomed_inset_axes
+from mpl_toolkits.axes_grid1.inset_locator import mark_inset
+
 from sklearn import metrics
 
 from sklearn.metrics import roc_curve, roc_auc_score
@@ -64,6 +67,11 @@ def approx_inv_norm(x_in, degree):
 
 def ROC_Encrypted_Results(filenames, title, names, labels=True, debug=False):
     fig = go.Figure()
+    
+    fig1, ax1 = plt.subplots(figsize=(8,6))
+    fprs = []
+    tprs = []
+    
     for iter, filename in enumerate(filenames):
         enc_results_file = open(filename,'r')
         enc_results = []
@@ -96,9 +104,11 @@ def ROC_Encrypted_Results(filenames, title, names, labels=True, debug=False):
             #for i in range(enc_results_final.shape[0]):
                 #print(enc_results_final[i,0])
             #a_file = open("data/features_L_values_val.txt",'r')
+            #a_file = open("data4/dataset/L_values_test.txt",'r')
             a_file = open("data5/dataset/L_values_test.txt",'r')
             L = a_file.readline().strip()
             L = [int(i) for i in L[1:len(L)-2].split(", ")]
+            #L = L[:100] #for debugging
     
         y_score = []
         y_true = []
@@ -108,7 +118,7 @@ def ROC_Encrypted_Results(filenames, title, names, labels=True, debug=False):
         count = len(L)
         for i in range(count):
             
-            for j in range(i,count):
+            for j in range(i+1,count):
                 score = Cosine_Similarity_no_div(enc_results_final[i],enc_results_final[j])
                 #score = Cosine_Similarity(enc_results_final[i],enc_results_final[j])
                 if L[i]==L[j]:
@@ -136,7 +146,11 @@ def ROC_Encrypted_Results(filenames, title, names, labels=True, debug=False):
             )
         )
         
-        plt.plot(fpr,tpr)
+        ##plt.plot(fpr,tpr)
+        #ax1.plot(fpr,tpr)
+        #axins1.plot(fpr,tpr)
+        fprs.append(fpr)
+        tprs.append(tpr)
         
         #data_dict = {"False Positive Rate":fpr,"True Positive Rate":tpr}
         #df = pandas.DataFrame(data_dict)
@@ -144,6 +158,10 @@ def ROC_Encrypted_Results(filenames, title, names, labels=True, debug=False):
                   #title=title)
     fig.update_yaxes(range=[0,1.0])
     fig.update_xaxes(range=[0,1.0])
+    
+    #fig.update_yaxes(range=[0.4,1.0])
+    #fig.update_xaxes(range=[0,0.6])
+    
     
     fig.update_layout(legend=dict(
     yanchor="bottom",
@@ -157,9 +175,42 @@ def ROC_Encrypted_Results(filenames, title, names, labels=True, debug=False):
     fig.write_image(fig_file_name)
     
     
-    plt.ylabel('True Positive Rate')
-    plt.xlabel('False Positive Rate')
-    plt.legend(names, loc=0, frameon=True)
+    #ax1.plot(fprs,tprs)
+    
+    for i in range(len(fprs)):
+        fpr = fprs[i]
+        tpr = tprs[i]
+        ax1.plot(fpr,tpr,linewidth=2)
+    
+    axins1 = zoomed_inset_axes(ax1, zoom = 1.75, loc=5)#loc=5/7?
+    for i in range(len(fprs)):
+        fpr = fprs[i]
+        tpr = tprs[i]
+        axins1.plot(fpr,tpr,linewidth=4)
+    
+    axins1.set_xlim(0.0,0.3)
+    axins1.set_xlim(-0.01,0.3)
+    axins1.set_ylim(0.7,1.0)
+    axins1.set_ylim(0.7,1.01)
+    plt.xticks(visible=False)
+    plt.yticks(visible=False)
+    
+    
+    
+    ax1.set_ylabel('True Positive Rate', fontsize=24)
+    ax1.set_xlabel('False Positive Rate',fontsize=24)
+    ax1.legend(names, loc=0, frameon=True)
+    ax1.grid()
+    #ax1.set_yticklabels(fontsize=18)
+    #ax1.set_xticklabels(fontsize=18)
+    
+    ax1.tick_params(axis='x', labelsize=18 )
+    ax1.tick_params(axis='y', labelsize=18 )
+    
+    #
+    
+    mark_inset(ax1,axins1,loc1=1,loc2=3, fc="none",ec="0.5")
+    
     plt.show()
     
     return y_score, results
@@ -172,7 +223,7 @@ filenames.append("results/normalized_encrypted_results_test_lambda=0.01_margin=0
 filenames.append("results/normalized_encrypted_results_test_lambda=0.01_margin=0.1_gamma=32_exact6.txt")
 filenames.append("results/normalized_encrypted_results_goldschmidt_lambda=0.01_margin=0.1_gamma=32.txt")
 filenames.append("results/averaged_results.txt")
-names = ["HEFT Learning, Polynomial (Degree=2) Inference - 0.9519", "Exact Learning, Polynomial (Degree=2) Inference - 0.9188", "Exact Learning, Polynomial (Degree=6) Inference - 0.9588", "Exact Learning, Goldschmidt's Inference - 0.9666", "Averaged - 0.9182"]
+names = ["HEFT Learning, Polynomial (Degree=2) Inference - 0.9508", "Exact Learning, Polynomial (Degree=2) Inference - 0.9180", "Exact Learning, Polynomial (Degree=6) Inference - 0.9577", "Exact Learning, Goldschmidt's Inference - 0.9657", "Averaged - 0.9159"]
 ROC_Encrypted_Results(filenames, "ROC_multi", names, labels=False, debug=False)
 """
 filenames = []
@@ -185,3 +236,4 @@ names = ["HEFT Learning, Polynomial (Degree=2) Inference - 0.9925",
          "Exact Learning, Polynomial (Degree=6) Inference - 0.9883", 
          "Exact Learning, Goldschmidt's Inference - 0.9980"]
 ROC_Encrypted_Results(filenames, "ROC_multi_fingerprint", names, labels=False, debug=False)
+

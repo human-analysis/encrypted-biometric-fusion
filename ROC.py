@@ -1412,9 +1412,23 @@ if __name__ == "__main__":
     #0/0
     
     #New_ROC_Encrypted_large("results/normalized_encrypted_results_test_lambda=0.01_margin=0.1_gamma=32_exact6_.txt","ROC_Algo=Poly3Strict_Enc=Poly3",False)
-    New_ROC_Encrypted_large("results/normalized_encrypted_results_test_lambda=0.01_margin=0.25_gamma=32_poly2_.txt","ROC_Algo=Poly3Strict_Enc=Poly3",False)
-    0/0
     
+    
+    #New_ROC_Encrypted_large("results/normalized_encrypted_results_test_lambda=0.01_margin=0.25_gamma=32_poly2_.txt","ROC_Algo=Poly3Strict_Enc=Poly3",False)
+    
+    
+    print("16 plaintext poly2, poly 2 inference")
+    New_ROC_P_Matrix_voice_face_large("data4/degree=2strict/large_approximate_best_P_value_transpose_lambda=0.25_margin=0.25_gamma=16_reg=0.txt",1,1,"test",2)
+    print()
+    
+    print("64 plaintext poly2, poly 2 inference")
+    New_ROC_P_Matrix_voice_face_large("data4/degree=2strict/large_approximate_best_P_value_transpose_lambda=0.1_margin=0.1_gamma=64_reg=0.txt",1,1,"test",2)
+    print()
+    
+    print("32 plaintext poly2, poly 2 inference")
+    New_ROC_P_Matrix_voice_face_large("data4/degree=2strict/large_approximate_best_P_value_transpose_lambda=0.01_margin=0.25_gamma=32_reg=0.txt",1,1,"test",2)
+    print()
+    0/0
     print("A")
     New_ROC_large("data4/dataset/A_values_test_unique.txt","ROC_X",False,False)
     print()

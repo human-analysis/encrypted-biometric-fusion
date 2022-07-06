@@ -1,6 +1,0 @@
-time elapsed to create context: 51.763479700000005
-Number of queries: 40
-time elapsed to perform encrypted fusion: 284.5108126
-time elapsed to perform unencrypted fusion: 0.0012035999999966407
-Average error: tensor([0.0003, 0.0014])
-Total error: tensor([0.0117, 0.0551])

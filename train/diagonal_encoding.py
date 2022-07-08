@@ -77,6 +77,6 @@ def diagonal_encoding_arbitrary(in_name, out_name):
     outfile_p.close()
 
 if __name__ == "__main__":
-    diagonal_encoding_arbitrary("data4/exact_results/exact_best_P_value_transpose_lambda=0.01_margin=0.1_gamma=32_reg=0.txt","data4/exact_results/diagonal_exact_best_P_value_transpose_lambda=0.01_margin=0.1_gamma=32_reg=0.txt")
-    diagonal_encoding_arbitrary("data4/degree=2strict/large_approximate_best_P_value_transpose_lambda=0.01_margin=0.25_gamma=32_reg=0.txt","data4/degree=2strict/diagonal_large_approximate_best_P_value_transpose_lambda=0.01_margin=0.25_gamma=32_reg=0.txt")
+    diagonal_encoding_arbitrary("data/exact_results/exact_best_P_value_transpose_lambda=0.01_margin=0.1_gamma=32_reg=0.txt","data/exact_results/diagonal/diagonal_exact_best_P_value_transpose_lambda=0.01_margin=0.1_gamma=32_reg=0.txt")
+    diagonal_encoding_arbitrary("data/degree=3strict/large_approximate_best_P_value_transpose_lambda=0.01_margin=0.25_gamma=32_reg=0.txt","data/degree=3strict/diagonal/diagonal_large_approximate_best_P_value_transpose_lambda=0.01_margin=0.25_gamma=32_reg=0.txt")
     

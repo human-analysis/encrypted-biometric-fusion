@@ -1,7 +1,7 @@
 """
 Author: Luke Sperling
 Created: 04-04-22
-Modified: 07-07-22
+Modified: 07-08-22
 Training procedure for FHE-aware Learning (HEFT). Also includes version where exact normalization is used. This is considered not FHE-aware Learning.
 """
 
@@ -165,16 +165,16 @@ def train_exact(gamma,iters,spec_margin=None,spec_lamb=None):
     print("X_train shuffled:",X_train.shape)
     print("L_train shuffled:",L_train.shape)
     
-    if not os.path.exists("data4"):
-        os.mkdir("data4")
-    if not os.path.exists("data4/dataset"):
-        os.mkdir("data4/dataset")
-    if not os.path.exists("data4/exact_results"):
-        os.mkdir("data4/exact_results")
-    if not os.path.exists("data4/exact_results/"):
-        os.mkdir("data4/dataset")
+    if not os.path.exists("data"):
+        os.mkdir("data")
+    if not os.path.exists("data/dataset"):
+        os.mkdir("data/dataset")
+    if not os.path.exists("data/exact_results"):
+        os.mkdir("data/exact_results")
+    if not os.path.exists("data/exact_results/"):
+        os.mkdir("data/dataset")
 
-    outfile_a = open("data4/dataset/A_values.txt",'w')
+    outfile_a = open("data/dataset/A_values.txt",'w')
     for row in A.tolist():
         for item in row:
             outfile_a.write(str(f'{item:.9f}'))
@@ -182,7 +182,7 @@ def train_exact(gamma,iters,spec_margin=None,spec_lamb=None):
         outfile_a.write("\n")
     outfile_a.close()
     
-    outfile_b = open("data4/dataset/B_values.txt",'w')
+    outfile_b = open("data/dataset/B_values.txt",'w')
     for row in B.tolist():
         for item in row:
             outfile_b.write(str(f'{item:.9f}'))
@@ -190,7 +190,7 @@ def train_exact(gamma,iters,spec_margin=None,spec_lamb=None):
         outfile_b.write("\n")
     outfile_b.close()
     
-    outfile_a_train = open("data4/dataset/A_values_train.txt",'w')
+    outfile_a_train = open("data/dataset/A_values_train.txt",'w')
     for row in A.tolist()[split2:]:
         for item in row:
             outfile_a_train.write(str(f'{item:.9f}'))
@@ -198,7 +198,7 @@ def train_exact(gamma,iters,spec_margin=None,spec_lamb=None):
         outfile_a_train.write("\n")
     outfile_a_train.close()
     
-    outfile_b_train = open("data4/dataset/B_values_train.txt",'w')
+    outfile_b_train = open("data/dataset/B_values_train.txt",'w')
     for row in B.tolist()[split2:]:
         for item in row:
             outfile_b_train.write(str(f'{item:.9f}'))
@@ -206,7 +206,7 @@ def train_exact(gamma,iters,spec_margin=None,spec_lamb=None):
         outfile_b_train.write("\n")
     outfile_b_train.close()
 
-    outfile_a_test = open("data4/dataset/A_values_test.txt",'w')
+    outfile_a_test = open("data/dataset/A_values_test.txt",'w')
     for row in A.tolist()[split1:split2]:
         for item in row:
             outfile_a_test.write(str(f'{item:.9f}'))
@@ -215,7 +215,7 @@ def train_exact(gamma,iters,spec_margin=None,spec_lamb=None):
     outfile_a_test.close()
 
     
-    outfile_b_test = open("data4/dataset/B_values_test.txt",'w')
+    outfile_b_test = open("data/dataset/B_values_test.txt",'w')
     for row in B.tolist()[split1:split2]:
         for item in row:
             outfile_b_test.write(str(f'{item:.9f}'))
@@ -223,7 +223,7 @@ def train_exact(gamma,iters,spec_margin=None,spec_lamb=None):
         outfile_b_test.write("\n")
     outfile_b_test.close()
     
-    outfile_a_test = open("data4/dataset/A_values_test_transpose.txt",'w')
+    outfile_a_test = open("data/dataset/A_values_test_transpose.txt",'w')
     for row in A[split1:split2,:].T.tolist():
         for item in row:
             outfile_a_test.write(str(f'{item:.9f}'))
@@ -231,7 +231,7 @@ def train_exact(gamma,iters,spec_margin=None,spec_lamb=None):
         outfile_a_test.write("\n")
     outfile_a_test.close()
     
-    outfile_b_test = open("data4/dataset/B_values_test_transpose.txt",'w')
+    outfile_b_test = open("data/dataset/B_values_test_transpose.txt",'w')
     for row in B[split1:split2,:].T.tolist():
         for item in row:
             outfile_b_test.write(str(f'{item:.9f}'))
@@ -239,7 +239,7 @@ def train_exact(gamma,iters,spec_margin=None,spec_lamb=None):
         outfile_b_test.write("\n")
     outfile_b_test.close()
     
-    outfile_a_val = open("data4/dataset/A_values_val.txt",'w')
+    outfile_a_val = open("data/dataset/A_values_val.txt",'w')
     for row in A.tolist()[:split1]:
         outfile_a_val.write("[")
         for item in row:
@@ -249,7 +249,7 @@ def train_exact(gamma,iters,spec_margin=None,spec_lamb=None):
         outfile_a_val.write("\n")
     outfile_a_val.close()
     
-    outfile_b_val = open("data4/dataset/B_values_val.txt",'w')
+    outfile_b_val = open("data/dataset/B_values_val.txt",'w')
     for row in B.tolist()[:split1]:
         outfile_b_val.write("[")
         for item in row:
@@ -259,7 +259,7 @@ def train_exact(gamma,iters,spec_margin=None,spec_lamb=None):
         outfile_b_val.write("\n")
     outfile_b_val.close()
     
-    outfile_x_test = open("data4/dataset/X_values_test.txt",'w')
+    outfile_x_test = open("data/dataset/X_values_test.txt",'w')
     for row in X.tolist()[split1:split2]:
         outfile_x_test.write("[")
         for item in row:
@@ -269,11 +269,11 @@ def train_exact(gamma,iters,spec_margin=None,spec_lamb=None):
         outfile_x_test.write("\n")
     outfile_x_test.close()
     
-    outfile_L = open("data4/dataset/L_values_val.txt",'w')
+    outfile_L = open("data/dataset/L_values_val.txt",'w')
     outfile_L.write(str(L_val.tolist()))
     outfile_L.close()
     
-    outfile_L = open("data4/dataset/L_values_test.txt",'w')
+    outfile_L = open("data/dataset/L_values_test.txt",'w')
     outfile_L.write(str(L_test.tolist()))
     outfile_L.close()
     
@@ -281,7 +281,7 @@ def train_exact(gamma,iters,spec_margin=None,spec_lamb=None):
     B2 = torch.stack(b)
     L2 = torch.tensor(L2)
     
-    outfile_b_test = open("data4/dataset/A_values_test_unique.txt",'w')
+    outfile_b_test = open("data/dataset/A_values_test_unique.txt",'w')
     for row in A2.tolist()[math.floor(0.2*num_classes)*2:math.floor(0.4*num_classes)*2]:
         for item in row:
             outfile_b_test.write(str(f'{item:.9f}'))
@@ -289,7 +289,7 @@ def train_exact(gamma,iters,spec_margin=None,spec_lamb=None):
         outfile_b_test.write("\n")
     outfile_b_test.close()
     
-    outfile_b_test = open("data4/dataset/B_values_test_unique.txt",'w')
+    outfile_b_test = open("data/dataset/B_values_test_unique.txt",'w')
     for row in B2.tolist()[split1//2:split2//2]:
         for item in row:
             outfile_b_test.write(str(f'{item:.9f}'))
@@ -297,7 +297,7 @@ def train_exact(gamma,iters,spec_margin=None,spec_lamb=None):
         outfile_b_test.write("\n")
     outfile_b_test.close()
     
-    outfile_L = open("data4/dataset/L_values_test_unique.txt",'w')
+    outfile_L = open("data/dataset/L_values_test_unique.txt",'w')
     outfile_L.write(str(L2[split1//2:split2//2].tolist()))
     outfile_L.close()
     
@@ -308,8 +308,6 @@ def train_exact(gamma,iters,spec_margin=None,spec_lamb=None):
 
     regularizers = [0]
     
-    #anneal_rate = 0.995
-    #anneal_rate = 0.9999
     rate = 0.005
     decay = 0.0001
     
@@ -320,16 +318,11 @@ def train_exact(gamma,iters,spec_margin=None,spec_lamb=None):
         lambs = [spec_lamb]
     
     
-    #f = 0
-    #randoms = [i*5 for i in range(21,31)]
-
     aucs = []
     #repeat training for each hyperparam combination
     for reg in regularizers:
         for margin in margins:
             for lamb in lambs:
-                #rate = rates[gamma]
-                #rate = 0.005
                 print("Lambda value of", lamb, "Margin value of", margin, "regularizer of",reg)
                 M = []
                 V = []
@@ -357,9 +350,6 @@ def train_exact(gamma,iters,spec_margin=None,spec_lamb=None):
 
                 for i in range(X_prime.shape[0]):
                     X_prime[i,:]=torch.mul(X_prime[i,:], approximate_inv_norm(X_prime[i,:]))
-                #auc = New_ROC_AUC(X_prime, L_val)
-                #print("approx AUC of lambda="+str(lamb)+", margin="+str(margin)+ "_reg=" + str(reg) + ":", auc)
-
                 X_prime = torch.mm(X_val,best_P)
                 print(X_prime.shape)
 
@@ -370,55 +360,13 @@ def train_exact(gamma,iters,spec_margin=None,spec_lamb=None):
                 aucs.append((margin,lamb,auc))
                 print("AUC of lambda="+str(lamb)+", margin="+str(margin)+ "_reg=" + str(reg) + ":", auc)
 
-                p_best_file_name = "data4/exact_results/exact_best_P_value_transpose_lambda=" + str(lamb) + "_margin=" + str(margin) + "_gamma=" + str(gamma)  + "_reg=" + str(reg) + ".txt"
+                p_best_file_name = "data/exact_results/exact_best_P_value_transpose_lambda=" + str(lamb) + "_margin=" + str(margin) + "_gamma=" + str(gamma)  + "_reg=" + str(reg) + ".txt"
                 outfile_p_t = open(p_best_file_name,'w')
                 P_final_t = best_P.T
                 P_final_t = str(P_final_t.tolist())
                 outfile_p_t.write(P_final_t)
                 outfile_p_t.close()
                 
-                loss_file_name = "data4/exact_results/exact_loss_values_lambda=" + str(lamb) + "_margin=" + str(margin) + "_gamma=" + str(gamma)  + "_reg=" + str(reg) + ".txt"
-                outfile_loss = open(loss_file_name,'w')
-                for loss_value in losses:
-                    outfile_loss.write(str(loss_value.tolist()))
-                    outfile_loss.write("\n")
-                outfile_loss.close()
-
-                X_prime_filename = "data4/exact_results/exact_labels_X_prime_val_lambda=" + str(lamb) + "_margin=" + str(margin) + "_gamma=" + str(gamma) + "_reg=" + str(reg) + ".txt"
-                outfile_x = open(X_prime_filename,'w')
-                x_list = X_prime.tolist()
-                for i in range(len(x_list)):
-                    x_list[i] = str(x_list[i])+";"+str(L_val.tolist()[i])
-                    outfile_x.write(x_list[i])
-                    outfile_x.write("\n")
-                outfile_x.close()
-                
-                X_prime = torch.mm(X_test,best_P)
-                
-                
-                X_filename = "data4/exact_results/exact_labels_X_NOT_NORMAL_test_lambda=" + str(lamb) + "_margin=" + str(margin) + "_gamma=" + str(gamma) + "_reg=" + str(reg) + ".txt"
-                outfile_x = open(X_filename,'w')
-                x_list = X_prime.tolist()
-                for i in range(len(x_list)):
-                    x_list[i] = str(x_list[i])+";"+str(L_test.tolist()[i])
-                    outfile_x.write(x_list[i])
-                    outfile_x.write("\n")
-                outfile_x.close()
-                print()
-                
-                
-                for i in range(X_prime.shape[0]):
-                    X_prime[i,:]=torch.div(X_prime[i,:], torch.linalg.norm(X_prime[i,:]))
-                
-                X_prime_filename = "data4/exact_results/exact_labels_X_prime_test_lambda=" + str(lamb) + "_margin=" + str(margin) + "_gamma=" + str(gamma) + "_reg=" + str(reg) + ".txt"
-                outfile_x = open(X_prime_filename,'w')
-                x_list = X_prime.tolist()
-                for i in range(len(x_list)):
-                    x_list[i] = str(x_list[i])+";"+str(L_test.tolist()[i])
-                    outfile_x.write(x_list[i])
-                    outfile_x.write("\n")
-                outfile_x.close()
-                print()
     print("(margin, lambda, Validation AUC)")
     print(aucs)
 
@@ -437,11 +385,9 @@ def train(gamma,iters,spec_margin=None,spec_lamb=None):
     A_infile = open("feature-extraction/extractions/VGGFace_vgg_cplfw.txt",'r')
     for line in A_infile:
         line = line.strip().split()
-        #print(torch.linalg.norm(torch.tensor([float(char) for char in line])))
         a.append(torch.tensor([float(char) for char in line]))
     
     L = []
-    #L_infile = open("feature-extraction/extractions/deep_speaker_librispeech_big_labels.txt",'r')
     L_infile = open("feature-extraction/extractions/deep_speaker_librispeech_google_labels.txt",'r')
     
     l_dict = {}
@@ -494,12 +440,9 @@ def train(gamma,iters,spec_margin=None,spec_lamb=None):
     last_l = L[0]
     i = 0
     while completed <= 188:
-        #for i, label in enumerate(L):
         label = L[b_index]
         for j in range(2):
             a_sub_index = j
-            #b_index = i
-            #print(label, a_index+a_sub_index)
             print(a_index+a_sub_index, b_index, label)
             true_a.append(a[a_index+a_sub_index])
             true_b.append(b[b_index])
@@ -557,10 +500,10 @@ def train(gamma,iters,spec_margin=None,spec_lamb=None):
     print("X_train shuffled:",X_train.shape)
     print("L_train shuffled:",L_train.shape)
     
-    if not os.path.exists("data4/degree=3strict"):
-        os.mkdir("data4/degree=3strict")
-    if not os.path.exists("data4/degree=2strict"):
-        os.mkdir("data4/degree=2strict")
+    if not os.path.exists("data/degree=3strict"):
+        os.mkdir("data/degree=3strict")
+    if not os.path.exists("data/degree=2strict"):
+        os.mkdir("data/degree=2strict")
     
     
     #Hyperparameters
@@ -601,12 +544,7 @@ def train(gamma,iters,spec_margin=None,spec_lamb=None):
                     total += norm
                 total = float(total)
                 avg = total / X_train.shape[0]
-                #model.scale = 0.7245688373 / avg #0.525 is the median of our valid range, therefore we want squared norm to be 0.525, therefore we use the sqrt of 0.525 as the numerator to make the new norm that
-                #model.scale = 0.4 / avg
-                #model.scale = 0.5 / avg
                 model.scale = 1.525**0.5 / avg
-                #model.scale = 0.304764**0.5 / avg
-                #model.scale = 0.7245688373 / avg
                 
                 best_loss = model.loss()
                 best_P = model.P
@@ -672,54 +610,13 @@ def train(gamma,iters,spec_margin=None,spec_lamb=None):
                 aucs.append((margin,lamb,auc,best_scale))
                 print("AUC of lambda="+str(lamb)+", margin="+str(margin)+ "_reg=" + str(reg) + ":", auc)
                 
-                p_best_file_name = "data4/degree=2strict/large_approximate_best_P_value_transpose_lambda=" + str(lamb) + "_margin=" + str(margin) + "_gamma=" + str(gamma)  + "_reg=" + str(reg) + ".txt"
+                p_best_file_name = "data/degree=2strict/approximate_best_P_value_transpose_lambda=" + str(lamb) + "_margin=" + str(margin) + "_gamma=" + str(gamma)  + "_reg=" + str(reg) + ".txt"
                 outfile_p_t = open(p_best_file_name,'w')
                 P_final_t = best_P.T
                 P_final_t = str(P_final_t.tolist())
                 outfile_p_t.write(P_final_t)
                 outfile_p_t.close()
                 
-                loss_file_name = "data4/degree=2strict/large_approximate_loss_values_lambda=" + str(lamb) + "_margin=" + str(margin) + "_gamma=" + str(gamma)  + "_reg=" + str(reg) + ".txt"
-                outfile_loss = open(loss_file_name,'w')
-                for loss_value in losses:
-                    outfile_loss.write(str(loss_value.tolist()))
-                    outfile_loss.write("\n")
-                outfile_loss.close()
-
-                X_prime_filename = "data4/degree=2strict/large_approximate_labels_X_prime_val_lambda=" + str(lamb) + "_margin=" + str(margin) + "_gamma=" + str(gamma) + "_reg=" + str(reg) + ".txt"
-                outfile_x = open(X_prime_filename,'w')
-                x_list = X_prime.tolist()
-                for i in range(len(x_list)):
-                    x_list[i] = str(x_list[i])+";"+str(L_val.tolist()[i])
-                    outfile_x.write(x_list[i])
-                    outfile_x.write("\n")
-                outfile_x.close()
-
-                X_prime = torch.mm(X_test,best_P)
-                
-                
-                X_filename = "data4/degree=2strict/large_approximate_labels_X_NOT_NORMAL_test_lambda=" + str(lamb) + "_margin=" + str(margin) + "_gamma=" + str(gamma) + "_reg=" + str(reg) + ".txt"
-                outfile_x = open(X_filename,'w')
-                x_list = X_prime.tolist()
-                for i in range(len(x_list)):
-                    x_list[i] = str(x_list[i])+";"+str(L_test.tolist()[i])
-                    outfile_x.write(x_list[i])
-                    outfile_x.write("\n")
-                outfile_x.close()
-                print()
-                
-                for i in range(X_prime.shape[0]):
-                    X_prime[i,:]=torch.mul(X_prime[i,:], approximate_inv_norm(X_prime[i,:]))
-                
-                X_prime_filename = "data4/degree=2strict/large_approximate_labels_X_prime_test_lambda=" + str(lamb) + "_margin=" + str(margin) + "_gamma=" + str(gamma) + "_reg=" + str(reg) + ".txt"
-                outfile_x = open(X_prime_filename,'w')
-                x_list = X_prime.tolist()
-                for i in range(len(x_list)):
-                    x_list[i] = str(x_list[i])+";"+str(L_test.tolist()[i])
-                    outfile_x.write(x_list[i])
-                    outfile_x.write("\n")
-                outfile_x.close()
-                print()
     print("(margin, lambda, Validation AUC), Scale")
     print(aucs)
     

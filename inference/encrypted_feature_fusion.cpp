@@ -32,7 +32,7 @@ bool zero_vector(vector<double> input)
 }
 
 
-void encrypted_feature_fusion_polynomial_approximation_arbitrary(string P_file_name_in, string outfile_name, string normalized_outfile_name, int degree)
+void encrypted_feature_fusion_polynomial_approximation_arbitrary(string P_file_name_in, string normalized_outfile_name, int degree)
 {
 
     //Encryption parameters chosen based on multiplicative depth needed
@@ -192,7 +192,7 @@ void encrypted_feature_fusion_polynomial_approximation_arbitrary(string P_file_n
     A_enc.reserve(20);
     
     string row;
-    ifstream A_file ("../../train/data4/dataset/A_values_test.txt");
+    ifstream A_file ("../../train/data/dataset/A_values_test.txt");
     string A_values_str;
     int zeroes_to_add;
     int to_rotate = -1; //we need to know how much to rotate B by for concatenation
@@ -277,7 +277,7 @@ void encrypted_feature_fusion_polynomial_approximation_arbitrary(string P_file_n
     vector<Plaintext> B_plain;
     vector<Ciphertext> B_enc;
     B_enc.reserve(20);
-    ifstream B_file ("../../train/data4/dataset/B_values_test.txt");
+    ifstream B_file ("../../train/data/dataset/B_values_test.txt");
     string B_values_str;
     
     cout << "build B" << endl;
@@ -567,8 +567,6 @@ void encrypted_feature_fusion_polynomial_approximation_arbitrary(string P_file_n
         }
         //end arbitrary polynomial evaluation
         
-        
-        
         //now we multiply the original vector by the inverse norm and return that result
         Ciphertext normalized_cipher;
         
@@ -589,8 +587,6 @@ void encrypted_feature_fusion_polynomial_approximation_arbitrary(string P_file_n
     //end normalization
     
     int delta = 1024;
-    
-    
     
     //preprocessing step
     start = high_resolution_clock::now();
@@ -706,15 +702,6 @@ void encrypted_feature_fusion_polynomial_approximation_arbitrary(string P_file_n
 
 int main()
 {
-
-    //CPLFW, google
-    //poly2 train, poly2
-    encrypted_feature_fusion_polynomial_approximation_arbitrary("../../train/data4/degree=3strict/diagonal/diagonal_large_approximate_best_P_value_transpose_lambda=0.01_margin=0.25_gamma=32_reg=0.txt","encrypted_results_test_lambda=0.01_margin=0.25_gamma=32_poly2_.txt","normalized_encrypted_results_test_lambda=0.01_margin=0.25_gamma=32_poly2_.txt",2);//hybrid, poly
-    
-    //exact train, poly2
-    //encrypted_feature_fusion_polynomial_approximation_arbitrary("../big_data/diagonal_exact_best_P_value_transpose_lambda=0.01_margin=0.1_gamma=32_reg=0.txt","encrypted_results_test_lambda=0.01_margin=0.1_gamma=32_exact2_.txt","normalized_encrypted_results_test_lambda=0.01_margin=0.1_gamma=32_exact2_.txt",2);//hybrid, poly
-    
-    //exact train, poly6
-    //encrypted_feature_fusion_polynomial_approximation_arbitrary("../big_data/diagonal_exact_best_P_value_transpose_lambda=0.01_margin=0.1_gamma=32_reg=0.txt","encrypted_results_test_lambda=0.01_margin=0.1_gamma=32_exact6_.txt","normalized_encrypted_results_test_lambda=0.01_margin=0.1_gamma=32_exact6_.txt",6);//hybrid, poly
+    encrypted_feature_fusion_polynomial_approximation_arbitrary("../../train/data/degree=2strict/diagonal/XXX.txt","../results/normalized_encrypted_results_lambda=XXX_margin=XXX_gamma=XXX.txt",2);
     return 0;
 }

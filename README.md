@@ -38,9 +38,9 @@ diagonal_encoding.py produces a diagonally-encoded matrix for use in the hybrid 
 In order to perform inference-time feature-level fusion in the encrypted domain, first encrypted_feature_fusion.cpp's main method must be changed to include the p matrix filename produced from the training procedure. Replacing the X's in the function call's parameter is sufficient for this.
 Then, the following may be executed:
 ```
-$ cd inference
+$ cd inference/build
 $ make
-$ cd bin
+$ cd ../bin
 ./encrypted_feature_fusion
 ```
 This will produce a new file in inference/results with the results.

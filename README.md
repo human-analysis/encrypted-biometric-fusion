@@ -28,7 +28,7 @@ $ python HEFT_train_voice_face.py
 $ python rescale_p_matrix.py
 $ python diagonal_encoding.py
 ```
-This will produce files corresponding to the learned matrix that will be used during inference time. Both rescale_p_matrix.py and diagonal_encoding.py may be altered to select specific output p matrix files from HEFT_train_voice_face.py as opposed to what they by default select.
+This will produce files corresponding to the learned matrix that will be used during inference time. Both rescale_p_matrix.py and diagonal_encoding.py may be altered to select specific output p matrix files from HEFT_train_voice_face.py as opposed to what they select by default.
 
 rescale_p_matrix.py adjusts the mean of the p matrix to ensure data samples during inference fall within the acceptable range for the polynomial approximation of inverse square root to be valid.
 

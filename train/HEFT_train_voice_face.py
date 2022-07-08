@@ -48,7 +48,7 @@ def train_exact(gamma,iters,spec_margin=None,spec_lamb=None):
     
     #start by loading feature vectors and labels
     a = []
-    A_infile = open("feature-extraction/extractions/VGGFace_vgg_cplfw_new.txt",'r')
+    A_infile = open("feature-extraction/extractions/VGGFace_vgg_cplfw.txt",'r')
     for line in A_infile:
         line = line.strip().split()
         a.append(torch.tensor([float(char) for char in line]))

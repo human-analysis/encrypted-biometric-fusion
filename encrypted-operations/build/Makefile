@@ -57,12 +57,10 @@ RM = /usr/local/Cellar/cmake/3.21.3/bin/cmake -E rm -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-#CMAKE_SOURCE_DIR = /Users/sperling/documents/SEAL/native/examples
-CMAKE_SOURCE_DIR = /Users/sperling/documents/GitHub/encrypted-feature-fusion/encrypted-operations
+CMAKE_SOURCE_DIR = /Users/sperling/Documents/SEAL-main/native/examples
 
 # The top-level build directory on which CMake was run.
-#CMAKE_BINARY_DIR = /Users/sperling/documents/SEAL/native/examples/build
-CMAKE_BINARY_DIR = Users/sperling/documents/GitHub/encrypted-feature-fusion/encrypted-operations/build
+CMAKE_BINARY_DIR = /Users/sperling/Documents/SEAL-main/native/examples/build
 
 #=============================================================================
 # Targets provided globally by CMake.
@@ -88,17 +86,10 @@ edit_cache/fast: edit_cache
 .PHONY : edit_cache/fast
 
 # The main all target
-#all: cmake_check_build_system
-#	$(CMAKE_COMMAND) -E cmake_progress_start /Users/sperling/documents/SEAL/native/examples/#build/CMakeFiles /Users/sperling/documents/SEAL/native/examples/build//CMakeFiles/progress.marks
-#	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 all
-#	$(CMAKE_COMMAND) -E cmake_progress_start /Users/sperling/documents/SEAL/native/examples/#build/CMakeFiles 0
-
-
 all: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start Users/sperling/documents/GitHub/encrypted-feature-fusion/encrypted-operations/build/CMakeFiles Users/sperling/documents/GitHub/encrypted-feature-fusion/encrypted-operations/build//CMakeFiles/progress.marks
+	$(CMAKE_COMMAND) -E cmake_progress_start /Users/sperling/Documents/SEAL-main/native/examples/build/CMakeFiles /Users/sperling/Documents/SEAL-main/native/examples/build//CMakeFiles/progress.marks
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 all
-	$(CMAKE_COMMAND) -E cmake_progress_start /Users/sperling/documents/GitHub/encrypted-feature-fusion/encrypted-operations/build/CMakeFiles 0
-
+	$(CMAKE_COMMAND) -E cmake_progress_start /Users/sperling/Documents/SEAL-main/native/examples/build/CMakeFiles 0
 .PHONY : all
 
 # The main clean target
@@ -210,101 +201,125 @@ sealexamples/fast:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/sealexamples.dir/build.make CMakeFiles/sealexamples.dir/3_levels.cpp.s
 .PHONY : 3_levels.cpp.s
 
-4_ckks_basics.o: 4_ckks_basics.cpp.o
-.PHONY : 4_ckks_basics.o
+4_bgv_basics.o: 4_bgv_basics.cpp.o
+.PHONY : 4_bgv_basics.o
 
 # target to build an object file
-4_ckks_basics.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/sealexamples.dir/build.make CMakeFiles/sealexamples.dir/4_ckks_basics.cpp.o
-.PHONY : 4_ckks_basics.cpp.o
+4_bgv_basics.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/sealexamples.dir/build.make CMakeFiles/sealexamples.dir/4_bgv_basics.cpp.o
+.PHONY : 4_bgv_basics.cpp.o
 
-4_ckks_basics.i: 4_ckks_basics.cpp.i
-.PHONY : 4_ckks_basics.i
+4_bgv_basics.i: 4_bgv_basics.cpp.i
+.PHONY : 4_bgv_basics.i
 
 # target to preprocess a source file
-4_ckks_basics.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/sealexamples.dir/build.make CMakeFiles/sealexamples.dir/4_ckks_basics.cpp.i
-.PHONY : 4_ckks_basics.cpp.i
+4_bgv_basics.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/sealexamples.dir/build.make CMakeFiles/sealexamples.dir/4_bgv_basics.cpp.i
+.PHONY : 4_bgv_basics.cpp.i
 
-4_ckks_basics.s: 4_ckks_basics.cpp.s
-.PHONY : 4_ckks_basics.s
+4_bgv_basics.s: 4_bgv_basics.cpp.s
+.PHONY : 4_bgv_basics.s
 
 # target to generate assembly for a file
-4_ckks_basics.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/sealexamples.dir/build.make CMakeFiles/sealexamples.dir/4_ckks_basics.cpp.s
-.PHONY : 4_ckks_basics.cpp.s
+4_bgv_basics.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/sealexamples.dir/build.make CMakeFiles/sealexamples.dir/4_bgv_basics.cpp.s
+.PHONY : 4_bgv_basics.cpp.s
 
-5_rotation.o: 5_rotation.cpp.o
-.PHONY : 5_rotation.o
+5_ckks_basics.o: 5_ckks_basics.cpp.o
+.PHONY : 5_ckks_basics.o
 
 # target to build an object file
-5_rotation.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/sealexamples.dir/build.make CMakeFiles/sealexamples.dir/5_rotation.cpp.o
-.PHONY : 5_rotation.cpp.o
+5_ckks_basics.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/sealexamples.dir/build.make CMakeFiles/sealexamples.dir/5_ckks_basics.cpp.o
+.PHONY : 5_ckks_basics.cpp.o
 
-5_rotation.i: 5_rotation.cpp.i
-.PHONY : 5_rotation.i
+5_ckks_basics.i: 5_ckks_basics.cpp.i
+.PHONY : 5_ckks_basics.i
 
 # target to preprocess a source file
-5_rotation.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/sealexamples.dir/build.make CMakeFiles/sealexamples.dir/5_rotation.cpp.i
-.PHONY : 5_rotation.cpp.i
+5_ckks_basics.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/sealexamples.dir/build.make CMakeFiles/sealexamples.dir/5_ckks_basics.cpp.i
+.PHONY : 5_ckks_basics.cpp.i
 
-5_rotation.s: 5_rotation.cpp.s
-.PHONY : 5_rotation.s
+5_ckks_basics.s: 5_ckks_basics.cpp.s
+.PHONY : 5_ckks_basics.s
 
 # target to generate assembly for a file
-5_rotation.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/sealexamples.dir/build.make CMakeFiles/sealexamples.dir/5_rotation.cpp.s
-.PHONY : 5_rotation.cpp.s
+5_ckks_basics.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/sealexamples.dir/build.make CMakeFiles/sealexamples.dir/5_ckks_basics.cpp.s
+.PHONY : 5_ckks_basics.cpp.s
 
-6_serialization.o: 6_serialization.cpp.o
-.PHONY : 6_serialization.o
+6_rotation.o: 6_rotation.cpp.o
+.PHONY : 6_rotation.o
 
 # target to build an object file
-6_serialization.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/sealexamples.dir/build.make CMakeFiles/sealexamples.dir/6_serialization.cpp.o
-.PHONY : 6_serialization.cpp.o
+6_rotation.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/sealexamples.dir/build.make CMakeFiles/sealexamples.dir/6_rotation.cpp.o
+.PHONY : 6_rotation.cpp.o
 
-6_serialization.i: 6_serialization.cpp.i
-.PHONY : 6_serialization.i
+6_rotation.i: 6_rotation.cpp.i
+.PHONY : 6_rotation.i
 
 # target to preprocess a source file
-6_serialization.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/sealexamples.dir/build.make CMakeFiles/sealexamples.dir/6_serialization.cpp.i
-.PHONY : 6_serialization.cpp.i
+6_rotation.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/sealexamples.dir/build.make CMakeFiles/sealexamples.dir/6_rotation.cpp.i
+.PHONY : 6_rotation.cpp.i
 
-6_serialization.s: 6_serialization.cpp.s
-.PHONY : 6_serialization.s
+6_rotation.s: 6_rotation.cpp.s
+.PHONY : 6_rotation.s
 
 # target to generate assembly for a file
-6_serialization.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/sealexamples.dir/build.make CMakeFiles/sealexamples.dir/6_serialization.cpp.s
-.PHONY : 6_serialization.cpp.s
+6_rotation.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/sealexamples.dir/build.make CMakeFiles/sealexamples.dir/6_rotation.cpp.s
+.PHONY : 6_rotation.cpp.s
 
-7_performance.o: 7_performance.cpp.o
-.PHONY : 7_performance.o
+7_serialization.o: 7_serialization.cpp.o
+.PHONY : 7_serialization.o
 
 # target to build an object file
-7_performance.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/sealexamples.dir/build.make CMakeFiles/sealexamples.dir/7_performance.cpp.o
-.PHONY : 7_performance.cpp.o
+7_serialization.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/sealexamples.dir/build.make CMakeFiles/sealexamples.dir/7_serialization.cpp.o
+.PHONY : 7_serialization.cpp.o
 
-7_performance.i: 7_performance.cpp.i
-.PHONY : 7_performance.i
+7_serialization.i: 7_serialization.cpp.i
+.PHONY : 7_serialization.i
 
 # target to preprocess a source file
-7_performance.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/sealexamples.dir/build.make CMakeFiles/sealexamples.dir/7_performance.cpp.i
-.PHONY : 7_performance.cpp.i
+7_serialization.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/sealexamples.dir/build.make CMakeFiles/sealexamples.dir/7_serialization.cpp.i
+.PHONY : 7_serialization.cpp.i
 
-7_performance.s: 7_performance.cpp.s
-.PHONY : 7_performance.s
+7_serialization.s: 7_serialization.cpp.s
+.PHONY : 7_serialization.s
 
 # target to generate assembly for a file
-7_performance.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/sealexamples.dir/build.make CMakeFiles/sealexamples.dir/7_performance.cpp.s
-.PHONY : 7_performance.cpp.s
+7_serialization.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/sealexamples.dir/build.make CMakeFiles/sealexamples.dir/7_serialization.cpp.s
+.PHONY : 7_serialization.cpp.s
+
+8_performance.o: 8_performance.cpp.o
+.PHONY : 8_performance.o
+
+# target to build an object file
+8_performance.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/sealexamples.dir/build.make CMakeFiles/sealexamples.dir/8_performance.cpp.o
+.PHONY : 8_performance.cpp.o
+
+8_performance.i: 8_performance.cpp.i
+.PHONY : 8_performance.i
+
+# target to preprocess a source file
+8_performance.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/sealexamples.dir/build.make CMakeFiles/sealexamples.dir/8_performance.cpp.i
+.PHONY : 8_performance.cpp.i
+
+8_performance.s: 8_performance.cpp.s
+.PHONY : 8_performance.s
+
+# target to generate assembly for a file
+8_performance.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/sealexamples.dir/build.make CMakeFiles/sealexamples.dir/8_performance.cpp.s
+.PHONY : 8_performance.cpp.s
 
 encrypted_feature_fusion.o: encrypted_feature_fusion.cpp.o
 .PHONY : encrypted_feature_fusion.o
@@ -372,18 +387,21 @@ help:
 	@echo "... 3_levels.o"
 	@echo "... 3_levels.i"
 	@echo "... 3_levels.s"
-	@echo "... 4_ckks_basics.o"
-	@echo "... 4_ckks_basics.i"
-	@echo "... 4_ckks_basics.s"
-	@echo "... 5_rotation.o"
-	@echo "... 5_rotation.i"
-	@echo "... 5_rotation.s"
-	@echo "... 6_serialization.o"
-	@echo "... 6_serialization.i"
-	@echo "... 6_serialization.s"
-	@echo "... 7_performance.o"
-	@echo "... 7_performance.i"
-	@echo "... 7_performance.s"
+	@echo "... 4_bgv_basics.o"
+	@echo "... 4_bgv_basics.i"
+	@echo "... 4_bgv_basics.s"
+	@echo "... 5_ckks_basics.o"
+	@echo "... 5_ckks_basics.i"
+	@echo "... 5_ckks_basics.s"
+	@echo "... 6_rotation.o"
+	@echo "... 6_rotation.i"
+	@echo "... 6_rotation.s"
+	@echo "... 7_serialization.o"
+	@echo "... 7_serialization.i"
+	@echo "... 7_serialization.s"
+	@echo "... 8_performance.o"
+	@echo "... 8_performance.i"
+	@echo "... 8_performance.s"
 	@echo "... encrypted_feature_fusion.o"
 	@echo "... encrypted_feature_fusion.i"
 	@echo "... encrypted_feature_fusion.s"

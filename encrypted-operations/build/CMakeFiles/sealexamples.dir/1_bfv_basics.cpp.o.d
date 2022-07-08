@@ -1,15 +1,15 @@
 CMakeFiles/sealexamples.dir/1_bfv_basics.cpp.o: \
-  /Users/sperling/documents/SEAL/native/examples/1_bfv_basics.cpp \
-  /Users/sperling/documents/SEAL/native/examples/examples.h \
-  /usr/local/include/SEAL-3.7/seal/seal.h \
-  /usr/local/include/SEAL-3.7/seal/batchencoder.h \
-  /usr/local/include/SEAL-3.7/seal/context.h \
-  /usr/local/include/SEAL-3.7/seal/encryptionparams.h \
-  /usr/local/include/SEAL-3.7/seal/memorymanager.h \
-  /usr/local/include/SEAL-3.7/seal/util/defines.h \
-  /usr/local/include/SEAL-3.7/seal/util/msvc.h \
-  /usr/local/include/SEAL-3.7/seal/util/clang.h \
-  /usr/local/include/SEAL-3.7/seal/util/config.h \
+  /Users/sperling/Documents/SEAL-main/native/examples/1_bfv_basics.cpp \
+  /Users/sperling/Documents/SEAL-main/native/examples/examples.h \
+  /usr/local/include/SEAL-4.0/seal/seal.h \
+  /usr/local/include/SEAL-4.0/seal/batchencoder.h \
+  /usr/local/include/SEAL-4.0/seal/context.h \
+  /usr/local/include/SEAL-4.0/seal/encryptionparams.h \
+  /usr/local/include/SEAL-4.0/seal/memorymanager.h \
+  /usr/local/include/SEAL-4.0/seal/util/defines.h \
+  /usr/local/include/SEAL-4.0/seal/util/msvc.h \
+  /usr/local/include/SEAL-4.0/seal/util/clang.h \
+  /usr/local/include/SEAL-4.0/seal/util/config.h \
   /Library/Developer/CommandLineTools/SDKs/MacOSX11.3.sdk/usr/include/c++/v1/cstdlib \
   /Library/Developer/CommandLineTools/SDKs/MacOSX11.3.sdk/usr/include/c++/v1/__config \
   /Library/Developer/CommandLineTools/SDKs/MacOSX11.3.sdk/usr/include/pthread.h \
@@ -164,14 +164,14 @@ CMakeFiles/sealexamples.dir/1_bfv_basics.cpp.o: \
   /Library/Developer/CommandLineTools/usr/lib/clang/12.0.5/include/lwpintrin.h \
   /Library/Developer/CommandLineTools/usr/lib/clang/12.0.5/include/mwaitxintrin.h \
   /Library/Developer/CommandLineTools/usr/lib/clang/12.0.5/include/clzerointrin.h \
-  /usr/local/include/SEAL-3.7/seal/util/gcc.h \
+  /usr/local/include/SEAL-4.0/seal/util/gcc.h \
   /Library/Developer/CommandLineTools/SDKs/MacOSX11.3.sdk/usr/include/c++/v1/cstddef \
   /Library/Developer/CommandLineTools/SDKs/MacOSX11.3.sdk/usr/include/c++/v1/version \
   /Library/Developer/CommandLineTools/usr/lib/clang/12.0.5/include/stddef.h \
   /Library/Developer/CommandLineTools/usr/lib/clang/12.0.5/include/__stddef_max_align_t.h \
   /Library/Developer/CommandLineTools/SDKs/MacOSX11.3.sdk/usr/include/c++/v1/__nullptr \
-  /usr/local/include/SEAL-3.7/seal/util/globals.h \
-  /usr/local/include/SEAL-3.7/seal/util/hestdparms.h \
+  /usr/local/include/SEAL-4.0/seal/util/globals.h \
+  /usr/local/include/SEAL-4.0/seal/util/hestdparms.h \
   /Library/Developer/CommandLineTools/SDKs/MacOSX11.3.sdk/usr/include/c++/v1/map \
   /Library/Developer/CommandLineTools/SDKs/MacOSX11.3.sdk/usr/include/c++/v1/__tree \
   /Library/Developer/CommandLineTools/SDKs/MacOSX11.3.sdk/usr/include/c++/v1/iterator \
@@ -263,12 +263,12 @@ CMakeFiles/sealexamples.dir/1_bfv_basics.cpp.o: \
   /Library/Developer/CommandLineTools/SDKs/MacOSX11.3.sdk/usr/include/c++/v1/vector \
   /Library/Developer/CommandLineTools/SDKs/MacOSX11.3.sdk/usr/include/c++/v1/__bit_reference \
   /Library/Developer/CommandLineTools/SDKs/MacOSX11.3.sdk/usr/include/c++/v1/__split_buffer \
-  /usr/local/include/SEAL-3.7/seal/util/mempool.h \
-  /usr/local/include/SEAL-3.7/seal/util/common.h \
+  /usr/local/include/SEAL-4.0/seal/util/mempool.h \
+  /usr/local/include/SEAL-4.0/seal/util/common.h \
   /Library/Developer/CommandLineTools/SDKs/MacOSX11.3.sdk/usr/include/c++/v1/cmath \
   /Library/Developer/CommandLineTools/SDKs/MacOSX11.3.sdk/usr/include/c++/v1/math.h \
   /Library/Developer/CommandLineTools/SDKs/MacOSX11.3.sdk/usr/include/math.h \
-  /usr/local/include/SEAL-3.7/seal/util/locks.h \
+  /usr/local/include/SEAL-4.0/seal/util/locks.h \
   /Library/Developer/CommandLineTools/SDKs/MacOSX11.3.sdk/usr/include/c++/v1/mutex \
   /Library/Developer/CommandLineTools/SDKs/MacOSX11.3.sdk/usr/include/c++/v1/__mutex_base \
   /Library/Developer/CommandLineTools/SDKs/MacOSX11.3.sdk/usr/include/c++/v1/system_error \
@@ -288,9 +288,9 @@ CMakeFiles/sealexamples.dir/1_bfv_basics.cpp.o: \
   /Library/Developer/CommandLineTools/SDKs/MacOSX11.3.sdk/usr/include/c++/v1/unordered_map \
   /Library/Developer/CommandLineTools/SDKs/MacOSX11.3.sdk/usr/include/c++/v1/__hash_table \
   /Library/Developer/CommandLineTools/SDKs/MacOSX11.3.sdk/usr/include/c++/v1/thread \
-  /usr/local/include/SEAL-3.7/seal/modulus.h \
-  /usr/local/include/SEAL-3.7/seal/serialization.h \
-  /usr/local/include/SEAL-3.7/seal/version.h \
+  /usr/local/include/SEAL-4.0/seal/modulus.h \
+  /usr/local/include/SEAL-4.0/seal/serialization.h \
+  /usr/local/include/SEAL-4.0/seal/version.h \
   /Library/Developer/CommandLineTools/SDKs/MacOSX11.3.sdk/usr/include/c++/v1/iostream \
   /Library/Developer/CommandLineTools/SDKs/MacOSX11.3.sdk/usr/include/c++/v1/ios \
   /Library/Developer/CommandLineTools/SDKs/MacOSX11.3.sdk/usr/include/c++/v1/__locale \
@@ -340,47 +340,47 @@ CMakeFiles/sealexamples.dir/1_bfv_basics.cpp.o: \
   /Library/Developer/CommandLineTools/SDKs/MacOSX11.3.sdk/usr/include/_types/_nl_item.h \
   /Library/Developer/CommandLineTools/SDKs/MacOSX11.3.sdk/usr/include/c++/v1/__bsd_locale_defaults.h \
   /Library/Developer/CommandLineTools/SDKs/MacOSX11.3.sdk/usr/include/c++/v1/bitset \
-  /usr/local/include/SEAL-3.7/seal/util/uintcore.h \
-  /usr/local/include/SEAL-3.7/seal/util/pointer.h \
-  /usr/local/include/SEAL-3.7/seal/util/ztools.h \
-  /usr/local/include/SEAL-3.7/seal/dynarray.h \
-  /usr/local/include/SEAL-3.7/gsl/span \
-  /usr/local/include/SEAL-3.7/gsl/gsl_assert \
-  /usr/local/include/SEAL-3.7/gsl/gsl_byte \
+  /usr/local/include/SEAL-4.0/seal/util/uintcore.h \
+  /usr/local/include/SEAL-4.0/seal/util/pointer.h \
+  /usr/local/include/SEAL-4.0/seal/util/ztools.h \
+  /usr/local/include/SEAL-4.0/seal/dynarray.h \
+  /usr/local/include/gsl/span /usr/local/include/gsl/assert \
+  /usr/local/include/gsl/byte /usr/local/include/gsl/util \
   /Library/Developer/CommandLineTools/SDKs/MacOSX11.3.sdk/usr/include/c++/v1/array \
-  /usr/local/include/SEAL-3.7/seal/randomgen.h \
-  /usr/local/include/SEAL-3.7/seal/util/hash.h \
-  /usr/local/include/SEAL-3.7/seal/util/blake2.h \
+  /usr/local/include/gsl/span_ext \
+  /usr/local/include/SEAL-4.0/seal/randomgen.h \
+  /usr/local/include/SEAL-4.0/seal/util/hash.h \
+  /usr/local/include/SEAL-4.0/seal/util/blake2.h \
   /Library/Developer/CommandLineTools/SDKs/MacOSX11.3.sdk/usr/include/c++/v1/numeric \
-  /usr/local/include/SEAL-3.7/seal/util/galois.h \
-  /usr/local/include/SEAL-3.7/seal/util/iterator.h \
-  /usr/local/include/SEAL-3.7/seal/util/ntt.h \
-  /usr/local/include/SEAL-3.7/seal/util/dwthandler.h \
-  /usr/local/include/SEAL-3.7/seal/util/uintarithsmallmod.h \
-  /usr/local/include/SEAL-3.7/seal/util/numth.h \
-  /usr/local/include/SEAL-3.7/seal/util/uintarith.h \
-  /usr/local/include/SEAL-3.7/seal/util/rns.h \
-  /usr/local/include/SEAL-3.7/seal/plaintext.h \
-  /usr/local/include/SEAL-3.7/seal/valcheck.h \
-  /usr/local/include/SEAL-3.7/seal/util/polycore.h \
+  /usr/local/include/SEAL-4.0/seal/util/galois.h \
+  /usr/local/include/SEAL-4.0/seal/util/iterator.h \
+  /usr/local/include/SEAL-4.0/seal/util/ntt.h \
+  /usr/local/include/SEAL-4.0/seal/util/dwthandler.h \
+  /usr/local/include/SEAL-4.0/seal/util/uintarithsmallmod.h \
+  /usr/local/include/SEAL-4.0/seal/util/numth.h \
+  /usr/local/include/SEAL-4.0/seal/util/uintarith.h \
+  /usr/local/include/SEAL-4.0/seal/util/rns.h \
+  /usr/local/include/SEAL-4.0/seal/plaintext.h \
+  /usr/local/include/SEAL-4.0/seal/valcheck.h \
+  /usr/local/include/SEAL-4.0/seal/util/polycore.h \
   /Library/Developer/CommandLineTools/SDKs/MacOSX11.3.sdk/usr/include/c++/v1/sstream \
-  /usr/local/include/SEAL-3.7/seal/ciphertext.h \
-  /usr/local/include/SEAL-3.7/seal/ckks.h \
-  /usr/local/include/SEAL-3.7/seal/util/croots.h \
+  /usr/local/include/SEAL-4.0/seal/ciphertext.h \
+  /usr/local/include/SEAL-4.0/seal/ckks.h \
+  /usr/local/include/SEAL-4.0/seal/util/croots.h \
   /Library/Developer/CommandLineTools/SDKs/MacOSX11.3.sdk/usr/include/c++/v1/complex \
-  /usr/local/include/SEAL-3.7/seal/decryptor.h \
-  /usr/local/include/SEAL-3.7/seal/secretkey.h \
+  /usr/local/include/SEAL-4.0/seal/decryptor.h \
+  /usr/local/include/SEAL-4.0/seal/secretkey.h \
   /Library/Developer/CommandLineTools/SDKs/MacOSX11.3.sdk/usr/include/c++/v1/random \
-  /usr/local/include/SEAL-3.7/seal/encryptor.h \
-  /usr/local/include/SEAL-3.7/seal/publickey.h \
-  /usr/local/include/SEAL-3.7/seal/serializable.h \
-  /usr/local/include/SEAL-3.7/seal/util/streambuf.h \
-  /usr/local/include/SEAL-3.7/seal/evaluator.h \
-  /usr/local/include/SEAL-3.7/seal/galoiskeys.h \
-  /usr/local/include/SEAL-3.7/seal/kswitchkeys.h \
-  /usr/local/include/SEAL-3.7/seal/relinkeys.h \
-  /usr/local/include/SEAL-3.7/seal/keygenerator.h \
-  /usr/local/include/SEAL-3.7/seal/randomtostd.h \
+  /usr/local/include/SEAL-4.0/seal/encryptor.h \
+  /usr/local/include/SEAL-4.0/seal/publickey.h \
+  /usr/local/include/SEAL-4.0/seal/serializable.h \
+  /usr/local/include/SEAL-4.0/seal/util/streambuf.h \
+  /usr/local/include/SEAL-4.0/seal/evaluator.h \
+  /usr/local/include/SEAL-4.0/seal/galoiskeys.h \
+  /usr/local/include/SEAL-4.0/seal/kswitchkeys.h \
+  /usr/local/include/SEAL-4.0/seal/relinkeys.h \
+  /usr/local/include/SEAL-4.0/seal/keygenerator.h \
+  /usr/local/include/SEAL-4.0/seal/randomtostd.h \
   /Library/Developer/CommandLineTools/SDKs/MacOSX11.3.sdk/usr/include/c++/v1/fstream \
   /Library/Developer/CommandLineTools/SDKs/MacOSX11.3.sdk/usr/include/c++/v1/filesystem \
   /Library/Developer/CommandLineTools/SDKs/MacOSX11.3.sdk/usr/include/c++/v1/stack \

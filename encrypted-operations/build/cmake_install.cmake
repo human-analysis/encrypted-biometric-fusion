@@ -1,4 +1,4 @@
-# Install script for directory: /Users/sperling/documents/SEAL/native/examples
+# Install script for directory: /Users/sperling/Documents/SEAL-main/native/examples
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)
@@ -45,5 +45,5 @@ endif()
 
 string(REPLACE ";" "\n" CMAKE_INSTALL_MANIFEST_CONTENT
        "${CMAKE_INSTALL_MANIFEST_FILES}")
-file(WRITE "/Users/sperling/documents/SEAL/native/examples/build/${CMAKE_INSTALL_MANIFEST}"
+file(WRITE "/Users/sperling/Documents/SEAL-main/native/examples/build/${CMAKE_INSTALL_MANIFEST}"
      "${CMAKE_INSTALL_MANIFEST_CONTENT}")

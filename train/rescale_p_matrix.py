@@ -1,10 +1,13 @@
+"""
+Author: Luke Sperling
+Created: 04-04-22
+Modified: 07-11-22
+Rescales learned matrix to allow polynomial approximation of inverse norm to be correctly calculated.
+"""
+
 import numpy as np
 import random
 import os
-
-#import autograd.numpy as np  # Thinly-wrapped numpy
-#from autograd import grad
-#from matplotlib import pyplot
 from sklearn.decomposition import PCA
 import math
 

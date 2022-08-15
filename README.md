@@ -1,13 +1,22 @@
 # HEFT: Homomorphically Encrypted Fusion of Biometric Templates
-By Luke Sperling
+```BibTex
+@inproceedings{
+  sperling2022heft,
+  title={{HEFT}: Homomorphically Encrypted Fusion of Biometric Templates},
+  author={Luke Sperling and Nalini Ratha and Arun Ross and Vishnu Naresh Boddeti},
+  booktitle={International Joint Conference on Biometrics (IJCB)},
+  year={2022}
+}
+```
 
 # Introduction
-Encrypted multimodal feature-level fusion of homomorphically encrypted biometric templates. This project is divided into two parts: train and inference. During training, a disjoint train set is used in the message-space domain to learn a matrix to be used in linear projection during inference. Inference is performed entirely in the encrypted domain and consists of four processes: concatenation of feature vectors, linear projection, approximate normalization, and match score generation.
 
-# Citation
-Coming soon...
+<img src="assets/overview.png">
+
+HEFT is an efficient algorithm for multimodal feature-level fusion of homomorphically encrypted biometric templates. As shown in the figure HEFT consists of four processes: concatenation of feature vectors, linear projection, approximate normalization, and match score generation. All of these operations are performed entirely in the encrypted domain. At training a disjoint train set is used in the message-space domain to learn a matrix to be used in linear projection during inference.
 
 # Installation
+
 SEAL 4.0.0 must be installed prior to compiling this project.
 ```
 $ git clone --recursive https://github.com/human-analysis/encrypted-feature-fusion.git
@@ -18,6 +27,7 @@ $ make clean; make
 ```
 
 # Usage
+
 Usage is split between training and inference. Training should be done prior to inference.
 
 # Training
